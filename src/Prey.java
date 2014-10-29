@@ -1,37 +1,22 @@
-import java.util.List;
-import java.util.Random;
-
 public class Prey extends Animal {
-	//BasicEnvironment be;
-	private Cell cell;
-	public Prey(BasicEnvironment env) {
-	//receive basic environment to acess the "board"
-	super(env);
+
+	public Prey(int locX_, int locY_) {
+		super(locX_, locY_);
+		// TODO Auto-generated constructor stub
 	}
 	
-	Cell move(){
-		Random _r = new Random();
-		
-		if(_r.nextDouble()<0.8){
-			List<Cell> steps = getPossibleSteps();
-			return steps.get(_r.nextInt(steps.size()));
-			
+	public void move() {
+		double p = Math.random();
+		if (p < 0.8) {
+			move(DIR_WAIT);
+		} else if (p < 0.85) {
+			move(DIR_NORTH);
+		} else if (p < 0.9) {
+			move(DIR_SOUTH);
+		} else if (p < 0.95) {
+			move(DIR_EAST);
+		} else {
+			move(DIR_WEST);
 		}
-		return cell;
 	}
-
-	private List<Cell> getPossibleSteps() {
-		
-		
-		
-		return null;
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "p";
-	}
-	
-	
 }

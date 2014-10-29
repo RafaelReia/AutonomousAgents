@@ -2,8 +2,10 @@ import java.util.ArrayList;
 
 public class BasicEnvironment {
 
-	private Cell[][] environment = new Cell[11][11];
-	private ArrayList<Animal> agents = new ArrayList<Animal>();
+	//private Cell[][] environment = new Cell[11][11];
+	//private ArrayList<Animal> agents = new ArrayList<Animal>();
+	ArrayList<Animal> predators = new ArrayList<Animal>();
+	ArrayList<Animal> preys = new ArrayList<Animal>();
 
 	/**
 	 * @param args
