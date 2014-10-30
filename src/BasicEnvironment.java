@@ -4,8 +4,8 @@ public class BasicEnvironment {
 
 	//private Cell[][] environment = new Cell[11][11];
 	//private ArrayList<Animal> agents = new ArrayList<Animal>();
-	ArrayList<Animal> predators = new ArrayList<Animal>();
-	ArrayList<Animal> preys = new ArrayList<Animal>();
+	ArrayList<Agent> predators = new ArrayList<Agent>();
+	ArrayList<Agent> preys = new ArrayList<Agent>();
 
 	/**
 	 * @param args

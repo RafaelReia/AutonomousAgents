@@ -1,22 +1,25 @@
-public class Prey extends Animal {
+import java.util.ArrayList;
+
+public class Prey extends Agent {
 
 	public Prey(int locX_, int locY_) {
 		super(locX_, locY_);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void move() {
+	public int planMove(ArrayList<Agent> predators) {
+		ArrayList<Integer> dir_cand = tryMove(predators);
+		double p_delta  = 0.2 / dir_cand.size();
+		double p_bound = 0;
 		double p = Math.random();
-		if (p < 0.8) {
-			move(DIR_WAIT);
-		} else if (p < 0.85) {
-			move(DIR_NORTH);
-		} else if (p < 0.9) {
-			move(DIR_SOUTH);
-		} else if (p < 0.95) {
-			move(DIR_EAST);
-		} else {
-			move(DIR_WEST);
+		
+		for (int dir : dir_cand) {
+			p_bound += p_delta;
+			if (p < p_bound) {
+				move(dir);
+			}
 		}
+		
+		return DIR_WAIT;
 	}
 }
