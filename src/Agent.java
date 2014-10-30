@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-
-public class Agent{
+public abstract class Agent{
 	public final static int DIR_WAIT 	= 0;
 	public final static int DIR_NORTH 	= 1;
 	public final static int DIR_SOUTH 	= 2;
@@ -41,30 +39,13 @@ public class Agent{
 	}
 	
 	public void move(int deltaX, int deltaY) {
-		locX = (deltaX + 11) % 11;
-		locY = (deltaY + 11) % 11;
+		locX = (locX + deltaX + 11) % 11;
+		locY = (locY + deltaY + 11) % 11;
 	}
 	
 	public void move(int DIR) {
 		move(dirX[DIR], dirY[DIR]);
 	}
 	
-	public ArrayList<Integer> tryMove(ArrayList<Agent> agents) {
-		ArrayList<Integer> dir = new ArrayList<Integer>();
-		for (int i = 1; i < DIR_NUM; i++) {
-			Agent prob = new Agent(this);
-			prob.move(i);
-			boolean block = false;
-			for (Agent agent : agents) {
-				if (prob.equals(agent)) {
-					block = true;
-					break;
-				}
-			}
-			if (!block) {
-				dir.add(i);
-			}
-		}
-		return dir;
-	}
+	abstract public void print();
 }

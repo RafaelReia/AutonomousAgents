@@ -5,18 +5,17 @@ public class Predator extends Agent {
 
 	public Predator(int locX_, int locY_) {
 		super(locX_, locY_);
-		// TODO Auto-generated constructor stub
 	}
 	
-	public int planMoveRandom() {
-		return (int) Math.floor(Math.random() * DIR_NUM);
+	public Predator(Agent predator) {
+		super(predator);
 	}
 	
-	public int move(int DIR, ArrayList<Agent> preys) {
+	public int move(int DIR, ArrayList<Prey> preys) {
 		move(DIR);
 		
 		int reward = 0;
-		for (Iterator<Agent> iterator = preys.iterator(); iterator.hasNext();) {
+		for (Iterator<Prey> iterator = preys.iterator(); iterator.hasNext();) {
 			if (this.equals(iterator.next())) {
 				reward += 10;
 				iterator.remove();
@@ -24,5 +23,14 @@ public class Predator extends Agent {
 		}
 		
 		return reward;
+	}
+	
+	public int planMoveRandom() {
+		return (int) Math.floor(Math.random() * DIR_NUM);
+	}
+
+	@Override
+	public void print() {
+		System.out.print("Predator(" + getX() + "," + getY() + ")");
 	}
 }
