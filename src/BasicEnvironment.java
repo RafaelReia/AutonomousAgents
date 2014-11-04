@@ -9,10 +9,12 @@ public class BasicEnvironment {
 	ArrayList<Prey> preys = new ArrayList<Prey>();
 	
 	
+	// Constructur for one prey and one predator
 	public BasicEnvironment(Predator predator_, Prey prey_) {
 		this(new ArrayList<Predator>(Arrays.asList(predator_)), new ArrayList<Prey>(Arrays.asList(prey_)));
 	}
 	
+	// Constructor for multiple predators/preys
 	public BasicEnvironment(ArrayList<Predator> predators_, ArrayList<Prey> preys_) {
 		if (predators == null || preys == null) {
 			System.out.println("It's null");
