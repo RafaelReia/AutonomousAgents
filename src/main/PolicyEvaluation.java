@@ -1,5 +1,8 @@
+package main;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import agents.Prey;
 
 public class PolicyEvaluation extends BasicEnvironment{
 	

@@ -1,3 +1,5 @@
+package agents;
+
 public abstract class Agent{
 	public final static int DIR_WAIT 	= 0;
 	public final static int DIR_NORTH 	= 1;

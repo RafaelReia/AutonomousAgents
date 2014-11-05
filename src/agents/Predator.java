@@ -1,7 +1,9 @@
+package agents;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import static BasicEnvironment.*;
+import static main.BasicEnvironment.WORLDSIZE;
+
 
 public class Predator extends Agent {
 

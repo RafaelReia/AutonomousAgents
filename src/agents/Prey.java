@@ -1,3 +1,4 @@
+package agents;
 import java.util.ArrayList;
 
 public class Prey extends Agent {

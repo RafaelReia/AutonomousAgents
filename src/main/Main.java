@@ -1,3 +1,6 @@
+package main;
+import agents.Prey;
+
 public class Main {
 
 	/**
