@@ -1,8 +1,8 @@
 package main;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import agents.Predator;
+import agents.PredatorPI;
 import agents.Prey;
 
 public class PolicyIteration extends BasicEnvironment{
@@ -33,7 +33,8 @@ public class PolicyIteration extends BasicEnvironment{
 			}
 			
 			for (Predator predator : predators) {
-				int dir = predator.planMovePI(preys);
+				PredatorPI predatorPI = new PredatorPI(predator);
+				int dir = predatorPI.planMovePI(preys);
 				predator.move(dir, preys);
 				System.out.print(" ");
 				predator.print();

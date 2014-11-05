@@ -1,14 +1,14 @@
 package main;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import agents.Predator;
+import agents.PredatorVI;
 import agents.Prey;
 
 public class ValueIteration extends BasicEnvironment{
 	
 	// Constructur for one prey and one predator
-	public ValueIteration(Predator predator_, Prey prey_)
+	public ValueIteration(PredatorVI predator_, Prey prey_)
 	{
 		super(predator_, prey_);
 	}
@@ -33,7 +33,8 @@ public class ValueIteration extends BasicEnvironment{
 			}
 			
 			for (Predator predator : predators) {
-				int dir = predator.planMoveVI(preys);
+				PredatorVI predatorVI = new PredatorVI(predator);
+				int dir = predatorVI.planMoveVI(preys);
 				predator.move(dir, preys);
 				System.out.print(" ");
 				predator.print();

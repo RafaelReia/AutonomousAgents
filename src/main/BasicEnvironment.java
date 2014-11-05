@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import agents.Predator;
+import agents.PredatorRandom;
 import agents.Prey;
 
 public class BasicEnvironment {
@@ -64,7 +65,8 @@ public class BasicEnvironment {
 			}
 			
 			for (Predator predator : predators) {
-				int dir = predator.planMoveRandom();
+				PredatorRandom predatorRandom = new PredatorRandom(predator);
+				int dir = predatorRandom.planMoveRandom();
 				predator.move(dir, preys);
 				System.out.print(" ");
 				predator.print();
