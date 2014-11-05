@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BasicEnvironment {
+	
+	public static final int WORLDSIZE 	= 11;
+	
 
 	//private Cell[][] environment = new Cell[11][11];
 	//private ArrayList<Animal> agents = new ArrayList<Animal>();
@@ -16,6 +19,8 @@ public class BasicEnvironment {
 	
 	// Constructor for multiple predators/preys
 	public BasicEnvironment(ArrayList<Predator> predators_, ArrayList<Prey> preys_) {
+		
+		
 		if (predators == null || preys == null) {
 			System.out.println("It's null");
 			return;

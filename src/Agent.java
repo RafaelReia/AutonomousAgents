@@ -9,8 +9,8 @@ public abstract class Agent{
 	private int locX;
 	private int locY;
 	
-	private int dirX[] = {0,-1,+1, 0, 0};
-	private int dirY[] = {0, 0, 0,+1,-1};
+	public final static int dirX[] = {0,-1,+1, 0, 0};
+	public final static int dirY[] = {0, 0, 0,+1,-1};
 
 	public Agent(int locX_, int locY_) {
 		locX = locX_;
@@ -39,8 +39,8 @@ public abstract class Agent{
 	}
 	
 	public void move(int deltaX, int deltaY) {
-		locX = (locX + deltaX + 11) % 11;
-		locY = (locY + deltaY + 11) % 11;
+		locX = (locX + deltaX + WORLDSIZE) % WORLDSIZE;
+		locY = (locY + deltaY + WORLDSIZE) % WORLDSIZE;
 	}
 	
 	public void move(int DIR) {

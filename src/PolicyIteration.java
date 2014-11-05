@@ -29,7 +29,7 @@ public class PolicyIteration extends BasicEnvironment{
 			}
 			
 			for (Predator predator : predators) {
-				int dir = predator.planMovePI();
+				int dir = predator.planMovePI(preys);
 				predator.move(dir, preys);
 				System.out.print(" ");
 				predator.print();

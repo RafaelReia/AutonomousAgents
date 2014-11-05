@@ -29,7 +29,7 @@ public class PolicyEvaluation extends BasicEnvironment{
 			}
 			
 			for (Predator predator : predators) {
-				int dir = predator.planMovePE();
+				int dir = predator.planMovePE(preys);
 				predator.move(dir, preys);
 				System.out.print(" ");
 				predator.print();

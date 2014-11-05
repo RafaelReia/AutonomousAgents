@@ -29,7 +29,7 @@ public class ValueIteration extends BasicEnvironment{
 			}
 			
 			for (Predator predator : predators) {
-				int dir = predator.planMoveRandom();
+				int dir = predator.planMoveVI(preys);
 				predator.move(dir, preys);
 				System.out.print(" ");
 				predator.print();
