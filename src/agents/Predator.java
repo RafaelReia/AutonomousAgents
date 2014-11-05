@@ -32,9 +32,13 @@ public class Predator extends Agent {
 			Predator dummyP = new Predator(posX, posY);
 			double actionReward = dummyP.getReward(a, preys);
 
-			double value = values[this.getX()][this.getY()];
+			double value = values[dummyP.getX()][dummyP.getY()];
 			double output = actionReward + gamma * value;
-
+			/*if(output > 0 && output < 20)
+				System.out.println("output > 0"+output);
+			if(actionReward > 0 && actionReward < 20)
+				System.out.println("actionReward > 0"+output);*/
+			//System.out.println(output);
 			// Save output if higher than of previous actions
 			if (output > highestOutput) {
 				highestOutput = output;
@@ -43,8 +47,7 @@ public class Predator extends Agent {
 
 		}
 		maxArg = bestDirection;
-		if(maxValue > 0)
-			System.out.println("maxValue > 0");
+
 		return highestOutput;
 	}
 
@@ -82,8 +85,8 @@ public class Predator extends Agent {
 		return (int) Math.floor(Math.random() * DIR_NUM);
 	}
 
-	double[][] values = new double[WORLDSIZE][WORLDSIZE];
 	public int planMoveVI(ArrayList<Prey> preys) {
+		double[][] values = new double[WORLDSIZE][WORLDSIZE];
 
 		// Create array which stores values for all fields in the grid
 		// values array is initialized: v=0 for every state
@@ -122,13 +125,13 @@ public class Predator extends Agent {
 		Double maxValue = 0.0;
 		maxValue = maxAction(values, getX(), getY(), maxValue, preys);
 		
-		System.out.println("TEST");
+		/*System.out.println("TEST");
 		for (int x = 0; x < WORLDSIZE; x++) {
 			for (int y = 0; y < WORLDSIZE; y++) {
 				System.out.print(values[x][y]+ " ");
 			}
 			System.out.println();
-		}
+		}*/
 		
 		return maxArg;
 	}
