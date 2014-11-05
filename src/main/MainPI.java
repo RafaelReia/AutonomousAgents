@@ -1,4 +1,5 @@
 package main;
+import agents.Predator;
 import agents.Prey;
 
 public class MainPI {

@@ -22,16 +22,19 @@ public class Predator extends Agent {
 	{
 		
 		double highestOutput = 0.0;
-		int bestDireciton;
+		int bestDirection = 0;
+		double gamma= 0.8; //TODO
 		
 		for (int a = 0; a < DIR_NUM; a++)
 		{
 			
 			
 			// Calculate reward of taking action a to go to s'
-			double actionReward = getReward(a,posX,posY, preys);
 			// Calculate value of s'
-			double value = values[dirX[a]][dirY[a]];
+			Predator dummyP = new Predator(posX,posY);
+			double actionReward = dummyP.getReward(a, preys);
+			
+			double value = values[this.getX()][this.getY()];
 			double output = actionReward + gamma * value;
 			
 			// Save output if higher than of previous actions
@@ -42,7 +45,6 @@ public class Predator extends Agent {
 			}
 			
 		}
-		
 		maxValue = highestOutput;
 		maxArg = bestDirection;
 	}
@@ -62,10 +64,10 @@ public class Predator extends Agent {
 	}
 	
 	// Get reward for a certain field, without really moving into that direction
-	public int getReward(int DIR, int posX, int posY, ArrayList<Prey> preys) {
+	public int getReward(int DIR,ArrayList<Prey> preys) {
 		// Create dummy predator with same location as current predator
-		Predator dummy = new Predator(posX, posY);
-		dummy.move(DIR);
+		//Predator dummy = new Predator(posX, posY);
+		move(DIR);
 		
 		// Move dummy predator
 		int reward = 0;
@@ -88,10 +90,10 @@ public class Predator extends Agent {
 		// values array is initialized: v=0 for every state
 		double[][] values = new double[WORLDSIZE][WORLDSIZE];
 		
-		double delta = 0.0;
+		double delta = 1.0;
 		double theta = 0.1;
 		// Repeat untill values have converged
-		while (delta < theta)
+		while (delta > theta)
 		{
 			delta = 0.0;
 			for (int x = 0; x < WORLDSIZE; x++)
@@ -100,15 +102,19 @@ public class Predator extends Agent {
 				{
 					double temp = values[x][y];
 					
-					Double maxValue;
-					Integer maxArg;
+					Double maxValue = 0.0;
+					Integer maxArg = 0;
 					maxAction(values, x, y, maxValue, maxArg, preys);
 					values[x][y] = maxValue;
 					// Updating delta, which is used for the convergence check
 					delta = Math.max(delta, Math.abs(temp-values[x][y]));
 				}
 			}	
+			//System.out.println("TEST" + delta);
+
 		}
+		//System.out.println("TEST");
+
 		/* 
 			Repeat
 				∆ ← 0
@@ -125,18 +131,18 @@ public class Predator extends Agent {
 		 */
 		 
 		 // Output best action given the current value field
-		 Double maxValue;
-		 Integer maxArg;
-		 maxAction(values, maxValue, maxArg, preys);
+		 Double maxValue = 0.0;
+		 Integer maxArg = 0;
+		 maxAction(values, getX(),getY(),maxValue, maxArg, preys);
 		 return maxArg;
 	}
 	
-	public int planMovePI()
+	public int planMovePI(ArrayList<Prey> preys)
 	{
 		return 0;
 	}
 	
-	public int planMovePE()
+	public int planMovePE(ArrayList<Prey> preys)
 	{
 		return 0;
 	}
