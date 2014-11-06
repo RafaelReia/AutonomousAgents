@@ -31,9 +31,7 @@ public class PredatorVI extends Predator {
 				for (int y = 0; y < WORLDSIZE; y++) {
 					double temp = values[x][y];
 
-					Double maxValue = 0.0;
-					
-					values[x][y] = maxAction(values, x, y, maxValue, preys);
+					values[x][y] = maxAction(values, x, y, preys);
 					// Updating delta, which is used for the convergence check
 					delta = Math.max(delta, Math.abs(temp - values[x][y]));
 				}
@@ -54,7 +52,7 @@ public class PredatorVI extends Predator {
 
 		// Output best action given the current value field
 		Double maxValue = 0.0;
-		maxValue = maxAction(values, getX(), getY(), maxValue, preys);
+		maxValue = maxAction(values, getX(), getY(),preys);
 		
 		/*System.out.println("TEST");
 		for (int x = 0; x < WORLDSIZE; x++) {
