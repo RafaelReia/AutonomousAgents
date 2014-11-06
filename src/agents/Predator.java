@@ -37,10 +37,12 @@ public class Predator extends Agent {
 
 			double value = values[dummyP.getX()][dummyP.getY()];
 			double output = actionReward + gamma * value;
-			/*
-			 * if(output > 0 && output < 20)
-			 * System.out.println("output > 0"+output); if(actionReward > 0 &&
-			 * actionReward < 20) System.out.println("actionReward > 0"+output);
+
+			/*if (output > 0 && output < 20)
+				System.out.println("output > 0" + output);
+			
+			 * if(actionReward > 0 && actionReward < 20)
+			 * System.out.println("actionReward > 0"+output);
 			 */
 			// System.out.println(output);
 			// Save output if higher than of previous actions
@@ -74,11 +76,12 @@ public class Predator extends Agent {
 			double actionReward = dummyP.getReward(a, preys);
 
 			double value = values[dummyP.getX()][dummyP.getY()];
-			Output += 0.2 *(actionReward + gamma * value);
+			Output += 0.2 * (actionReward + gamma * value);
 
-			if (Output > 0 && Output < 20)
-				System.out.println("output > 0" + Output);
 			/*
+			 * if (Output > 0 && Output < 20) System.out.println("output > 0" +
+			 * Output);
+			 * 
 			 * if (actionReward > 0 && actionReward < 20) System.out.println (
 			 * "actionReward > 0" + actionReward);
 			 */
