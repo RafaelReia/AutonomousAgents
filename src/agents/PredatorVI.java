@@ -3,6 +3,7 @@ package agents;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import main.BasicEnvironment;
 import static main.BasicEnvironment.WORLDSIZE;
 
 public class PredatorVI extends Predator {
@@ -15,9 +16,8 @@ public class PredatorVI extends Predator {
 		super(predator);
 	}
 
-
-	public int planMoveVI(ArrayList<Prey> preys) {
-		double[][] values = new double[WORLDSIZE][WORLDSIZE];
+	public int planMoveVI(Prey prey, BasicEnvironment env) {
+		double[][][][] values = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
 
 		// Create array which stores values for all fields in the grid
 		// values array is initialized: v=0 for every state
@@ -29,11 +29,17 @@ public class PredatorVI extends Predator {
 			delta = 0.0;
 			for (int x = 0; x < WORLDSIZE; x++) {
 				for (int y = 0; y < WORLDSIZE; y++) {
-					double temp = values[x][y];
+					for (int px = 0; px < WORLDSIZE; px++) {
+						for (int py = 0; py < WORLDSIZE; py++) {
+							double temp = values[x][y][px][py];
 
-					values[x][y] = maxAction(values, x, y, preys);
-					// Updating delta, which is used for the convergence check
-					delta = Math.max(delta, Math.abs(temp - values[x][y]));
+							values[x][y][px][py] = maxAction(values, x, y, px, py, prey, env);
+							// Updating delta, which is used for the convergence
+							// check
+							delta = Math.max(delta,
+									Math.abs(temp - values[x][y][px][py]));
+						}
+					}
 				}
 			}
 			// System.out.println("TEST" + delta);
@@ -52,18 +58,9 @@ public class PredatorVI extends Predator {
 
 		// Output best action given the current value field
 		Double maxValue = 0.0;
-		maxValue = maxAction(values, getX(), getY(),preys);
-		
-		/*System.out.println("TEST");
-		for (int x = 0; x < WORLDSIZE; x++) {
-			for (int y = 0; y < WORLDSIZE; y++) {
-				System.out.print(values[x][y]+ " ");
-			}
-			System.out.println();
-		}*/
-		
+		maxValue = maxAction(values, getX(), getY(), prey.getX(),prey.getY() , prey, env);
+
 		return maxArg;
 	}
 
-	
 }

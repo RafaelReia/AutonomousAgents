@@ -1,4 +1,6 @@
 package main;
+import static main.BasicEnvironment.WORLDSIZE;
+
 import java.util.ArrayList;
 
 import agents.Predator;
@@ -37,6 +39,7 @@ public class PolicyIteration extends BasicEnvironment{
 				PredatorPI predatorPI = new PredatorPI(predator);
 				int[][] policy = new int[11][11];
 				policy = predatorPI.evaluatePolicy(policy, preys);
+				printPolicy(policy);
 				int dir = predatorPI.planMovePI(policy);
 				predator.move(dir, preys);
 				System.out.print(" ");
@@ -44,11 +47,37 @@ public class PolicyIteration extends BasicEnvironment{
 			}
 
 			System.out.println();
+			System.out.println(time);
 		}
 		
 		return time;
 	}
-
+	private void printPolicy(int[][] policy) {
+		System.out.println();
+		for (int x = 0; x < WORLDSIZE; x++) {
+			for (int y = 0; y < WORLDSIZE; y++) {
+				switch (policy[x][y]) {
+				case 0:
+					System.out.print(0 + " ");
+					break;
+				case 1:
+					System.out.print("^ ");
+					break;
+				case 2:
+					System.out.print("v ");
+					break;
+				case 3:
+					System.out.print("> ");
+					break;
+				case 4:
+					System.out.print("< ");
+					break;
+				}
+				
+			}
+			System.out.println();
+		}
+	}
 
 
 }

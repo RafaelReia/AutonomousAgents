@@ -34,7 +34,7 @@ public class ValueIteration extends BasicEnvironment{
 			
 			for (Predator predator : predators) {
 				PredatorVI predatorVI = new PredatorVI(predator);
-				int dir = predatorVI.planMoveVI(preys);
+				int dir = predatorVI.planMoveVI(preys.get(0),this);
 				predator.move(dir, preys);
 				System.out.print(" ");
 				predator.print();
