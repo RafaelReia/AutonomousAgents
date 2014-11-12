@@ -78,6 +78,18 @@ public class BasicEnvironment {
 		return time;
 	}
 
+	public int getReward(Predator predator, Prey prey, int aPredator, int aPrey) {
+		Predator dummyPredator = new Predator(predator);
+		Prey dummyPrey = new Prey(prey);
+		
+		dummyPredator.move(aPredator);;
+		dummyPrey.move(aPrey);
+		
+		if (dummyPredator.equals(dummyPrey))
+			return 10;
+		return 0;
+	}
+	
 	public void printEnvrionment() {
 //		System.out.print("  ");
 //		for (int i = 0; i < 10; i++) {
