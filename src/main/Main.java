@@ -50,15 +50,15 @@ public class Main {
 		// Print times
 		for (int j = 0; j < nRuns; j++)
 		{
-			System.out.println("Run " + j + ": " + execTime[j] +  " ns");
+			System.out.println((j+1) + "&" + execTime[j] +  "\\\\");
 		}
 		
 		// Calculate average
 		long average = calcAverage(execTime);
 		long stdDev = calcStdDev(execTime,nRuns);
 		
-		System.out.println("Average: " + average + " ns");
-		System.out.println("Standard deviation: " + stdDev + " ns");
+		System.out.println("Average&" + average + "\\\\");
+		System.out.println("Standard deviation&" + stdDev + "\\\\");
 	}
 
 }

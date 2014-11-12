@@ -12,7 +12,8 @@
 
 \begin{document}
 
-\title{Autonomous Agents -- assignment 1}
+\title{Autonomous Agents\\
+Assignment 1: \emph{Single Agent Planning}}
 \author{
 Artur Alkaim --\\
 Peter Dekker -- 10820973\\
@@ -20,6 +21,145 @@ Rafael Reia --\\
 Yikang Wang -- 10540288\\
 }
 \maketitle
+\section{Introduction}
+In this assignment, we study the application of dynamic programming algorithms to find a best policy for Markov Decision Processes (MDP's). The MDP we implement is the \emph{predator versus prey grid world}. A predator and a prey move around a field, in which the predator wants to catch the prey. Our goal is to find the best poliy for the predator to catch the prey. We evaluate the following methods:
+\begin{itemize}
+\item a random policy
+\item Policy Evaluation
+\item Policy Iteration
+\item Value Iteration
+\end{itemize}
 \section{Program design}
+Our program has been written in Java. The algorithm for every policy can be started from the corresponding main class: \emph{Main}, \emph{MainPE}, \emph{MainPI} and \emph{MainVI}. The main class creates an environment (specific for a certain policy), in which the predator and the prey reside. Then, it runs the simulation for that environment. 
+
+The grid location of the predator/prey is stored in the predator/prey object itself. There is no explicit grid object of which the predator and the prey are part. Using a subclass structure from \emph{Predator}, there are different predator objects for the different policies. The prey always has the same policy: it stays on the same place with probability $0.8$ and moves in one of the 4 directions with probability $0.05$.
+\section{Algorithms}
+\subsection{Random policy}
+Using the random policy, the predator moves in every direction (4 directions or stay on same place) with probability $0.2$. Running the simulation 100 times and measuring the time it takes to catch the prey, we get the following results:
+
+\begin{tabular}{l|l}
+Run&Time (ns)\\
+\hline
+1&12483009\\
+2&33220900\\
+3&19258769\\
+4&9411684\\
+5&21489573\\
+6&108636076\\
+7&6060394\\
+8&28965854\\
+9&4521412\\
+10&2227205\\
+11&6962201\\
+12&4603405\\
+13&22980891\\
+14&2233256\\
+15&3667792\\
+16&12523894\\
+17&5805929\\
+18&10653754\\
+19&20967738\\
+20&7676957\\
+21&1334273\\
+22&739940\\
+23&3709295\\
+24&923601\\
+25&1345108\\
+26&1074067\\
+27&2618578\\
+28&1108096\\
+29&2531916\\
+30&1186321\\
+31&1826504\\
+32&896075\\
+33&1407726\\
+34&1967083\\
+35&3532417\\
+36&1931770\\
+37&1251101\\
+38&2080832\\
+39&1456234\\
+40&888354\\
+41&207482\\
+42&1610262\\
+43&3047569\\
+44&2574137\\
+45&2841485\\
+46&2284098\\
+47&4946525\\
+48&1076185\\
+49&921872\\
+50&225947\\
+51&130180\\
+\end{tabular}
+\begin{tabular}{l|l}
+Run&Time (ns)\\
+\hline
+52&441228\\
+53&9509077\\
+54&6990567\\
+55&1894598\\
+56&1566800\\
+57&2487033\\
+58&942783\\
+59&1453550\\
+60&3034682\\
+61&3363878\\
+62&3109286\\
+63&1055658\\
+64&2045824\\
+65&1461825\\
+66&2868691\\
+67&1096158\\
+68&529433\\
+69&1902568\\
+70&3642898\\
+71&149756\\
+72&850971\\
+73&820259\\
+74&861874\\
+75&2606251\\
+76&7179547\\
+77&2635322\\
+78&1662120\\
+79&1661208\\
+80&1110873\\
+81&1104998\\
+82&392293\\
+83&1122473\\
+84&118332\\
+85&301622\\
+86&988455\\
+87&715650\\
+88&120369\\
+89&375782\\
+90&139960\\
+91&672597\\
+92&285194\\
+93&1055060\\
+94&2265205\\
+95&782393\\
+96&218434\\
+97&44930590\\
+98&5482743\\
+99&245094\\
+100&303780\\
+\hline
+Average&5285814\\
+Standard deviation&2299\\
+\end{tabular}
+
+\subsection{Policy evaluation}
+
+\subsection{Policy iteration}
+
+\subsection{Value iteration}
+
+\section{Efficient state-space representation}
+The state-space consists of $11^4$ items: both the predator and the prey have coordinates in a $11 \times 11$ space. It would save computation time if the policy algorithms do not have to loop over $11^4$, but less, items.
+
+A solution to this would be to represent the locations of the predator and the prey not as an absolute location, but as relative locations.
+
+\section{Conclusion}
 
 \end{document}
