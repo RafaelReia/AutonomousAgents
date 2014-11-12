@@ -45,6 +45,19 @@ public class Prey extends Agent {
 		
 		return DIR_WAIT;
 	}
+	
+	public double prob(ArrayList<Predator> predators, int aPrey) {
+		ArrayList<Integer> dir_cand = tryMove(predators);
+		double p_delta  = 0.2 / dir_cand.size();
+		
+		if (aPrey == DIR_WAIT)
+			return 0.8;
+		if (dir_cand.indexOf(aPrey) < 0) {
+			return 0;
+		} else {
+			return p_delta;
+		}
+	}
 
 	@Override
 	public void print() {

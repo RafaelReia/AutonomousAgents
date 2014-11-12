@@ -13,10 +13,17 @@ public class BasicEnvironment {
 
 	//private Cell[][] environment = new Cell[11][11];
 	//private ArrayList<Animal> agents = new ArrayList<Animal>();
-	ArrayList<Predator> predators = new ArrayList<Predator>();
-	ArrayList<Prey> preys = new ArrayList<Prey>();
+	protected ArrayList<Predator> predators = new ArrayList<Predator>();
+	protected ArrayList<Prey> preys = new ArrayList<Prey>();
 	
-	
+	public ArrayList<Predator> getPredators() {
+		return predators;
+	}
+
+	public ArrayList<Prey> getPreys() {
+		return preys;
+	}
+
 	// Constructur for one prey and one predator
 	public BasicEnvironment(Predator predator_, Prey prey_) {
 		this(new ArrayList<Predator>(Arrays.asList(predator_)), new ArrayList<Prey>(Arrays.asList(prey_)));
@@ -78,6 +85,18 @@ public class BasicEnvironment {
 		return time;
 	}
 
+	public int getReward(Predator predator, Prey prey, int aPredator, int aPrey) {
+		Predator dummyPredator = new Predator(predator);
+		Prey dummyPrey = new Prey(prey);
+		
+		dummyPredator.move(aPredator);;
+		dummyPrey.move(aPrey);
+		
+		if (dummyPredator.equals(dummyPrey))
+			return 10;
+		return 0;
+	}
+	
 	public void printEnvrionment() {
 //		System.out.print("  ");
 //		for (int i = 0; i < 10; i++) {
