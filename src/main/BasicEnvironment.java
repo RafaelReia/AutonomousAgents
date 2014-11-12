@@ -13,10 +13,17 @@ public class BasicEnvironment {
 
 	//private Cell[][] environment = new Cell[11][11];
 	//private ArrayList<Animal> agents = new ArrayList<Animal>();
-	ArrayList<Predator> predators = new ArrayList<Predator>();
-	ArrayList<Prey> preys = new ArrayList<Prey>();
+	protected ArrayList<Predator> predators = new ArrayList<Predator>();
+	protected ArrayList<Prey> preys = new ArrayList<Prey>();
 	
-	
+	public ArrayList<Predator> getPredators() {
+		return predators;
+	}
+
+	public ArrayList<Prey> getPreys() {
+		return preys;
+	}
+
 	// Constructur for one prey and one predator
 	public BasicEnvironment(Predator predator_, Prey prey_) {
 		this(new ArrayList<Predator>(Arrays.asList(predator_)), new ArrayList<Prey>(Arrays.asList(prey_)));
