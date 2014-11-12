@@ -3,7 +3,9 @@ package agents;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
+import main.BasicEnvironment;
 import static main.BasicEnvironment.WORLDSIZE;
 
 public class Predator extends Agent {
@@ -21,76 +23,111 @@ public class Predator extends Agent {
 	// Helper function which loops over actions to look for action
 	// with highest output according to value iteration.
 	// maxValue is that value, maxArg is the corresponding action
-	public double maxAction(double[][] values, int posX, int posY,
-			ArrayList<Prey> preys) {
+	public double maxAction(double[][][][] values, int posX, int posY,
+			int px, int py, Prey prey, BasicEnvironment env) {
 
 		double highestOutput = 0.0;
-		int bestDirection = 0;
-		double gamma = 0.8; // TODO
+		ArrayList<Integer> bestDirection = new ArrayList<Integer>();
+		double gamma = 0.1; // TODO
 
 		for (int a = 0; a < DIR_NUM; a++) {
 
 			// Calculate reward of taking action a to go to s'
 			// Calculate value of s'
-			Predator dummyP = new Predator(posX, posY);
-			double actionReward = dummyP.getReward(a, preys);
-
-			double value = values[dummyP.getX()][dummyP.getY()];
-			double output = actionReward + gamma * value;
-
-			/*if (output > 0 && output < 20)
-				System.out.println("output > 0" + output);
+			Predator dummyPredator = new Predator(posX, posY);
+			dummyPredator.move(a);
+			double output = 0;
 			
-			 * if(actionReward > 0 && actionReward < 20)
-			 * System.out.println("actionReward > 0"+output);
-			 */
-			// System.out.println(output);
-			// Save output if higher than of previous actions
-			if (output > highestOutput) {
-				highestOutput = output;
-				bestDirection = a;
+			for (int aPrey = 0; aPrey < DIR_NUM; aPrey++) {
+				Prey dummyPrey = new Prey(prey);
+				int actionReward = env.getReward(this,prey,a,aPrey);
+				dummyPrey.move(aPrey);
+				
+				double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
+				output = this.prob(a) * prey.prob(env.getPredators() ,aPrey)*(actionReward + gamma * value);
 			}
 
+			// Save output if higher than of previous actions
+			if (output >= highestOutput) {
+				highestOutput = output;
+				bestDirection.add(a);
+			}
+			/*if(output == highestOutput)
+				bestDirection.add(a);*/
+
 		}
-		maxArg = bestDirection;
+		Random rdm = new Random();
+		maxArg = bestDirection.get(rdm.nextInt(bestDirection.size()));
 
 		return highestOutput;
+	}
+
+	private double prob(int a) {
+		return 0.2;
 	}
 
 	/*
 	 * Helper function which loops over actions to and sum the values of all
 	 * possible actions from that state. Output is the sum.
-	 */
-	public double sumActions(double[][] values, int posX, int posY,
+	 
+	public double sumActions(double[][][][] values, int posX, int posY,
 			ArrayList<Prey> preys) {
 
 		double Output = 0.0;
 		int bestDirection = 0;
 		double gamma = 0.8; // TODO
+		double[] prob = {0.8,0.05,0.05,0.05,0.05};
 
 		for (int a = 0; a < DIR_NUM; a++) {
 
 			// Calculate reward of taking action a to go to s'
 			// Calculate value of s'
-			Predator dummyP = new Predator(posX, posY);
-			double actionReward = dummyP.getReward(a, preys);
+			Predator dummyPredator = new Predator(posX, posY);
 
-			double value = values[dummyP.getX()][dummyP.getY()];
-			Output += 0.2 * (actionReward + gamma * value);
+			Prey dummyPrey = new Prey(posX, posY);
 
-			/*
-			 * if (Output > 0 && Output < 20) System.out.println("output > 0" +
-			 * Output);
-			 * 
-			 * if (actionReward > 0 && actionReward < 20) System.out.println (
-			 * "actionReward > 0" + actionReward);
-			 */
+			for (int sPrey = 0; sPrey < DIR_NUM; sPrey++) {
+				
+				int actionReward = env.getReward(this,prey,a,sPrey);
+				//double actionReward = dummyPrey.getReward(sPrey, preys);
+				
+				double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
+				Output += 0.2 * prob[sPrey]*(actionReward + gamma * value);
+			}
+
 		}
 		maxArg = bestDirection;
 
 		return Output;
 	}
 
+	
+	/*
+	 * Helper function which loops over actions to and sum the values of all
+	 * possible actions from that state. Output is the sum.
+	 *
+	public double sumActions2(double[][] values, int posX, int posY,
+			ArrayList<Prey> preys) {
+
+		double Output = 0.0;
+		int bestDirection = 0;
+		double gamma = 0.5; // TODO
+
+		for (int a = 0; a < DIR_NUM; a++) {
+
+			// Calculate reward of taking action a to go to s'
+			// Calculate value of s'
+			Predator dummyP = new Predator(posX, posY);
+			double actionReward = dummyP.getReward(a, preys);
+
+			double value = values[dummyP.getX()][dummyP.getY()];
+			Output += (actionReward + gamma * value);
+
+		}
+		maxArg = bestDirection;
+
+		return Output;
+	}*/
 	public int move(int DIR, ArrayList<Prey> preys) {
 		move(DIR);
 
@@ -105,21 +142,6 @@ public class Predator extends Agent {
 		return reward;
 	}
 
-	// Get reward for a certain field, without really moving into that direction
-	public int getReward(int DIR, ArrayList<Prey> preys) {
-		// Create dummy predator with same location as current predator
-		// Predator dummy = new Predator(posX, posY);
-		move(DIR);
-
-		// Move dummy predator
-		int reward = 0;
-		for (Iterator<Prey> iterator = preys.iterator(); iterator.hasNext();) {
-			if (this.equals(iterator.next())) {
-				reward += 10;
-			}
-		}
-		return reward;
-	}
 
 	@Override
 	public void print() {
