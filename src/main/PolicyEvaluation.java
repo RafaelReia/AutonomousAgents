@@ -1,7 +1,5 @@
 package main;
 
-import static main.BasicEnvironment.WORLDSIZE;
-
 import java.util.ArrayList;
 
 import agents.Predator;
@@ -31,20 +29,31 @@ public class PolicyEvaluation extends BasicEnvironment {
 			predator.print();
 			System.out.println();
 			PredatorPE predatorPE = new PredatorPE(predator);
-			double[][] values = predatorPE.evaluatePolicy(preys);
+			double[][][][] values = predatorPE.evaluatePolicy(preys.get(0),this);
+			
+			
+			//System.out.println("TEMP values[0][0][5][5] = "+values[5][5][5][5]);
+			//System.out.println("TEMP= "+values[2][3][5][4]);
+			//System.out.println("TEMP= "+values[2][10][10][10]);
+			//System.out.println("TEMP= "+values[10][10][0][0]);
 			printValues(values);
 		}
 		
-
 		return time;
 	}
 
-	private void printValues(double[][] values) {
+	private void printValues(double[][][][] values) {
 		for (int x = 0; x < WORLDSIZE; x++) {
 			for (int y = 0; y < WORLDSIZE; y++) {
-				System.out.print((int)values[x][y] + " ");
+				for (int px = 0; px < WORLDSIZE; px++) {
+					for (int py = 0; py < WORLDSIZE; py++) {
+						double temp = values[x][y][px][py];
+						if(temp>0)
+							System.out.println("TEMP= "+temp);
+					}
+				}
 			}
-			System.out.println();
+			//System.out.println();
 		}
 	}
 

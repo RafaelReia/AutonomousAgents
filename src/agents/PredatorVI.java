@@ -57,7 +57,7 @@ public class PredatorVI extends Predator {
 		 * Output a deterministic policy, π, such that π(s) = arg max a SUM p(s
 		 * |s, a) r(s, a, s ) + γv(s )
 		 */
-		printValues(values);
+		//printValues(values);
 		// Output best action given the current value field
 		Double maxValue = 0.0;
 		maxValue = maxAction(values, getX(), getY(), prey.getX(), prey.getY(),
