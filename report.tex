@@ -15,9 +15,9 @@
 \title{Autonomous Agents\\
 Assignment 1: \emph{Single Agent Planning}}
 \author{
-Artur Alkaim --\\
+Artur Alkaim -- 10859368\\
 Peter Dekker -- 10820973\\
-Rafael Reia --\\
+Rafael Reia -- 10859454\\
 Yikang Wang -- 10540288\\
 }
 \maketitle
@@ -34,7 +34,7 @@ Our program has been written in Java. The algorithm for every policy can be star
 
 The grid location of the predator/prey is stored in the predator/prey object itself. There is no explicit grid object of which the predator and the prey are part. Using a subclass structure from \emph{Predator}, there are different predator objects for the different policies. The prey always has the same policy: it stays on the same place with probability $0.8$ and moves in one of the 4 directions with probability $0.05$.
 
-The predator internally stores a 4-dimensional values array. The values of all states, calculated by MDP algorithms, are stored in this array. The array is 4-dimensional because every state is a tuple $(predator_x,predator_y,prey_x,prey_y)$.
+The predator internally stores a 4-dimensional values array. The values of all states, calculated by the MDP policy algorithms, are stored in this array. The array is 4-dimensional because every state is a tuple $(predator_x,predator_y,prey_x,prey_y)$.
 \section{Algorithms}
 \subsection{Random policy}
 Using the random policy, the predator moves in every direction (4 directions or stay on same place) with probability $0.2$. Running the simulation 100 times and measuring the time it takes to catch the prey, we get the following results:
@@ -180,9 +180,11 @@ Evaluation = 1.9428943967738175
 
 It seems that the highest score is given to settings where the predator is far from the prey.
 \subsection{Policy iteration}
+We implemented policy iteration, which starts from an arbitrary policy and improves the policy by evaluating it.
 
+Results for discount factors of 0.1, 0.5, 0.7 and 0.9 are available in the \emph{results} folder, file names starting with $PI$.
 \subsection{Value iteration}
-
+Results for discount factors of 0.1, 0.5, 0.7 and 0.9 are available in the \emph{results} folder, file names starting with $VI$.
 \section{Efficient state-space representation}
 The state-space consists of $11^4$ items: both the predator and the prey have coordinates in a $11 \times 11$ space. It would save computation time if the policy algorithms do not have to loop over $11^4$, but less, items.
 
@@ -195,5 +197,7 @@ y := y\,mod\,11
 \end{align}
 
 \section{Conclusion}
+We tried out different policy algorithms for a simple MDP, a race between predator and prey. Using a random policy, the predator catches the prey in an average of 280 iterations. Policy evaluation makes it possible to see when the predator has the best policy. For the random policy, this is when the predator is removed far from the prey. Policy iteration and value iteration are ways to find a good policy for the predator. It seems that a higher discount factor gives a higher number iterations that is needed.
 
+An interesting addition to our program would be to encode the state-space in such a way that the coordinates of the prey are relative to those of the predator. 
 \end{document}
