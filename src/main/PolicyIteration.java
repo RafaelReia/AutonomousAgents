@@ -24,30 +24,13 @@ public class PolicyIteration extends BasicEnvironment{
 	
 	public int run() {
 		int time = 0;
-		while (preys.size() > 0) {
-			time ++;
-			System.out.print(time);
-			
-			for (Prey prey : preys) {
-				int dir = prey.planMoveRandom(predators);
-				prey.move(dir);
-				System.out.print(" ");
-				prey.print();
-			}
-			
-			for (Predator predator : predators) {
-				PredatorPI predatorPI = new PredatorPI(predator);
-				int[][] policy = new int[11][11];
-				policy = predatorPI.evaluatePolicy(policy, preys);
-				printPolicy(policy);
-				int dir = predatorPI.planMovePI(policy);
-				predator.move(dir, preys);
-				System.out.print(" ");
-				predator.print();
-			}
-
-			System.out.println();
-			System.out.println(time);
+		
+		for (Predator predator : predators) {
+			PredatorPI predatorPI = new PredatorPI(predator);
+			int[][][][] policies = new int[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
+			double[][][][] values = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
+			predatorPI.evaluatePolicy(policies, preys.get(0),this);
+			policies = predatorPI.improvePolicy(policies, values, preys.get(0),this);
 		}
 		
 		return time;
