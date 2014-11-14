@@ -33,6 +33,8 @@ In this assignment, we study the application of dynamic programming algorithms t
 Our program has been written in Java. The algorithm for every policy can be started from the corresponding main class: \emph{Main}, \emph{MainPE}, \emph{MainPI} and \emph{MainVI}. The main class creates an environment (specific for a certain policy), in which the predator and the prey reside. Then, it runs the simulation for that environment. 
 
 The grid location of the predator/prey is stored in the predator/prey object itself. There is no explicit grid object of which the predator and the prey are part. Using a subclass structure from \emph{Predator}, there are different predator objects for the different policies. The prey always has the same policy: it stays on the same place with probability $0.8$ and moves in one of the 4 directions with probability $0.05$.
+
+The predator internally stores a 4-dimensional values array. The values of all states, calculated by MDP algorithms, are stored in this array. The array is 4-dimensional because every state is a tuple $(predator_x,predator_y,prey_x,prey_y)$.
 \section{Algorithms}
 \subsection{Random policy}
 Using the random policy, the predator moves in every direction (4 directions or stay on same place) with probability $0.2$. Running the simulation 100 times and measuring the time it takes to catch the prey, we get the following results:
@@ -150,7 +152,33 @@ Standard deviation&342.7141666170221\\
 \end{tabular}
 
 \subsection{Policy evaluation}
+With policy evaluation, we evaluated the values of the states using a random policy. We looked at four different locations for the prey and predator. For these four locations, we calculated the policy evaluation value and measured how many iterations it took the algorithm to a stable value array:
 
+\begin{itemize}
+\item \emph{Prey(5,5) Predator(0,0)}
+
+Number of iterations before value matrix converges: 35
+
+Evaluation = 0.008985523068296548
+
+\item \emph{Prey(5,4) Predator(2,3)}
+
+Number of iterations before value matrix converges: 35
+
+Evaluation = 0.28595851469775013
+
+\item \emph{Prey(10,0) Predator(2,10)}
+
+Number of iterations before value matrix converges: 35
+
+Evaluation = 0.28595886049229247
+
+\item Prey(0,0) Predator(10,10)
+Number of iterations before value matrix converges: 35
+Evaluation = 1.9428943967738175
+\end{itemize}
+
+It seems that the highest score is given to settings where the predator is far from the prey.
 \subsection{Policy iteration}
 
 \subsection{Value iteration}
