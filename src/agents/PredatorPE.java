@@ -24,8 +24,9 @@ public class PredatorPE extends Predator {
 		double[][][][] valuesAux = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
 
 		double delta = 100.0;
-		double theta = 1;
+		double theta = 0.000001;
 		// Repeat untill values have converged
+		int count = 0;
 		while (delta > theta) {
 			delta = 0.0;
 			for (int x = 0; x < WORLDSIZE; x++) {
@@ -45,9 +46,11 @@ public class PredatorPE extends Predator {
 					}
 				}
 			}
+			count++;
 			System.out.println(delta);
+			
 		}
-
+		System.out.println("Number of iterations: " + count);
 		return values;
 	}
 
