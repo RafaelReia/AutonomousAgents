@@ -3,6 +3,7 @@ import static main.BasicEnvironment.WORLDSIZE;
 
 import java.util.ArrayList;
 
+import agents.Pair;
 import agents.Predator;
 import agents.PredatorPE;
 import agents.PredatorPI;
@@ -29,8 +30,13 @@ public class PolicyIteration extends BasicEnvironment{
 			PredatorPI predatorPI = new PredatorPI(predator);
 			int[][][][] policies = new int[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
 			double[][][][] values = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
-			predatorPI.evaluatePolicy(policies, preys.get(0),this);
-			policies = predatorPI.improvePolicy(policies, values, preys.get(0),this);
+			boolean policy_stable = false;
+			while (!policy_stable) {
+				predatorPI.evaluatePolicy(policies, preys.get(0),this);
+				Pair<int[][][][], Boolean> tmp = predatorPI.improvePolicy(policies, values, preys.get(0),this);
+				policies = tmp.a;
+				policy_stable = tmp.b;
+			}
 		}
 		
 		return time;

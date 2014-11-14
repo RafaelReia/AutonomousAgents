@@ -89,7 +89,7 @@ public class BasicEnvironment {
 		Predator dummyPredator = new Predator(predator);
 		Prey dummyPrey = new Prey(prey);
 		
-		dummyPredator.move(aPredator);;
+		dummyPredator.move(aPredator);
 		dummyPrey.move(aPrey);
 		
 		if (dummyPredator.equals(dummyPrey))

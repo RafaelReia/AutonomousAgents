@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import main.BasicEnvironment;
 import main.PolicyEvaluation;
+import main.PolicyIteration;
 import static main.BasicEnvironment.WORLDSIZE;
 
 public class PredatorPI extends Predator {
@@ -16,30 +17,6 @@ public class PredatorPI extends Predator {
 
 	public PredatorPI(Agent predator) {
 		super(predator);
-	}
-
-	public int[][] improvePolicy(int[][] policy, double[][] values,
-			ArrayList<Prey> preys) {
-
-		boolean test = true;
-		for (int x = 0; x < WORLDSIZE; x++) {
-			for (int y = 0; y < WORLDSIZE; y++) {
-				int old = policy[x][y];
-
-				maxAction(values, x, y, preys);
-				policy[x][y] = maxArg;
-				// Updating delta, which is used for the convergence check
-				// delta = Math.max(delta, Math.abs(temp - valuesAux[x][y]));
-				if (old != maxArg)
-					test = false;
-			}
-		}
-
-		if (!test) {
-			evaluatePolicy(policy, preys);
-		}
-		printPolicy(policy);
-		return policy;
 	}
 
 	private void printPolicy(int[][] policy) {
@@ -122,9 +99,9 @@ public class PredatorPI extends Predator {
 					for (int px = 0; px < WORLDSIZE; px++) {
 						for (int py = 0; py < WORLDSIZE; py++) {
 							double temp = values[x][y][px][py];
-
-							values[x][y][px][py] = sumStates(values, x, y, policies[x][y][px][py], px,
-									py, prey, env);
+							//System.out.println(policies[x][y][px][py]);
+							values[x][y][px][py] = sumStates(values, x, y, px,
+									py, policies[x][y][px][py], prey, env);
 							// Updating delta, which is used for the convergence
 							// check
 							delta = Math.max(delta,
@@ -140,4 +117,33 @@ public class PredatorPI extends Predator {
 		return values;
 	}
 
+	public Pair<int[][][][], Boolean> improvePolicy(int[][][][] policies,
+			double[][][][] values, Prey prey, PolicyIteration env) {
+		
+		boolean policy_stable = true;
+		for (int x = 0; x < WORLDSIZE; x++) {
+			for (int y = 0; y < WORLDSIZE; y++) {
+				for (int px = 0; px < WORLDSIZE; px++) {
+					for (int py = 0; py < WORLDSIZE; py++) {
+						int temp = policies[x][y][px][py];
+						double maxValue = 0;
+						for (int a = 0; a < DIR_NUM; a++) {
+							double value = sumStates(values, x, y, px, py, a, prey, env);
+							if (value > maxValue) {
+								maxValue = value;
+								policies[x][y][px][py] = a;
+							}
+						}
+						if (temp != policies[x][y][px][py]) {
+							policy_stable = false;
+						}
+					}
+				}
+			}
+		}
+		
+		System.out.println("policy-stable: " + policy_stable);
+		
+		return new Pair<int[][][][], Boolean>(policies, policy_stable);
+	}
 }
