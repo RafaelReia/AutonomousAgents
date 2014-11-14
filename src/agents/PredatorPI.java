@@ -82,11 +82,9 @@ public class PredatorPI extends Predator {
 		return output;
 	}
 	
-	public double[][][][] evaluatePolicy(int[][][][] policies, Prey prey, BasicEnvironment env) {
+	public Pair<double[][][][], Integer> evaluatePolicy(double[][][][] values, int[][][][] policies, Prey prey, BasicEnvironment env) {
 		// Create array which stores values for all fields in the grid
 		// values array is initialized: v=0 for every state
-		double[][][][] values = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
-
 
 		double delta = 100.0;
 		double theta = 1e-6;
@@ -115,7 +113,7 @@ public class PredatorPI extends Predator {
 			count++;
 		}
 		System.out.println("Number of iterations: " + count);
-		return values;
+		return new Pair<double[][][][], Integer>(values, count);
 	}
 
 	public Pair<int[][][][], Boolean> improvePolicy(int[][][][] policies,

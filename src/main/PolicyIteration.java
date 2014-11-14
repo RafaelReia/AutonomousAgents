@@ -36,10 +36,15 @@ public class PolicyIteration extends BasicEnvironment{
 			while (!policy_stable) {
 				count++;
 				System.out.println("Round " + count + ":");
-				values = predatorPI.evaluatePolicy(policies, preys.get(0),this);
-				Pair<int[][][][], Boolean> tmp = predatorPI.improvePolicy(policies, values, preys.get(0),this);
-				policies = tmp.a;
-				policy_stable = tmp.b;
+				Pair<double[][][][], Integer>tmp1 = predatorPI.evaluatePolicy(values, policies, preys.get(0),this);
+				values = tmp1.a;
+				if (tmp1.b == 1) {
+					policy_stable = true;
+					break;
+				}
+				Pair<int[][][][], Boolean> tmp2 = predatorPI.improvePolicy(policies, values, preys.get(0),this);
+				policies = tmp2.a;
+				policy_stable = tmp2.b;
 				System.out.println();
 			}
 			
