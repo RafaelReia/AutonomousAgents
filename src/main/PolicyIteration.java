@@ -1,6 +1,7 @@
 package main;
 import static main.BasicEnvironment.WORLDSIZE;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import agents.Pair;
@@ -35,12 +36,14 @@ public class PolicyIteration extends BasicEnvironment{
 			while (!policy_stable) {
 				count++;
 				System.out.println("Round " + count + ":");
-				predatorPI.evaluatePolicy(policies, preys.get(0),this);
+				values = predatorPI.evaluatePolicy(policies, preys.get(0),this);
 				Pair<int[][][][], Boolean> tmp = predatorPI.improvePolicy(policies, values, preys.get(0),this);
 				policies = tmp.a;
 				policy_stable = tmp.b;
 				System.out.println();
 			}
+			
+			printValues(values, 5, 5);
 		}
 		
 		return time;
@@ -72,5 +75,22 @@ public class PolicyIteration extends BasicEnvironment{
 		}
 	}
 
+	private void printValues(double[][][][] values, int px, int py) {
+		System.out.println();
 
+		for (int x = 0; x < WORLDSIZE; x++) {
+			for (int y = 0; y < WORLDSIZE; y++) {
+				System.out.printf("%.02f\t", values[x][y][px][py]);
+			}
+			System.out.println();
+		}
+		System.out.println();
+		
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

@@ -56,23 +56,21 @@ public class PredatorVI extends Predator {
 		maxValue = maxAction(values, getX(), getY(), prey.getX(), prey.getY(),
 				prey, env);
 
+		printValues(values, 5, 5);
+		
 		return maxArg;
 	}
 
-	private void printValues(double[][][][] values) {
+	private void printValues(double[][][][] values, int px, int py) {
 		System.out.println();
 
 		for (int x = 0; x < WORLDSIZE; x++) {
 			for (int y = 0; y < WORLDSIZE; y++) {
-				for (int px = 0; px < WORLDSIZE; px++) {
-					for (int py = 0; py < WORLDSIZE; py++) {
-						System.out.print((int) values[x][y][px][py] + " ");
-					}
-					System.out.println();
-				}
+				System.out.printf("%.02f\t", values[x][y][px][py]);
 			}
 			System.out.println();
 		}
+		System.out.println();
 		
 		try {
 			System.in.read();
