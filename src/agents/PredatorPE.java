@@ -24,7 +24,7 @@ public class PredatorPE extends Predator {
 		double[][][][] valuesAux = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
 
 		double delta = 100.0;
-		double theta = 1;
+		double theta = 1e-6;
 		// Repeat untill values have converged
 		while (delta > theta) {
 			delta = 0.0;

@@ -86,11 +86,10 @@ public class PredatorPI extends Predator {
 		// Create array which stores values for all fields in the grid
 		// values array is initialized: v=0 for every state
 		double[][][][] values = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
-		double[][][][] valuesAux = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
 
 
 		double delta = 100.0;
-		double theta = 1;
+		double theta = 1e-6;
 		// Repeat untill values have converged
 		while (delta > theta) {
 			delta = 0.0;

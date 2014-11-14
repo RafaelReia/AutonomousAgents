@@ -28,23 +28,25 @@ public class Predator extends Agent {
 
 		double highestOutput = -Double.MAX_VALUE;
 		ArrayList<Integer> bestDirection = new ArrayList<Integer>();
-		double gamma = 0.1; // TODO
+		double gamma = 0.8; // TODO
 
 		for (int a = 0; a < DIR_NUM; a++) {
 
 			// Calculate reward of taking action a to go to s'
 			// Calculate value of s'
-			Predator dummyPredator = new Predator(posX, posY);
-			dummyPredator.move(a);
+			
+			
 			double output = 0.0;
 			
 			for (int aPrey = 0; aPrey < DIR_NUM; aPrey++) {
-				Prey dummyPrey = new Prey(prey);
-				double actionReward = env.getReward(this,prey,a,aPrey);
+				Prey dummyPrey = new Prey(px, py);
+				Predator dummyPredator = new Predator(posX, posY);
+				double actionReward = env.getReward(dummyPredator,prey,a,aPrey);
+				dummyPredator.move(a);
 				dummyPrey.move(aPrey);
 				
 				double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
-				output += this.prob(a) * prey.prob(env.getPredators() ,aPrey)*(actionReward + gamma * value);
+				output += prey.prob(env.getPredators() ,aPrey)*(actionReward + gamma * value);
 			}
 			if (output >= highestOutput) {
 				highestOutput = output;
@@ -53,8 +55,8 @@ public class Predator extends Agent {
 
 		}
 		
-		if(highestOutput>0)
-			System.out.println("ITS GREATER THAT HOOOHHOHOHOHOHOHOH!!!! " + highestOutput);
+		//if(highestOutput>0)
+			//System.out.println("ITS GREATER THAT HOOOHHOHOHOHOHOHOH!!!! " + highestOutput);
 		
 		Random rdm = new Random();
 		maxArg = bestDirection.get(rdm.nextInt(bestDirection.size()));

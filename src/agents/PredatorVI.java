@@ -24,7 +24,7 @@ public class PredatorVI extends Predator {
 		// values array is initialized: v=0 for every state
 
 		double delta = 10.0;
-		double theta = 1;
+		double theta = 1e-6;
 		// Repeat untill values have converged
 		while (delta > theta) {
 			delta = 0.0;
@@ -44,19 +44,10 @@ public class PredatorVI extends Predator {
 					}
 				}
 			}
-			// System.out.println("TEST" + delta);
+			 System.out.println(delta);
 
 		}
 
-		/*
-		 * Repeat ∆ ← 0 For each s ∈ S: temp ← v(s) v(s) ← max a s p(s |s,
-		 * a)[r(s, a, s ) + γv(s )] ∆ ← max(∆, |temp − v(s)|) until ∆ < θ (a
-		 * small positive number)
-		 * 
-		 * 
-		 * Output a deterministic policy, π, such that π(s) = arg max a SUM p(s
-		 * |s, a) r(s, a, s ) + γv(s )
-		 */
 		//printValues(values);
 		// Output best action given the current value field
 		Double maxValue = 0.0;

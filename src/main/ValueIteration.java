@@ -21,27 +21,27 @@ public class ValueIteration extends BasicEnvironment{
 	
 	public int run() {
 		int time = 0;
-		while (preys.size() > 0) {
-			time ++;
-			System.out.print(time);
-			
-			for (Prey prey : preys) {
-				int dir = prey.planMoveRandom(predators);
-				prey.move(dir);
-				System.out.print(" ");
-				prey.print();
-			}
+//		while (preys.size() > 0) {
+//			time ++;
+//			System.out.print(time);
+//			
+//			for (Prey prey : preys) {
+//				int dir = prey.planMoveRandom(predators);
+//				prey.move(dir);
+//				System.out.print(" ");
+//				prey.print();
+//			}
 			
 			for (Predator predator : predators) {
 				PredatorVI predatorVI = new PredatorVI(predator);
 				int dir = predatorVI.planMoveVI(preys.get(0),this);
-				predator.move(dir, preys);
-				System.out.print(" ");
-				predator.print();
+//				predator.move(dir, preys);
+//				System.out.print(" ");
+//				predator.print();
 			}
-
-			System.out.println();
-		}
+//
+//			System.out.println();
+//		}
 		
 		return time;
 	}
