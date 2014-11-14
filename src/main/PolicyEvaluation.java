@@ -23,20 +23,21 @@ public class PolicyEvaluation extends BasicEnvironment {
 		int time = 0;
 		
 		for(Prey prey:preys)
-			prey.print();
+			//prey.print();
 		
 		for (Predator predator : predators) {
-			predator.print();
-			System.out.println();
+			//predator.print();
+			//System.out.println();
 			PredatorPE predatorPE = new PredatorPE(predator);
 			double[][][][] values = predatorPE.evaluatePolicy(preys.get(0),this);
 			
-			
-			//System.out.println("TEMP values[0][0][5][5] = "+values[5][5][5][5]);
+			preys.get(0).print();
+			predator.print();
+			System.out.println(", Evaluation = "+values[predator.getX()][predator.getY()][preys.get(0).getX()][preys.get(0).getY()]);
 			//System.out.println("TEMP= "+values[2][3][5][4]);
 			//System.out.println("TEMP= "+values[2][10][10][10]);
 			//System.out.println("TEMP= "+values[10][10][0][0]);
-			printValues(values);
+			//printValues(values);
 		}
 		
 		return time;

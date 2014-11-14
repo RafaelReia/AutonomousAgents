@@ -40,10 +40,12 @@ public class PredatorPE extends Predator {
 							// check
 							delta = Math.max(delta,
 									Math.abs(temp - values[x][y][px][py]));
+							//System.out.println(x + " " + y + " " + px + " " + py + ": " + delta);
 						}
 					}
 				}
 			}
+			System.out.println(delta);
 		}
 
 		return values;

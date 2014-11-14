@@ -81,19 +81,21 @@ public class Predator extends Agent {
 
 			// Calculate reward of taking action a to go to s'
 			// Calculate value of s'
-			Predator dummyPredator = new Predator(posX, posY);
-			dummyPredator.move(a);
 			
 			for (int aPrey = 0; aPrey < DIR_NUM; aPrey++) {
-				Prey dummyPrey = new Prey(prey);
-				double actionReward = env.getReward(this,prey,a,aPrey);
+				Predator dummyPredator = new Predator(posX, posY);
+				Prey dummyPrey = new Prey(px, py);
+				
+				double actionReward = env.getReward(dummyPredator,dummyPrey,a,aPrey);
+
+				dummyPredator.move(a);
 				dummyPrey.move(aPrey);
 				
 				double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
 				output += this.prob(a) * prey.prob(env.getPredators() ,aPrey)*(actionReward + gamma * value);
-				if(output >0)
-					System.out.println("SOMETHING BIIIIIIIIG!!! "+output);
-				System.out.println("Predator Prob " + this.prob(a) + "  Prey Prob" + prey.prob(env.getPredators() ,aPrey) + " Action Re" + actionReward);
+				//if(output >0)
+					//System.out.println("SOMETHING BIIIIIIIIG!!! "+output);
+				//System.out.println("Predator Prob " + this.prob(a) + "  Prey Prob" + prey.prob(env.getPredators() ,aPrey) + " Action Re" + actionReward);
 			}
 
 		}
