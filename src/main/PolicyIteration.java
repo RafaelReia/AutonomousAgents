@@ -31,11 +31,15 @@ public class PolicyIteration extends BasicEnvironment{
 			int[][][][] policies = new int[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
 			double[][][][] values = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
 			boolean policy_stable = false;
+			int count = 0;
 			while (!policy_stable) {
+				count++;
+				System.out.println("Round " + count + ":");
 				predatorPI.evaluatePolicy(policies, preys.get(0),this);
 				Pair<int[][][][], Boolean> tmp = predatorPI.improvePolicy(policies, values, preys.get(0),this);
 				policies = tmp.a;
 				policy_stable = tmp.b;
+				System.out.println();
 			}
 		}
 		
