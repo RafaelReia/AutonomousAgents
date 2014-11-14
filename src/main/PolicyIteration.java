@@ -31,6 +31,11 @@ public class PolicyIteration extends BasicEnvironment{
 			PredatorPI predatorPI = new PredatorPI(predator);
 			int[][][][] policies = new int[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
 			double[][][][] values = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
+			for (int i = 0; i < WORLDSIZE; i++)
+				for (int j = 0; j < WORLDSIZE; j++)
+					for (int k = 0; k < WORLDSIZE; k++)
+						for (int l = 0; l < WORLDSIZE; l++)
+							values[i][j][k][l] = (int)(Math.random() * 5); 
 			boolean policy_stable = false;
 			int count = 0;
 			while (!policy_stable) {
@@ -38,6 +43,7 @@ public class PolicyIteration extends BasicEnvironment{
 				System.out.println("Round " + count + ":");
 				Pair<double[][][][], Integer>tmp1 = predatorPI.evaluatePolicy(values, policies, preys.get(0),this);
 				values = tmp1.a;
+				printValues(values, 5, 5);
 				if (tmp1.b == 1) {
 					policy_stable = true;
 					break;
@@ -48,7 +54,6 @@ public class PolicyIteration extends BasicEnvironment{
 				System.out.println();
 			}
 			
-			printValues(values, 5, 5);
 		}
 		
 		return time;
@@ -90,12 +95,5 @@ public class PolicyIteration extends BasicEnvironment{
 			System.out.println();
 		}
 		System.out.println();
-		
-		try {
-			System.in.read();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
