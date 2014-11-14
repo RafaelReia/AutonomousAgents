@@ -5,9 +5,9 @@ import agents.Prey;
 
 public class Main {
 
-	public static long calcAverage (long[] array)
+	public static double calcAverage (int[] array)
 	{
-		long sum = 0;
+		double sum = 0;
 		// Sum
 		for (int i = 0; i < array.length; i++)
 		{
@@ -17,31 +17,28 @@ public class Main {
 		return sum / array.length;
 	}
 	
-	public static long calcStdDev (long[] array, long average)
+	public static double calcStdDev (int[] array, double average)
 	{
-		long sum = 0;
+		int sum = 0;
 		// Sum
 		for (int i = 0; i < array.length; i++)
 		{
-			sum += Math.abs(array[i]-average)^2;
+			sum += Math.pow(Math.abs(array[i]-average), 2.0);
 		}
 		// Divide by number of items and take square
-		return (long) Math.sqrt(sum / array.length);
+		return Math.sqrt(sum / array.length);
 	}
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		long[] execTime = new long[100];
+		int[] execTime = new int[100];
 		int nRuns = 100;
 		for (int i = 0; i < nRuns; i++)
 		{
-			long s0 = System.nanoTime();
 			BasicEnvironment env = new BasicEnvironment(new PredatorRandom(0, 0), new Prey(5, 5));
-			env.run();
-			long s1 = System.nanoTime();
-			execTime[i] = s1 - s0;
+			execTime[i] = env.run();
 			
 			// For garbage cleaning the object
 			env = null;
@@ -54,8 +51,8 @@ public class Main {
 		}
 		
 		// Calculate average
-		long average = calcAverage(execTime);
-		long stdDev = calcStdDev(execTime,nRuns);
+		double average = calcAverage(execTime);
+		double stdDev = calcStdDev(execTime,nRuns);
 		
 		System.out.println("Average&" + average + "\\\\");
 		System.out.println("Standard deviation&" + stdDev + "\\\\");
