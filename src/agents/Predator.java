@@ -28,7 +28,7 @@ public class Predator extends Agent {
 
 		double highestOutput = -Double.MAX_VALUE;
 		ArrayList<Integer> bestDirection = new ArrayList<Integer>();
-		double gamma = 0.8; // TODO
+		double gamma = 0.9; // TODO
 
 		for (int a = 0; a < DIR_NUM; a++) {
 

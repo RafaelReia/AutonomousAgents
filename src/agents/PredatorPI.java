@@ -54,7 +54,7 @@ public class PredatorPI extends Predator {
 
 		double output = 0.0;
 		int bestDirection = 0;
-		double gamma = 0.8; // TODO
+		double gamma = 0.9; // TODO
 
 		// Calculate reward of taking action a to go to s'
 		// Calculate value of s'
