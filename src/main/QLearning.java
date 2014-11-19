@@ -60,13 +60,14 @@ public class QLearning extends BasicEnvironment {
 		double[][][][][] Qvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
 
 		initValues(Qvalues);
-		for (Predator predator : predators) {
-			PredatorQL predatorQL = new PredatorQL(predator);
-			predatorQL.planEpisodeQL(prey, this,Qvalues);
-			// predator.move(dir, preys);
-			// System.out.print(" ");
-			// predator.print();
-		}
+		for (int i = 0; i < 100000; i++)
+			for (Predator predator : predators) {
+				PredatorQL predatorQL = new PredatorQL(predator);
+				predatorQL.planEpisodeQL(prey, this, Qvalues);
+				// predator.move(dir, preys);
+				// System.out.print(" ");
+				// predator.print();
+			}
 		//
 		// System.out.println();
 		// }

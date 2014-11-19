@@ -68,7 +68,7 @@ public class PredatorQL extends Predator {
 			move(a);
 			double reward = env.getReward(this, prey, a, aPrey);
 			Qvalues[getX()][getY()][prey.getX()][prey.getY()][a] = calcNextValue(Qvalues,prey, a, reward);
-			if(reward > 0){ //check this if not working XXX
+			if(reward > 0){ // if reward is not zero... XXX check this if not working
 				System.out.println("@" + reward + " " + steps);
 				isNotTerminal=false;
 			}
