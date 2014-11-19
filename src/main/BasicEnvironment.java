@@ -10,44 +10,38 @@ public class BasicEnvironment {
 	
 	public static final int WORLDSIZE 	= 11;
 	
-
-	//private Cell[][] environment = new Cell[11][11];
-	//private ArrayList<Animal> agents = new ArrayList<Animal>();
-	protected ArrayList<Predator> predators = new ArrayList<Predator>();
-	protected ArrayList<Prey> preys = new ArrayList<Prey>();
+	ArrayList<Predator> predators = new ArrayList<Predator>();
+	Prey prey;
 	
 	public ArrayList<Predator> getPredators() {
 		return predators;
 	}
 
-	public ArrayList<Prey> getPreys() {
-		return preys;
+	public Prey getPreys() {
+		return prey;
 	}
 
 	// Constructur for one prey and one predator
 	public BasicEnvironment(Predator predator_, Prey prey_) {
-		this(new ArrayList<Predator>(Arrays.asList(predator_)), new ArrayList<Prey>(Arrays.asList(prey_)));
+		this(new ArrayList<Predator>(Arrays.asList(predator_)), prey_);
 	}
 	
 	// Constructor for multiple predators/preys
-	public BasicEnvironment(ArrayList<Predator> predators_, ArrayList<Prey> preys_) {
+	public BasicEnvironment(ArrayList<Predator> predators_, Prey prey_) {
 		
 		
-		if (predators == null || preys == null) {
+		if (predators == null) {
 			System.out.println("It's null");
 			return;
 		}
 		
 		predators.clear();
-		preys.clear();
+		prey = prey_;
 		
 		System.out.print(0);
 		
-		for (Prey prey : preys_) {
-			preys.add(new Prey(prey));
-			System.out.print(" ");
-			prey.print();
-		}
+		System.out.print(" ");
+		prey.print();
 		
 		for (Predator predator : predators_) {
 			predators.add(new Predator(predator));
@@ -60,21 +54,19 @@ public class BasicEnvironment {
 	
 	public int run() {
 		int time = 0;
-		while (preys.size() > 0) {
+		while (!prey.isCaught()) {
 			time ++;
 			System.out.print(time);
 			
-			for (Prey prey : preys) {
-				int dir = prey.planMoveRandom(predators);
-				prey.move(dir);
-				System.out.print(" ");
-				prey.print();
-			}
+			int dir = prey.planMoveRandom(predators);
+			prey.move(dir);
+			System.out.print(" ");
+			prey.print();
 			
 			for (Predator predator : predators) {
 				PredatorRandom predatorRandom = new PredatorRandom(predator);
-				int dir = predatorRandom.planMoveRandom();
-				predator.move(dir, preys);
+				dir = predatorRandom.planMoveRandom();
+				predator.move(dir, prey);
 				System.out.print(" ");
 				predator.print();
 			}

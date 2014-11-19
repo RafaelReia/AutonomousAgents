@@ -18,20 +18,20 @@ public class Predator extends Agent {
 		super(predator);
 	}
 
-	public int move(int DIR, ArrayList<Prey> preys) {
+	public int move(int DIR, Prey prey) {
 		move(DIR);
 
 		int reward = 0;
-		for (Iterator<Prey> iterator = preys.iterator(); iterator.hasNext();) {
-			if (this.equals(iterator.next())) {
-				reward += 10;
-				iterator.remove();
-			}
+
+		if (this.equals(prey)) {
+			reward += 10;
+
+
+			prey.setCaught(true);
 		}
 
 		return reward;
 	}
-
 
 	@Override
 	public void print() {

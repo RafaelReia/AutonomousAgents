@@ -2,13 +2,25 @@ package agents;
 import java.util.ArrayList;
 
 public class Prey extends Agent {
+	
+	boolean caught;
 
 	public Prey(int locX_, int locY_) {
 		super(locX_, locY_);
+		caught = false;
 	}
 	
 	public Prey(Agent prey) {
 		super(prey);
+		caught = false;
+	}
+	
+	public void setCaught(boolean caught_) {
+		caught = caught_;
+	}
+	
+	public boolean isCaught() {
+		return caught;
 	}
 	
 	public ArrayList<Integer> tryMove(ArrayList<Predator> agents) {
