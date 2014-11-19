@@ -3,6 +3,7 @@ package agents;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import main.BasicEnvironment;
 import static main.BasicEnvironment.WORLDSIZE;
@@ -58,7 +59,7 @@ public class PredatorVI extends Predator {
 
 		printValues(values, 5, 5);
 		
-		return maxArg;
+		return 0;
 	}
 
 	private void printValues(double[][][][] values, int px, int py) {
@@ -80,4 +81,46 @@ public class PredatorVI extends Predator {
 		}
 	}
 
+	// Helper function which loops over actions to look for action
+	// with highest output according to value iteration.
+	// maxValue is that value, maxArg is the corresponding action
+	public double maxAction(double[][][][] values, int posX, int posY,
+			int px, int py, Prey prey, BasicEnvironment env) {
+
+		double highestOutput = -Double.MAX_VALUE;
+		ArrayList<Integer> bestDirection = new ArrayList<Integer>();
+		double gamma = 0.9; // TODO
+
+		for (int a = 0; a < DIR_NUM; a++) {
+
+			// Calculate reward of taking action a to go to s'
+			// Calculate value of s'
+			
+			
+			double output = 0.0;
+			
+			for (int aPrey = 0; aPrey < DIR_NUM; aPrey++) {
+				Prey dummyPrey = new Prey(px, py);
+				Predator dummyPredator = new Predator(posX, posY);
+				double actionReward = env.getReward(dummyPredator,prey,a,aPrey);
+				dummyPredator.move(a);
+				dummyPrey.move(aPrey);
+				
+				double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
+				output += prey.prob(env.getPredators() ,aPrey)*(actionReward + gamma * value);
+			}
+			if (output >= highestOutput) {
+				highestOutput = output;
+				bestDirection.add(a);
+			}
+
+		}
+		
+		//if(highestOutput>0)
+			//System.out.println("ITS GREATER THAT HOOOHHOHOHOHOHOHOH!!!! " + highestOutput);
+		
+		Random rdm = new Random();
+
+		return highestOutput;
+	}	
 }

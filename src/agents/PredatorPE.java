@@ -54,4 +54,47 @@ public class PredatorPE extends Predator {
 		return values;
 	}
 
+	private double prob(int a) {
+		return 0.2;
+	}
+
+	/*
+	 * Helper function which loops over actions to and sum the values of all
+	 * possible actions from that state. Output is the sum.
+	 */
+	public double sumActions(double[][][][] values, int posX, int posY,
+			int px, int py, Prey prey, BasicEnvironment env) {
+
+		double output = 0.0;
+		int bestDirection = 0;
+		double gamma = 0.8; // TODO
+
+		for (int a = 0; a < DIR_NUM; a++) {
+
+			// Calculate reward of taking action a to go to s'
+			// Calculate value of s'
+			
+			for (int aPrey = 0; aPrey < DIR_NUM; aPrey++) {
+				Predator dummyPredator = new Predator(posX, posY);
+				Prey dummyPrey = new Prey(px, py);
+				
+				double actionReward = env.getReward(dummyPredator,dummyPrey,a,aPrey);
+
+				dummyPredator.move(a);
+				dummyPrey.move(aPrey);
+				
+				double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
+				output += this.prob(a) * prey.prob(env.getPredators() ,aPrey)*(actionReward + gamma * value);
+				//if(output >0)
+					//System.out.println("SOMETHING BIIIIIIIIG!!! "+output);
+				//System.out.println("Predator Prob " + this.prob(a) + "  Prey Prob" + prey.prob(env.getPredators() ,aPrey) + " Action Re" + actionReward);
+			}
+
+		}
+		
+		//if(output>0)
+			//System.out.println("ITS GREATER THAT ZEROOOO!!!! " + output);
+
+		return output;
+	}
 }

@@ -77,7 +77,6 @@ public class PredatorPI extends Predator {
 		
 		//if(output>0)
 			//System.out.println("ITS GREATER THAT ZEROOOO!!!! " + output);
-		maxArg = bestDirection;
 
 		return output;
 	}
