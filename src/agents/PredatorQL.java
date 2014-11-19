@@ -15,8 +15,8 @@ import main.QLearning;
 public class PredatorQL extends Predator {
 
 	private static final double alpha = 0.1; /* 0.1 until 0.5 */
-	private static final double gamma = 0.1; /* 0.1 ,0.5 , 0.7, 0.9 */
-	private static final double e = 0.1; /* e-greedy policy */
+	private static final double gamma = 0.9; /* 0.1 ,0.5 , 0.7, 0.9 */
+	private static double e = 0.2; /* e-greedy policy */
 
 	/**
 	 * @param locX_
@@ -57,19 +57,22 @@ public class PredatorQL extends Predator {
 
 	public void planEpisodeQL(Prey prey, QLearning env, double[][][][][] Qvalues) {
 		/* Initializing the array values */
-
+		e+=0.001;
 		int steps = 0;
 		boolean isNotTerminal = true;
 		while (isNotTerminal) {
 			steps++;
 			int a = chooseAction(Qvalues[getX()][getY()][prey.getX()][prey
 					.getY()]);
-			int aPrey = env.movePrey(); //check this if not working XXX
 			move(a);
+			int aPrey = env.movePrey(); //check this if not working XXX
+			//prey.print();
+			//this.print();
+			//System.out.println(steps);
 			double reward = env.getReward(this, prey, a, aPrey);
 			Qvalues[getX()][getY()][prey.getX()][prey.getY()][a] = calcNextValue(Qvalues,prey, a, reward);
 			if(reward > 0){ // if reward is not zero... XXX check this if not working
-				System.out.println("@" + reward + " " + steps);
+				System.out.println(/*"@" + reward + " " + */steps);
 				isNotTerminal=false;
 			}
 		}

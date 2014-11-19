@@ -8,6 +8,7 @@ import static main.BasicEnvironment.WORLDSIZE;
 import java.util.ArrayList;
 
 import agents.Predator;
+import agents.PredatorPE;
 import agents.PredatorQL;
 import agents.PredatorVI;
 import agents.Prey;
@@ -60,17 +61,11 @@ public class QLearning extends BasicEnvironment {
 		double[][][][][] Qvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
 
 		initValues(Qvalues);
-		for (int i = 0; i < 100000; i++)
-			for (Predator predator : predators) {
-				PredatorQL predatorQL = new PredatorQL(predator);
-				predatorQL.planEpisodeQL(prey, this, Qvalues);
-				// predator.move(dir, preys);
-				// System.out.print(" ");
-				// predator.print();
-			}
-		//
-		// System.out.println();
-		// }
+		for (int i = 0; i < 5000; i++) {
+			PredatorQL predatorQL = new PredatorQL(0, 0);
+			prey = new Prey(5, 5);
+			predatorQL.planEpisodeQL(prey, this, Qvalues);
+		}
 
 		return time;
 	}
