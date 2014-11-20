@@ -1,12 +1,10 @@
 package main;
 
-import static main.BasicEnvironment.WORLDSIZE;
 import static agents.Agent.*;
 
 import java.util.ArrayList;
 
 import agents.Predator;
-import agents.PredatorPE;
 import agents.Prey;
 
 public class PolicyEvaluation extends BasicEnvironment {
@@ -82,7 +80,6 @@ public class PolicyEvaluation extends BasicEnvironment {
 			int px, int py, Prey prey) {
 
 		double output = 0.0;
-		int bestDirection = 0;
 		double gamma = 0.8; // TODO
 
 		for (int a = 0; a < DIR_NUM; a++) {
