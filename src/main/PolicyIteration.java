@@ -28,7 +28,7 @@ public class PolicyIteration extends BasicEnvironment{
 			for (int j = 0; j < WORLDSIZE; j++)
 				for (int k = 0; k < WORLDSIZE; k++)
 					for (int l = 0; l < WORLDSIZE; l++)
-						values[i][j][k][l] = (int)(Math.random() * 5); 
+						policies[i][j][k][l] = (int)(Math.random() * 5); 
 		boolean policy_stable = false;
 		int count = 0;
 		while (!policy_stable) {
@@ -70,7 +70,11 @@ public class PolicyIteration extends BasicEnvironment{
 			dummyPrey.move(aPrey);
 			
 			double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
-			output += prey.prob(getPredators() ,aPrey)*(actionReward + gamma * value);
+			
+			dummyPredator = new Predator(posX, posY);
+			dummyPrey = new Prey(px, py);
+			
+			output += dummyPrey.prob(dummyPredator, aPrey)*(actionReward + gamma * value);
 		}
 		
 		return output;
@@ -89,16 +93,17 @@ public class PolicyIteration extends BasicEnvironment{
 			for (int x = 0; x < WORLDSIZE; x++) {
 				for (int y = 0; y < WORLDSIZE; y++) {
 					for (int px = 0; px < WORLDSIZE; px++) {
-						for (int py = 0; py < WORLDSIZE; py++) {
-							double temp = values[x][y][px][py];
-							//System.out.println(policies[x][y][px][py]);
-							values[x][y][px][py] = sumStates(values, x, y, px,
-									py, policies[x][y][px][py], prey);
-							// Updating delta, which is used for the convergence
-							// check
-							delta = Math.max(delta,
-									Math.abs(temp - values[x][y][px][py]));
-						}
+						for (int py = 0; py < WORLDSIZE; py++)
+							if (x != px || y != py) {
+								double temp = values[x][y][px][py];
+								//System.out.println(policies[x][y][px][py]);
+								values[x][y][px][py] = sumStates(values, x, y, px,
+										py, policies[x][y][px][py], prey);
+								// Updating delta, which is used for the convergence
+								// check
+								delta = Math.max(delta,
+										Math.abs(temp - values[x][y][px][py]));
+							}
 					}
 				}
 			}
@@ -116,20 +121,21 @@ public class PolicyIteration extends BasicEnvironment{
 		for (int x = 0; x < WORLDSIZE; x++) {
 			for (int y = 0; y < WORLDSIZE; y++) {
 				for (int px = 0; px < WORLDSIZE; px++) {
-					for (int py = 0; py < WORLDSIZE; py++) {
-						int temp = policies[x][y][px][py];
-						double maxValue = 0;
-						for (int a = 0; a < DIR_NUM; a++) {
-							double value = sumStates(values, x, y, px, py, a, prey);
-							if (value > maxValue) {
-								maxValue = value;
-								policies[x][y][px][py] = a;
+					for (int py = 0; py < WORLDSIZE; py++) 
+						{
+							int temp = policies[x][y][px][py];
+							double maxValue = 0;
+							for (int a = 0; a < DIR_NUM; a++) {
+								double value = sumStates(values, x, y, px, py, a, prey);
+								if (value > maxValue) {
+									maxValue = value;
+									policies[x][y][px][py] = a;
+								}
+							}
+							if (temp != policies[x][y][px][py]) {
+								policy_stable = false;
 							}
 						}
-						if (temp != policies[x][y][px][py]) {
-							policy_stable = false;
-						}
-					}
 				}
 			}
 		}
@@ -164,17 +170,5 @@ public class PolicyIteration extends BasicEnvironment{
 			}
 			System.out.println();
 		}
-	}
-
-	private void printValues(double[][][][] values, int px, int py) {
-		System.out.println();
-
-		for (int x = 0; x < WORLDSIZE; x++) {
-			for (int y = 0; y < WORLDSIZE; y++) {
-				System.out.printf("%.02f\t", values[x][y][px][py]);
-			}
-			System.out.println();
-		}
-		System.out.println();
 	}
 }

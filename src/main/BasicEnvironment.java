@@ -92,24 +92,16 @@ public class BasicEnvironment {
 		
 		return getReward(dummyPredator, dummyPrey);
 	}
-	
-	public void printEnvrionment() {
-//		System.out.print("  ");
-//		for (int i = 0; i < 10; i++) {
-//			System.out.print(i + " ");
-//		}
-//		System.out.println(10);
-//		for(int i = 0; i < 11; i++){
-//			System.out.print(i + " ");
-//			for(int j = 0; j<11; j++){
-//				if(environment[i][j] != null)
-//					System.out.print(environment[i][j].getAnimal().toString() + " ");
-//				else{
-//					System.out.print("  ");
-//				}
-//			}
-//			System.out.println();
-//		}
-	}
 
+	protected void printValues(double[][][][] values, int px, int py) {
+		System.out.println();
+
+		for (int x = 0; x < WORLDSIZE; x++) {
+			for (int y = 0; y < WORLDSIZE; y++) {
+				System.out.printf("%.02f\t", values[x][y][px][py]);
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
 }

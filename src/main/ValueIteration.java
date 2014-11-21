@@ -111,15 +111,4 @@ public class ValueIteration extends BasicEnvironment{
 		return highestOutput;
 	}
 	
-	private void printValues(double[][][][] values, int px, int py) {
-		System.out.println();
-
-		for (int x = 0; x < WORLDSIZE; x++) {
-			for (int y = 0; y < WORLDSIZE; y++) {
-				System.out.printf("%.02f\t", values[x][y][px][py]);
-			}
-			System.out.println();
-		}
-		System.out.println();
-	}
 }

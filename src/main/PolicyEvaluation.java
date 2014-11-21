@@ -23,6 +23,8 @@ public class PolicyEvaluation extends BasicEnvironment {
 	public int run() {
 		double[][][][] values = evaluatePolicy(prey);
 		
+		printValues(values, prey.getX(), prey.getY());
+		
 		for (Predator predator : predators) {
 			prey.print();
 			predator.print();
@@ -46,17 +48,18 @@ public class PolicyEvaluation extends BasicEnvironment {
 			for (int x = 0; x < WORLDSIZE; x++) {
 				for (int y = 0; y < WORLDSIZE; y++) {
 					for (int px = 0; px < WORLDSIZE; px++) {
-						for (int py = 0; py < WORLDSIZE; py++) {
-							double temp = values[x][y][px][py];
-
-							values[x][y][px][py] = sumActions(values, x, y, px,
-									py, prey);
-							// Updating delta, which is used for the convergence
-							// check
-							delta = Math.max(delta,
-									Math.abs(temp - values[x][y][px][py]));
-							//System.out.println(x + " " + y + " " + px + " " + py + ": " + delta);
-						}
+						for (int py = 0; py < WORLDSIZE; py++) 
+							if (x != px || y != py) {
+								double temp = values[x][y][px][py];
+	
+								values[x][y][px][py] = sumActions(values, x, y, px,
+										py, prey);
+								// Updating delta, which is used for the convergence
+								// check
+								delta = Math.max(delta,
+										Math.abs(temp - values[x][y][px][py]));
+								//System.out.println(x + " " + y + " " + px + " " + py + ": " + delta);
+							}
 					}
 				}
 			}
@@ -97,7 +100,11 @@ public class PolicyEvaluation extends BasicEnvironment {
 				dummyPrey.move(aPrey);
 				
 				double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
-				output += this.prob(a) * prey.prob(getPredators() ,aPrey)*(actionReward + gamma * value);
+				
+				dummyPredator = new Predator(posX, posY);
+				dummyPrey = new Prey(px, py);
+				
+				output += prob(a) * dummyPrey.prob(dummyPredator, aPrey)*(actionReward + gamma * value);
 			}
 
 		}
