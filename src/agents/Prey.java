@@ -1,5 +1,6 @@
 package agents;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Prey extends Agent {
 	
@@ -74,5 +75,9 @@ public class Prey extends Agent {
 	@Override
 	public void print() {
 		System.out.print("Prey(" + getX() + "," + getY() + ")");
+	}
+
+	public double prob(Predator predator, int aPrey) {
+		return prob(new ArrayList<Predator>(Arrays.asList(predator)), aPrey);
 	}
 }

@@ -44,16 +44,18 @@ public class ValueIteration extends BasicEnvironment{
 			for (int x = 0; x < WORLDSIZE; x++) {
 				for (int y = 0; y < WORLDSIZE; y++) {
 					for (int px = 0; px < WORLDSIZE; px++) {
-						for (int py = 0; py < WORLDSIZE; py++) {
-							double temp = values[x][y][px][py];
-
-							values[x][y][px][py] = maxAction(values, x, y, px,
-									py, prey);
-							// Updating delta, which is used for the convergence
-							// check
-							delta = Math.max(delta,
-									Math.abs(temp - values[x][y][px][py]));
-						}
+						for (int py = 0; py < WORLDSIZE; py++)
+							if (x != px || y != py) {
+								
+								double temp = values[x][y][px][py];
+	
+								values[x][y][px][py] = maxAction(values, x, y, px,
+										py, prey);
+								// Updating delta, which is used for the convergence
+								// check
+								delta = Math.max(delta,
+										Math.abs(temp - values[x][y][px][py]));
+							}
 					}
 				}
 			}
@@ -89,14 +91,17 @@ public class ValueIteration extends BasicEnvironment{
 			for (int aPrey = 0; aPrey < DIR_NUM; aPrey++) {
 				Prey dummyPrey = new Prey(px, py);
 				Predator dummyPredator = new Predator(posX, posY);
-				double actionReward = getReward(dummyPredator,prey,a,aPrey);
+				double actionReward = getReward(dummyPredator,dummyPrey,a,aPrey);
 				dummyPredator.move(a);
 				dummyPrey.move(aPrey);
 				
 				double value = values[dummyPredator.getX()][dummyPredator.getY()][dummyPrey.getX()][dummyPrey.getY()];
-				output += prey.prob(getPredators() ,aPrey)*(actionReward + gamma * value);
+				
+				dummyPrey = new Prey(px, py);
+				dummyPredator = new Predator(posX, posY);
+				output += dummyPrey.prob(dummyPredator ,aPrey)*(actionReward + gamma * value);
 			}
-			if (output >= highestOutput) {
+			if (output > highestOutput) {
 				highestOutput = output;
 				bestDirection.add(a);
 			}

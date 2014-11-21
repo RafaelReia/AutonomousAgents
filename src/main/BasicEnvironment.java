@@ -77,6 +77,12 @@ public class BasicEnvironment {
 		return time;
 	}
 
+	public int getReward(Predator predator, Prey prey) {
+		if (predator.equals(prey))
+			return 10;
+		return 0;
+	}
+	
 	public int getReward(Predator predator, Prey prey, int aPredator, int aPrey) {
 		Predator dummyPredator = new Predator(predator);
 		Prey dummyPrey = new Prey(prey);
@@ -84,9 +90,7 @@ public class BasicEnvironment {
 		dummyPredator.move(aPredator);
 		dummyPrey.move(aPrey);
 		
-		if (dummyPredator.equals(dummyPrey))
-			return 10;
-		return 0;
+		return getReward(dummyPredator, dummyPrey);
 	}
 	
 	public void printEnvrionment() {

@@ -62,15 +62,26 @@ public class PredatorQL extends Predator {
 		boolean isNotTerminal = true;
 		while (isNotTerminal) {
 			steps++;
+			
+			PredatorQL lastPredator = new PredatorQL(this);
+			Prey lastPrey = new Prey(prey);
+			
 			int a = chooseAction(Qvalues[getX()][getY()][prey.getX()][prey
 					.getY()]);
-			move(a);
 			int aPrey = env.movePrey(); //check this if not working XXX
+
+			move(a);
+			
+//			this.print();
+//			System.out.print(" ");
+//			env.getPreys().print();
+//			System.out.println();
+			
 			//prey.print();
 			//this.print();
 			//System.out.println(steps);
-			double reward = env.getReward(this, prey, a, aPrey);
-			Qvalues[getX()][getY()][prey.getX()][prey.getY()][a] = calcNextValue(Qvalues,prey, a, reward);
+			double reward = env.getReward(this, prey);
+			Qvalues[lastPredator.getX()][lastPredator.getY()][lastPrey.getX()][lastPrey.getY()][a] = calcNextValue(Qvalues, lastPredator, lastPrey, this, env.getPreys(), a, reward);
 			if(reward > 0){ // if reward is not zero... XXX check this if not working
 				System.out.println(/*"@" + reward + " " + */steps);
 				isNotTerminal=false;
@@ -79,17 +90,17 @@ public class PredatorQL extends Predator {
 
 	}
 
-	private double calcNextValue(double[][][][][] Qvalues, Prey prey, int a, double reward) {
-		return Qvalues[getX()][getY()][prey.getX()][prey.getY()][a]
+	private double calcNextValue(double[][][][][] Qvalues, PredatorQL lastPredator, Prey lastPrey, PredatorQL predator, Prey prey, int a, double reward) {
+		return Qvalues[lastPredator.getX()][lastPredator.getY()][lastPrey.getX()][lastPrey.getY()][a]
 				+ alpha
 				* (reward
 						+ gamma
-						* getMax(Qvalues[getX()][getY()][prey.getX()][prey
-								.getY()]) - Qvalues[getX()][getY()][prey.getX()][prey
+						* getMax(Qvalues[predator.getX()][predator.getY()][prey.getX()][prey
+								.getY()]) - Qvalues[lastPredator.getX()][lastPredator.getY()][lastPrey.getX()][lastPrey
 						.getY()][a]);
 	}
 
-	private int getMax(double[] qvalues) {
+	private double getMax(double[] qvalues) {
 		double max = -Double.MAX_VALUE;
 		int action = 0;
 		for (int i = 0; i < DIR_NUM; i++) {
@@ -98,7 +109,7 @@ public class PredatorQL extends Predator {
 				max = qvalues[i];
 			}
 		}
-		return action;
+		return max;
 	}
 
 }
