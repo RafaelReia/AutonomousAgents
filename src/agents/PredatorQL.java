@@ -57,17 +57,16 @@ public class PredatorQL extends Predator {
 
 	public void planEpisodeQL(Prey prey, QLearning env, double[][][][][] Qvalues) {
 		/* Initializing the array values */
-		e+=0.001;
+		e = 0.1;
 		int steps = 0;
 		boolean isNotTerminal = true;
 		while (isNotTerminal) {
 			steps++;
 			
 			PredatorQL lastPredator = new PredatorQL(this);
-			Prey lastPrey = new Prey(prey);
+			Prey lastPrey = new Prey(env.getPreys());
 			
-			int a = chooseAction(Qvalues[getX()][getY()][prey.getX()][prey
-					.getY()]);
+			int a = chooseAction(Qvalues[getX()][getY()][env.getPreys().getX()][env.getPreys().getY()]);
 			int aPrey = env.movePrey(); //check this if not working XXX
 
 			move(a);
@@ -80,7 +79,7 @@ public class PredatorQL extends Predator {
 			//prey.print();
 			//this.print();
 			//System.out.println(steps);
-			double reward = env.getReward(this, prey);
+			double reward = env.getReward(this, env.getPreys());
 			Qvalues[lastPredator.getX()][lastPredator.getY()][lastPrey.getX()][lastPrey.getY()][a] = calcNextValue(Qvalues, lastPredator, lastPrey, this, env.getPreys(), a, reward);
 			if(reward > 0){ // if reward is not zero... XXX check this if not working
 				System.out.println(/*"@" + reward + " " + */steps);
