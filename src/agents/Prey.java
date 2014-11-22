@@ -59,6 +59,10 @@ public class Prey extends Agent {
 		return DIR_WAIT;
 	}
 	
+	public int planMoveRandom(Predator predator) {
+		return planMoveRandom(new ArrayList<Predator>(Arrays.asList(predator)));
+	}
+	
 	public double prob(ArrayList<Predator> predators, int aPrey) {
 		ArrayList<Integer> dir_cand = tryMove(predators);
 		double p_delta  = 0.2 / dir_cand.size();
