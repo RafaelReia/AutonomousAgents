@@ -46,15 +46,25 @@ package main;
  */
 
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.general.Dataset;
+import org.jfree.data.general.Series;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -74,12 +84,12 @@ public class Chart extends ApplicationFrame {
      *
      * @param title  the frame title.
      */
-    public Chart(final String title) {
+    public Chart(final String title, String fileName) {
 
         super(title);
 
-        final XYDataset dataset = createDataset();
-        final JFreeChart chart = createChart(dataset);
+        final XYDataset dataset = getDataFromFile(fileName, title);
+        final JFreeChart chart = createChart(dataset,title);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         setContentPane(chartPanel);
@@ -91,42 +101,43 @@ public class Chart extends ApplicationFrame {
      * 
      * @return a sample dataset.
      */
-    private XYDataset createDataset() {
+    private XYDataset getDataFromFile(String fileName, String title) {
+    	// Create dataset
+    	final XYSeries series = new XYSeries(title);
+    	
+        // Open file
+    	BufferedReader reader = null;
+		try {
+			reader = new BufferedReader( new FileReader (fileName));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        String         line = null;
         
-        final XYSeries series1 = new XYSeries("First");
-        series1.add(1.0, 1.0);
-        series1.add(2.0, 4.0);
-        series1.add(3.0, 3.0);
-        series1.add(4.0, 5.0);
-        series1.add(5.0, 5.0);
-        series1.add(6.0, 7.0);
-        series1.add(7.0, 7.0);
-        series1.add(8.0, 8.0);
+        int i = 1;
+        try {
+			while( ( line = reader.readLine() ) != null ) {
+		        series.add(i,Integer.parseInt(line));
+				i++;
+			}
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		};
+    	
+		try {
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        final XYSeries series2 = new XYSeries("Second");
-        series2.add(1.0, 5.0);
-        series2.add(2.0, 7.0);
-        series2.add(3.0, 6.0);
-        series2.add(4.0, 8.0);
-        series2.add(5.0, 4.0);
-        series2.add(6.0, 4.0);
-        series2.add(7.0, 2.0);
-        series2.add(8.0, 1.0);
-
-        final XYSeries series3 = new XYSeries("Third");
-        series3.add(3.0, 4.0);
-        series3.add(4.0, 3.0);
-        series3.add(5.0, 2.0);
-        series3.add(6.0, 3.0);
-        series3.add(7.0, 6.0);
-        series3.add(8.0, 3.0);
-        series3.add(9.0, 4.0);
-        series3.add(10.0, 3.0);
-
-        final XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series1);
-        dataset.addSeries(series2);
-        dataset.addSeries(series3);
+		final XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(series);
                 
         return dataset;
         
@@ -139,11 +150,11 @@ public class Chart extends ApplicationFrame {
      * 
      * @return a chart.
      */
-    private JFreeChart createChart(final XYDataset dataset) {
+    private JFreeChart createChart(final XYDataset dataset, final String title) {
         
         // create the chart...
         final JFreeChart chart = ChartFactory.createXYLineChart(
-            "Line Chart Demo 6",      // chart title
+            title,      // chart title
             "X",                      // x axis label
             "Y",                      // y axis label
             dataset,                  // data
@@ -167,8 +178,8 @@ public class Chart extends ApplicationFrame {
         plot.setRangeGridlinePaint(Color.white);
         
         final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesLinesVisible(0, false);
-        renderer.setSeriesShapesVisible(1, false);
+        renderer.setSeriesLinesVisible(0, true);
+        renderer.setSeriesShapesVisible(0, false);
         plot.setRenderer(renderer);
 
         // change the auto tick unit selection to integer units only...
@@ -191,18 +202,5 @@ public class Chart extends ApplicationFrame {
     // * support us so that we can continue developing free software.             *
     // ****************************************************************************
     
-    /**
-     * Starting point for the demonstration application.
-     *
-     * @param args  ignored.
-     */
-    public static void main(final String[] args) {
-
-        final Chart demo = new Chart("Line Chart Demo 6");
-        demo.pack();
-        RefineryUtilities.centerFrameOnScreen(demo);
-        demo.setVisible(true);
-
-    }
 
 }

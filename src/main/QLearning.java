@@ -6,6 +6,12 @@ package main;
 import static main.BasicEnvironment.WORLDSIZE;
 import static agents.Agent.*;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -120,9 +126,20 @@ public class QLearning extends BasicEnvironment {
 		double[][][][][] Qvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
 
 		initValues(Qvalues, initValue);
-		for (int i = 0; i < 100000; i++) {
-			System.out.println(episodeQL(Qvalues, alpha, gamma, epsilon));
+		
+		// Open file to write results
+		PrintWriter f = null;
+		try {
+			f = new PrintWriter("output.txt");
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		for (int i = 0; i < 100000; i++) {
+			f.println(episodeQL(Qvalues, alpha, gamma, epsilon));
+		}
+		
+		f.close();
 
 		return time;
 	}
