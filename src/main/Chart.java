@@ -4,7 +4,7 @@
 
 
 package main;
-
+import java.util.Arrays;
 
 /* ===========================================================
  * JFreeChart : a free chart library for the Java(tm) platform
@@ -88,11 +88,11 @@ public class Chart extends ApplicationFrame {
      *
      * @param title  the frame title.
      */
-    public Chart(final String title, String[] fileNames) {
+    public Chart(final String title, double[][] parameterSettings) {
 
         super(title);
 
-        final XYDataset dataset = getDataFromFiles(fileNames, title);
+        final XYDataset dataset = getDataFromFiles(title, parameterSettings);
         final JFreeChart chart = createChart(dataset,title);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
@@ -105,28 +105,29 @@ public class Chart extends ApplicationFrame {
      * 
      * @return a sample dataset.
      */
-    private XYDataset getDataFromFiles(String[] fileNames, String title) {
-    	int nFiles = fileNames.length;
+    private XYDataset getDataFromFiles(String title, double[][] parameterSettings) {
+    	int nSettings = parameterSettings.length;
     	
     	// Create dataset, one series for every saved parameter setting
-    	final XYSeries[] series= new XYSeries[nFiles];
+    	final XYSeries[] series= new XYSeries[nSettings];
     	final XYSeriesCollection dataset = new XYSeriesCollection();
     	
     	int j=0;
     	
-        double[] sum = new double[nFiles];
-        average = new double[nFiles];
+        double[] sum = new double[nSettings];
+        average = new double[nSettings];
     	
-    	for(j = 0; j <nFiles; j++)
+    	for(j = 0; j <nSettings; j++)
     	{
     		System.out.println("j:"+j);
-	    	series[j]= new XYSeries(fileNames[j]);
+	    	series[j]= new XYSeries(Arrays.toString(parameterSettings[j]));
 	    	
 	        // Open file
 	    	BufferedReader reader = null;
 			try {
+				String fileName =  "output" + j + ".txt";
 				System.out.println(j);
-				reader = new BufferedReader( new FileReader (fileNames[j]));
+				reader = new BufferedReader( new FileReader (fileName));
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

@@ -137,33 +137,35 @@ public class QLearning extends BasicEnvironment {
 		return time;
 	}
 	
-	public int run() {
-		for(int i = 0;i<100;i++)
-		//test(0.1, 0.2, 0.1, 15);
-		//test(0.2, 0.2, 0.1, 15);
-		//test(0.3, 0.2, 0.1, 15);
-		//test(0.4, 0.2, 0.1, 15);
-		test(0.5, 0.2, 0.1, 15);
-
-		// Open file to write results
-		PrintWriter f = null;
-		try {
-			f = new PrintWriter("output.txt");
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	public int run(double[][] parameterSettings) {
+		// For every parameter setting
+		for (int ps = 0; ps < parameterSettings.length;ps++)
+		{
+			for(int i = 0;i<100;i++)
+			{
+				test(parameterSettings[ps][0],parameterSettings[ps][1],parameterSettings[ps][2],parameterSettings[ps][3]);
+			}
+			// Open file to write results
+			PrintWriter f = null;
+			try {
+				f = new PrintWriter("output" + ps + ".txt");
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			double sum = 0;
+			for (int i = 0; i < N_EPISODES; i++) {
+				sum += steps[i]/runs;
+				f.println(steps[i]/runs);
+			}
+			double average = sum / N_EPISODES;
+			System.out.println("Average: " +  average);
+			
+			f.close();
 		}
-		
-		double sum = 0;
-		for (int i = 0; i < N_EPISODES; i++) {
-			sum += steps[i]/runs;
-			f.println(steps[i]/runs);
-		}
-		double average = sum / N_EPISODES;
-		System.out.println("Average: " +  average);
-		
-		f.close();
 		return 0;
+		
 	}
 
 	public int movePrey() {
