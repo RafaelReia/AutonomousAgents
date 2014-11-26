@@ -3,28 +3,22 @@
  */
 package main;
 
-import static main.BasicEnvironment.WORLDSIZE;
 import static agents.Agent.*;
 
 import java.util.ArrayList;
-import java.util.Random;
-
 import agents.Predator;
-import agents.PredatorPE;
-import agents.PredatorQL;
-import agents.PredatorVI;
 import agents.Prey;
 
 /**
  *
  */
-public class QLearning extends BasicEnvironment {
+public class SoftmaxQLearning extends QLearning {
 
 	/**
 	 * @param predator_
 	 * @param prey_
 	 */
-	public QLearning(Predator predator_, Prey prey_) {
+	public SoftmaxQLearning(Predator predator_, Prey prey_) {
 		super(predator_, prey_);
 	}
 
@@ -32,30 +26,38 @@ public class QLearning extends BasicEnvironment {
 	 * @param predators_
 	 * @param preys_
 	 */
-	public QLearning(ArrayList<Predator> predators_, Prey preys_) {
+	public SoftmaxQLearning(ArrayList<Predator> predators_, Prey preys_) {
 		super(predators_, preys_);
 	}
 
-	private int chooseAction(double[] qvalues, double epsilon) {
-		double max = -Double.MAX_VALUE;
+	private int chooseAction(double[] qvalues, double temp) {
 		int action = 0;
-		Random rdm = new Random();
-		if (rdm.nextDouble() > epsilon)
-			for (int i = 0; i < DIR_NUM; i++) {
-				if (qvalues[i] >= max) {
-					action = i;
-					max = qvalues[i];
-				}
+		double prob[] = new double[DIR_NUM];
+		double sumProb = 0;
+		
+		for (int a = 0; a < DIR_NUM; a++) {
+			prob[a] = Math.exp(qvalues[a] / temp);
+			sumProb += prob[a];
+		}
+		
+		for (int a = 0; a < DIR_NUM; a++) {
+			prob[a] /= sumProb;
+		}
+		
+		sumProb = 0;
+		double randProb = Math.random();
+		for (int a = 0; a < DIR_NUM; a++) {
+			sumProb += prob[a];
+			if (randProb < sumProb) {
+				action = a;
+				break;
 			}
-		else {
-			// choose any random action for the epsilon part
-			return rdm.nextInt(DIR_NUM);
 		}
 		return action;
 	}
 
 
-	public int episodeQL(double[][][][][] Qvalues, double alpha, double gamma, double epsilon) {
+	public int episodeQL(double[][][][][] Qvalues, double alpha, double gamma, double temp) {
 		/* Initializing the array values */
 		int steps = 0;
 		
@@ -68,7 +70,7 @@ public class QLearning extends BasicEnvironment {
 			Predator nextPredator = new Predator(nowPredator);
 			Prey nextPrey = new Prey(nowPrey);
 			
-			int aPredator = chooseAction(Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()], epsilon);
+			int aPredator = chooseAction(Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()], temp);
 			int aPrey = nowPrey.planMoveRandom(nowPredator); //check this if not working XXX
 
 			nextPrey.move(aPrey);
@@ -115,26 +117,19 @@ public class QLearning extends BasicEnvironment {
 
 	}
 
-	public int test(double alpha, double gamma, double epsilon, double initValue) {
-		int time = 0;
+	public int test(double alpha, double gamma, double temp, double initValue) {
 		double[][][][][] Qvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
 
 		initValues(Qvalues, initValue);
-		for (int i = 0; i < 10000; i++) {
-			System.out.println(episodeQL(Qvalues, alpha, gamma, epsilon));
+		for (int i = 0; i < 100000; i++) {
+			System.out.println(episodeQL(Qvalues, alpha, gamma, temp));
 		}
 
-		return time;
+		return 0;
 	}
 	
 	public int run() {
-		test(0.1, 0.9, 0.1, 50);
+		test(0.1, 0.9, 1, 15);
 		return 0;
-	}
-
-	public int movePrey() {
-		int a = prey.planMoveRandom(predators);
-		prey.move(a);
-		return a;
 	}
 }
