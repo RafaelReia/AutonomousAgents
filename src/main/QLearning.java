@@ -15,6 +15,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.jfree.chart.renderer.xy.CandlestickRenderer;
+
 import agents.Predator;
 import agents.PredatorPE;
 import agents.PredatorQL;
@@ -134,6 +136,7 @@ public class QLearning extends BasicEnvironment {
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {
 			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
+			System.out.println("episode: " + i + ", steps: " + aux);
 			steps[i] += aux;
 		}
 		
@@ -141,12 +144,12 @@ public class QLearning extends BasicEnvironment {
 	}
 	
 	public int run() {
-		for(int i = 0;i<100;i++)
+		for(int i = 0;i<10;i++)
 		//test(0.1, 0.2, 0.1, 15);
 		//test(0.2, 0.2, 0.1, 15);
 		//test(0.3, 0.2, 0.1, 15);
 		//test(0.4, 0.2, 0.1, 15);
-		test(0.5, 0.2, 0.1, 15);
+		test(0.5, 0.9, 0.1, 0);
 
 		// Open file to write results
 		PrintWriter f = null;

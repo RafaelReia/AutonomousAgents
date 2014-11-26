@@ -129,7 +129,7 @@ public class SoftmaxQLearning extends QLearning {
 	}
 	
 	public int run() {
-		test(0.1, 0.9, 1, 15);
+		test(0.1, 0.9, 0.1, 1);
 		return 0;
 	}
 }
