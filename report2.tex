@@ -22,8 +22,44 @@ Yikang Wang -- 10540288\\
 }
 \maketitle
 \section{Introduction}
+In this assignment, we study the application of \emph{reinforced learning
+algorithms}. The main focus of this study is on the Q-Learning algorithm where
+we used a \epsilon-policy at the begining and changed other policies to experiment
+the efects of that.
+
+Our goal is to tune the algorithms with the different parameters and understand
+how this parameters affect the performance that in this specific instance is
+determined by the number of steps the predator needs to catch the prey and how
+we can improve that with learning. 
 
 \section{Program design}
+In this assignment the overall progam design stays the same, as we just added
+the equivalent classes for the new algorithms. So we have a new main class,
+\emph{MainQl} that, like the others, create a specific environment for the
+predator and prey to live. Then it runs the simulation for that setup.
+
+We also added some utility classes to produce the graphs for this report.
+
+\section{Evaluation}
+
+%- Why? 'In order to test\ldots'
+%- How? ' we run \ldots N times on X computer'
+%- What does it show?
+%- Take home message
+
+In order to test how the Q-learning algorithm works with different parameters we
+have run our implemetation and computed the average of $100$ runs, each of them
+with $10000$ episodes. With the averaging we have been able to get less sharper
+graphs.
+
+\subsection{Different \alpha's}
+We started to experiment with different values of \alpha. The values used are:
+$0.1 , 0.2, 0.3, 0.4 and 0.5$. 
+
+\subsection{Different \gamma's}
+We started to experiment with different values of \gamma. The values used are:
+$0.2, 0.5, 0.7 and 0.9$. 
+
 
 
 \section{Conclusion}

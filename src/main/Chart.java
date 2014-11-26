@@ -1,9 +1,15 @@
 
 
 
-
+/* This file is based on a demo of JFreeChart:
+ * http://www.java2s.com/Code/Java/Chart/JFreeChartLineChartDemo6.htm
+ * 
+ * The code has been modified by us (Peter Dekker, Yikang Wang,
+ * Rafael Reia, Artur Alkaim) to suit the needs of our project.
+ */
 
 package main;
+import java.util.Arrays;
 
 
 /* ===========================================================
@@ -58,11 +64,13 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.Series;
 import org.jfree.data.xy.XYDataset;
@@ -78,17 +86,19 @@ import org.jfree.ui.RefineryUtilities;
  *
  */
 public class Chart extends ApplicationFrame {
-
+	
+	double[] average;
+	
     /**
      * Creates a new demo.
      *
      * @param title  the frame title.
      */
-    public Chart(final String title, String fileName) {
+    public Chart(final String title, double[][] parameterSettings) {
 
         super(title);
 
-        final XYDataset dataset = getDataFromFile(fileName, title);
+        final XYDataset dataset = getDataFromFiles(title, parameterSettings);
         final JFreeChart chart = createChart(dataset,title);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
@@ -101,44 +111,61 @@ public class Chart extends ApplicationFrame {
      * 
      * @return a sample dataset.
      */
-    private XYDataset getDataFromFile(String fileName, String title) {
-    	// Create dataset
-    	final XYSeries series = new XYSeries(title);
+    private XYDataset getDataFromFiles(String title, double[][] parameterSettings) {
+    	int nSettings = parameterSettings.length;
     	
-        // Open file
-    	BufferedReader reader = null;
-		try {
-			reader = new BufferedReader( new FileReader (fileName));
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        String         line = null;
-        
-        int i = 1;
-        try {
-			while( ( line = reader.readLine() ) != null ) {
-		        series.add(i,Integer.parseInt(line));
-				i++;
+    	// Create dataset, one series for every saved parameter setting
+    	final XYSeries[] series= new XYSeries[nSettings];
+    	final XYSeriesCollection dataset = new XYSeriesCollection();
+    	
+    	int j=0;
+    	
+        double[] sum = new double[nSettings];
+        average = new double[nSettings];
+    	
+    	for(j = 0; j <nSettings; j++)
+    	{
+    		System.out.println("j:"+j);
+	    	series[j]= new XYSeries(Arrays.toString(parameterSettings[j]));
+	    	
+	        // Open file
+	    	BufferedReader reader = null;
+			try {
+				String fileName =  "output" + j + ".txt";
+				System.out.println(j);
+				reader = new BufferedReader( new FileReader (fileName));
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		};
-    	
-		try {
-			reader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	        String line = null;
+	        
+	        int i = 1;
 
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series);
-                
+	        try {
+				while( ( line = reader.readLine() ) != null ) {
+					int num = Integer.parseInt(line);
+					sum[j] += num;
+			        series[j].add(i,num);
+					i++;
+				}
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			};
+	    	average[j] = sum[j]/(i-1);
+			
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 dataset.addSeries(series[j]);
+    	}       
         return dataset;
         
     }
@@ -166,41 +193,29 @@ public class Chart extends ApplicationFrame {
 
         // NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
         chart.setBackgroundPaint(Color.white);
+        for(int i = 0; i < average.length; i++)
+        {
+        	chart.addSubtitle(new TextTitle("Average " + (i+1) + ": "+ average[i], TextTitle.DEFAULT_FONT));
+        }
 
-//        final StandardLegend legend = (StandardLegend) chart.getLegend();
-  //      legend.setDisplaySeriesShapes(true);
         
         // get a reference to the plot for further customisation...
         final XYPlot plot = chart.getXYPlot();
         plot.setBackgroundPaint(Color.lightGray);
-    //    plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         
         final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesLinesVisible(0, true);
-        renderer.setSeriesShapesVisible(0, false);
+        renderer.setLinesVisible(true);
+        renderer.setShapesVisible(false);
         plot.setRenderer(renderer);
 
         // change the auto tick unit selection to integer units only...
         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        // OPTIONAL CUSTOMISATION COMPLETED.
-                
-        return chart;
         
+        return chart;
     }
-
-    // ****************************************************************************
-    // * JFREECHART DEVELOPER GUIDE                                               *
-    // * The JFreeChart Developer Guide, written by David Gilbert, is available   *
-    // * to purchase from Object Refinery Limited:                                *
-    // *                                                                          *
-    // * http://www.object-refinery.com/jfreechart/guide.html                     *
-    // *                                                                          *
-    // * Sales are used to provide funding for the JFreeChart project - please    * 
-    // * support us so that we can continue developing free software.             *
-    // ****************************************************************************
     
 
 }
