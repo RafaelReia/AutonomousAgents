@@ -1,10 +1,16 @@
 
 
 
-
+/* This file is based on a demo of JFreeChart:
+ * http://www.java2s.com/Code/Java/Chart/JFreeChartLineChartDemo6.htm
+ * 
+ * The code has been modified by us (Peter Dekker, Yikang Wang,
+ * Rafael Reia, Artur Alkaim) to suit the needs of our project.
+ */
 
 package main;
 import java.util.Arrays;
+
 
 /* ===========================================================
  * JFreeChart : a free chart library for the Java(tm) platform
@@ -192,13 +198,10 @@ public class Chart extends ApplicationFrame {
         	chart.addSubtitle(new TextTitle("Average " + (i+1) + ": "+ average[i], TextTitle.DEFAULT_FONT));
         }
 
-//        final StandardLegend legend = (StandardLegend) chart.getLegend();
-  //      legend.setDisplaySeriesShapes(true);
         
         // get a reference to the plot for further customisation...
         final XYPlot plot = chart.getXYPlot();
         plot.setBackgroundPaint(Color.lightGray);
-    //    plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         
@@ -211,24 +214,8 @@ public class Chart extends ApplicationFrame {
         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         
-        
-//        CombinedDomainXYPlot comb = new CombinedDomainXYPlot();
-//        comb.add(plot);
-//        comb.add(plot);
-//        return new JFreeChart(title,JFreeChart.DEFAULT_TITLE_FONT, comb, true);
         return chart;
     }
-
-    // ****************************************************************************
-    // * JFREECHART DEVELOPER GUIDE                                               *
-    // * The JFreeChart Developer Guide, written by David Gilbert, is available   *
-    // * to purchase from Object Refinery Limited:                                *
-    // *                                                                          *
-    // * http://www.object-refinery.com/jfreechart/guide.html                     *
-    // *                                                                          *
-    // * Sales are used to provide funding for the JFreeChart project - please    * 
-    // * support us so that we can continue developing free software.             *
-    // ****************************************************************************
     
 
 }
