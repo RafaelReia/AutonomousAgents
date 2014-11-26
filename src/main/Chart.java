@@ -206,8 +206,8 @@ public class Chart extends ApplicationFrame {
         plot.setRangeGridlinePaint(Color.white);
         
         final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesLinesVisible(0, true);
-        renderer.setSeriesShapesVisible(0, false);
+        renderer.setLinesVisible(true);
+        renderer.setShapesVisible(false);
         plot.setRenderer(renderer);
 
         // change the auto tick unit selection to integer units only...
