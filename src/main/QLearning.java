@@ -45,20 +45,23 @@ public class QLearning extends BasicEnvironment {
 
 	private int chooseAction(double[] qvalues, double epsilon) {
 		double max = -Double.MAX_VALUE;
-		int action = 0;
 		Random rdm = new Random();
+		ArrayList<Integer> cand = new ArrayList<Integer>();
 		if (rdm.nextDouble() > epsilon)
 			for (int i = 0; i < DIR_NUM; i++) {
-				if (qvalues[i] >= max) {
-					action = i;
+				if (qvalues[i] > max) {
+					cand.clear();
 					max = qvalues[i];
+				}
+				if (qvalues[i] == max) {
+					cand.add(i);
 				}
 			}
 		else {
 			// choose any random action for the epsilon part
 			return rdm.nextInt(DIR_NUM);
 		}
-		return action;
+		return cand.get(rdm.nextInt(cand.size()));
 	}
 
 
