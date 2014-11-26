@@ -154,9 +154,13 @@ public class QLearning extends BasicEnvironment {
 			e1.printStackTrace();
 		}
 		
+		double sum = 0;
 		for (int i = 0; i < N_EPISODES; i++) {
+			sum += steps[i]/runs;
 			f.println(steps[i]/runs);
 		}
+		double average = sum / N_EPISODES;
+		System.out.println("Average: " +  average);
 		
 		f.close();
 		return 0;

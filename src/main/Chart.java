@@ -58,11 +58,13 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.Series;
 import org.jfree.data.xy.XYDataset;
@@ -78,17 +80,19 @@ import org.jfree.ui.RefineryUtilities;
  *
  */
 public class Chart extends ApplicationFrame {
-
+	
+	double[] average;
+	
     /**
      * Creates a new demo.
      *
      * @param title  the frame title.
      */
-    public Chart(final String title, String fileName) {
+    public Chart(final String title, String[] fileNames) {
 
         super(title);
 
-        final XYDataset dataset = getDataFromFile(fileName, title);
+        final XYDataset dataset = getDataFromFiles(fileNames, title);
         final JFreeChart chart = createChart(dataset,title);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
@@ -101,44 +105,60 @@ public class Chart extends ApplicationFrame {
      * 
      * @return a sample dataset.
      */
-    private XYDataset getDataFromFile(String fileName, String title) {
-    	// Create dataset
-    	final XYSeries series = new XYSeries(title);
+    private XYDataset getDataFromFiles(String[] fileNames, String title) {
+    	int nFiles = fileNames.length;
     	
-        // Open file
-    	BufferedReader reader = null;
-		try {
-			reader = new BufferedReader( new FileReader (fileName));
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        String         line = null;
-        
-        int i = 1;
-        try {
-			while( ( line = reader.readLine() ) != null ) {
-		        series.add(i,Integer.parseInt(line));
-				i++;
+    	// Create dataset, one series for every saved parameter setting
+    	final XYSeries[] series= new XYSeries[nFiles];
+    	final XYSeriesCollection dataset = new XYSeriesCollection();
+    	
+    	int j=0;
+    	
+        double[] sum = new double[nFiles];
+        average = new double[nFiles];
+    	
+    	for(j = 0; j <nFiles; j++)
+    	{
+    		System.out.println("j:"+j);
+	    	series[j]= new XYSeries(fileNames[j]);
+	    	
+	        // Open file
+	    	BufferedReader reader = null;
+			try {
+				System.out.println(j);
+				reader = new BufferedReader( new FileReader (fileNames[j]));
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		};
-    	
-		try {
-			reader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	        String line = null;
+	        
+	        int i = 1;
 
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series);
-                
+	        try {
+				while( ( line = reader.readLine() ) != null ) {
+					int num = Integer.parseInt(line);
+					sum[j] += num;
+			        series[j].add(i,num);
+					i++;
+				}
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			};
+	    	average[j] = sum[j]/(i-1);
+			
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 dataset.addSeries(series[j]);
+    	}       
         return dataset;
         
     }
@@ -166,6 +186,10 @@ public class Chart extends ApplicationFrame {
 
         // NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
         chart.setBackgroundPaint(Color.white);
+        for(int i = 0; i < average.length; i++)
+        {
+        	chart.addSubtitle(new TextTitle("Average " + (i+1) + ": "+ average[i], TextTitle.DEFAULT_FONT));
+        }
 
 //        final StandardLegend legend = (StandardLegend) chart.getLegend();
   //      legend.setDisplaySeriesShapes(true);
@@ -185,10 +209,13 @@ public class Chart extends ApplicationFrame {
         // change the auto tick unit selection to integer units only...
         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        // OPTIONAL CUSTOMISATION COMPLETED.
-                
-        return chart;
         
+        
+//        CombinedDomainXYPlot comb = new CombinedDomainXYPlot();
+//        comb.add(plot);
+//        comb.add(plot);
+//        return new JFreeChart(title,JFreeChart.DEFAULT_TITLE_FONT, comb, true);
+        return chart;
     }
 
     // ****************************************************************************
