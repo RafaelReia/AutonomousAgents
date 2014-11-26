@@ -6,6 +6,12 @@ package main;
 import static main.BasicEnvironment.WORLDSIZE;
 import static agents.Agent.*;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,6 +26,7 @@ import agents.Prey;
  */
 public class QLearning extends BasicEnvironment {
 
+	private static final int N_EPISODES = 10000;
 	/**
 	 * @param predator_
 	 * @param prey_
@@ -114,21 +121,44 @@ public class QLearning extends BasicEnvironment {
 						}
 
 	}
-
+	int runs;
+	int [] steps = new int[N_EPISODES];
 	public int test(double alpha, double gamma, double epsilon, double initValue) {
 		int time = 0;
 		double[][][][][] Qvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
-
 		initValues(Qvalues, initValue);
-		for (int i = 0; i < 10000; i++) {
-			System.out.println(episodeQL(Qvalues, alpha, gamma, epsilon));
+		int aux;
+		runs++;
+		for (int i = 0; i < N_EPISODES; i++) {
+			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
+			steps[i] += aux;
 		}
-
+		
 		return time;
 	}
 	
 	public int run() {
-		test(0.1, 0.9, 0.1, 50);
+		for(int i = 0;i<100;i++)
+		//test(0.1, 0.2, 0.1, 15);
+		//test(0.2, 0.2, 0.1, 15);
+		//test(0.3, 0.2, 0.1, 15);
+		//test(0.4, 0.2, 0.1, 15);
+		test(0.5, 0.2, 0.1, 15);
+
+		// Open file to write results
+		PrintWriter f = null;
+		try {
+			f = new PrintWriter("output.txt");
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		for (int i = 0; i < N_EPISODES; i++) {
+			f.println(steps[i]/runs);
+		}
+		
+		f.close();
 		return 0;
 	}
 
