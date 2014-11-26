@@ -99,7 +99,7 @@ public class Chart extends ApplicationFrame {
         super(title);
 
         final XYDataset dataset = getDataFromFiles(title, parameterSettings);
-        final JFreeChart chart = createChart(dataset,title);
+        final JFreeChart chart = createChart(dataset,title, parameterSettings);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         setContentPane(chartPanel);
@@ -140,14 +140,18 @@ public class Chart extends ApplicationFrame {
 			}
 	        String line = null;
 	        
-	        int i = 1;
-
+	        int ln = 1;
 	        try {
 				while( ( line = reader.readLine() ) != null ) {
 					int num = Integer.parseInt(line);
 					sum[j] += num;
-			        series[j].add(i,num);
-					i++;
+					
+					// Sumsampling, only 1 in 10 points is plotted
+					if (ln % 10 == 0)
+					{
+						series[j].add(ln,num);
+					}
+					ln++;
 				}
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
@@ -156,7 +160,7 @@ public class Chart extends ApplicationFrame {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			};
-	    	average[j] = sum[j]/(i-1);
+	    	average[j] = sum[j]/(ln-1);
 			
 			try {
 				reader.close();
@@ -177,7 +181,7 @@ public class Chart extends ApplicationFrame {
      * 
      * @return a chart.
      */
-    private JFreeChart createChart(final XYDataset dataset, final String title) {
+    private JFreeChart createChart(final XYDataset dataset, final String title, double[][] parameterSettings) {
         
         // create the chart...
         final JFreeChart chart = ChartFactory.createXYLineChart(
@@ -195,7 +199,7 @@ public class Chart extends ApplicationFrame {
         chart.setBackgroundPaint(Color.white);
         for(int i = 0; i < average.length; i++)
         {
-        	chart.addSubtitle(new TextTitle("Average " + (i+1) + ": "+ average[i], TextTitle.DEFAULT_FONT));
+        	chart.addSubtitle(new TextTitle("Average " + Arrays.toString(parameterSettings[i]) + ": "+ average[i], TextTitle.DEFAULT_FONT));
         }
 
         
