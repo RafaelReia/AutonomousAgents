@@ -101,7 +101,7 @@ public class QLearning extends BasicEnvironment {
 				* (reward
 						+ gamma
 						* getMax(Qvalues[nextPredator.getX()][nextPredator.getY()][nextPrey.getX()][nextPrey.getY()])
-						- Qvalues[nowPredator.getX()][nowPredator.getY()][nextPrey.getX()][nextPrey.getY()][aPredator]);
+						- Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]);
 	}
 
 	private double getMax(double[] qvalues) {
@@ -134,6 +134,7 @@ public class QLearning extends BasicEnvironment {
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {
 			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
+			System.out.println("episode: " + i + ", steps: " + aux);
 			steps[i] += aux;
 		}
 		
