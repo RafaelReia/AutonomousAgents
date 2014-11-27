@@ -53,16 +53,19 @@ with $10000$ episodes. With the averaging we have been able to get less sharper
 graphs.
 
 \subsection{Different learning rates (\alpha)}
-We started to experiment with different values of \alpha. The values used are:
+In order to test the influence of \alpha we run our implementation with
+different values. The values used are:
 $0.1 , 0.2, 0.3, 0.4 and 0.5$. 
 
 We have noticed that, as expected, when we increse the value of \alpha algorithm
 converges faster to an optimal value. This happens because this makes the agent
 consider the the known information. If we choose $0$ for \alpha the agent would
 not learn anything as he would just use the old(inital) values.
+
 In theory we could put it to $1$ to maximise de learning rate, but as our
 transitions are not deterministic, because the agent doesn't control the
 movement of the prey we can't trust only on learning.
+
 Thus, we should set the values as high as possible but considering this tradeof.
 So, as said we used the values from $0.1, \ldots , 0.5$ test and the results are
 better with $0.5$ as the chart shows. They all converge but with higher values
@@ -112,15 +115,29 @@ behaviour closer to a random policy at the begining cousing the first group of
 iterations to have much higher number of steps than with \"optimistic
 initial conditions\".
 
-\includegraphics[]{res\alpha_04_gama_02_to_09_epsilon_01_IV_15}
+\includegraphics[]{alpha_03_gama_05_epsilon_01IV_00_to_50}
 
 \subsection{Different \epsilon's}
-We started to experiment with different values of \epsilon. The values used are:
+In order to understand the impact of \epsilon to our implementation we run
+in with the following values:
 $0.1, 0.3, 0.5 and 0.7$.
 
-The 
+The \epislon is a parameter of the \epsilon-greedy policy and not directly from
+the Q-Learning algorithm. So this testing shows more how the choosen policy can
+influence the learning process and its outcomes. 
 
-\includegraphics[]{alpha_04_gama_02_to_09_epsilon_01_IV_15}
+As this parameter is related to the probability of choosing a random action over
+the higher value action it is another factor of exploration/exploitation
+(??????????????????????).
+
+So if the \epsilon is increasd, the the behaviour is again closer to a random
+policy, but contrary to what happens with the initial values, this policy have
+impact throughout the process and not just at the beginning.
+
+This causes a worst final value after convergence as show in the following
+chart.
+
+\includegraphics[]{alpha_03_gama_05_epsilon_01_to_07_IV_15}
 
 \section{Conclusion}
 
