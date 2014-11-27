@@ -117,6 +117,14 @@ initial conditions\".
 
 \includegraphics[]{alpha_03_gama_05_epsilon_01IV_00_to_50}
 
+\section{Policy}
+The main policy used was the \epsilon-greedy policy. And with that we had to
+tune the value of \epsilon and the results of that tuning are in the following
+subsection.
+
+After that we implemented a different policy, softmax policy that is also
+described in the subsection \ref{softmax}.
+
 \subsection{Different \epsilon's}
 In order to understand the impact of \epsilon to our implementation we run
 in with the following values:
@@ -138,6 +146,12 @@ This causes a worst final value after convergence as show in the following
 chart.
 
 \includegraphics[]{alpha_03_gama_05_epsilon_01_to_07_IV_15}
+
+\subsection{Softmax}
+\label{softmax}
+
+This policy calculate 
+
 
 \section{Conclusion}
 
