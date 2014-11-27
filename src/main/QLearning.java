@@ -15,6 +15,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.jfree.chart.renderer.xy.CandlestickRenderer;
+
 import agents.Predator;
 import agents.PredatorPE;
 import agents.PredatorQL;

@@ -93,7 +93,7 @@ public class SoftmaxQLearning extends QLearning {
 				* (reward
 						+ gamma
 						* getMax(Qvalues[nextPredator.getX()][nextPredator.getY()][nextPrey.getX()][nextPrey.getY()])
-						- Qvalues[nowPredator.getX()][nowPredator.getY()][nextPrey.getX()][nextPrey.getY()][aPredator]);
+						- Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]);
 	}
 
 	private double getMax(double[] qvalues) {
@@ -129,7 +129,7 @@ public class SoftmaxQLearning extends QLearning {
 	}
 	
 	public int run() {
-		test(0.1, 0.9, 1, 15);
+		test(0.1, 0.9, 0.1, 1);
 		return 0;
 	}
 }
