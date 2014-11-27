@@ -99,7 +99,7 @@ public class Chart extends ApplicationFrame {
         super(title);
 
         final XYDataset dataset = getDataFromFiles(title, parameterSettings);
-        final JFreeChart chart = createChart(dataset,title);
+        final JFreeChart chart = createChart(dataset,title, parameterSettings);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         setContentPane(chartPanel);
@@ -177,7 +177,7 @@ public class Chart extends ApplicationFrame {
      * 
      * @return a chart.
      */
-    private JFreeChart createChart(final XYDataset dataset, final String title) {
+    private JFreeChart createChart(final XYDataset dataset, final String title,double[][] parameterSettings) {
         
         // create the chart...
         final JFreeChart chart = ChartFactory.createXYLineChart(
@@ -195,7 +195,7 @@ public class Chart extends ApplicationFrame {
         chart.setBackgroundPaint(Color.white);
         for(int i = 0; i < average.length; i++)
         {
-        	chart.addSubtitle(new TextTitle("Average " + (i+1) + ": "+ average[i], TextTitle.DEFAULT_FONT));
+        	chart.addSubtitle(new TextTitle("Average " + Arrays.toString(parameterSettings[i]) + ": "+ average[i], TextTitle.DEFAULT_FONT));
         }
 
         

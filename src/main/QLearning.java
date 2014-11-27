@@ -126,7 +126,7 @@ public class QLearning extends BasicEnvironment {
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {
 			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
-			System.out.println("episode: " + i + ", steps: " + aux);
+			//System.out.println("episode: " + i + ", steps: " + aux);
 			steps[i] += aux;
 		}
 		
