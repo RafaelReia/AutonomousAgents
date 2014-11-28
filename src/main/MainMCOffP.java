@@ -5,11 +5,11 @@ import org.jfree.ui.RefineryUtilities;
 import agents.Predator;
 import agents.Prey;
 
-public class MainOffPMCC {
+public class MainMCOffP {
 
 	public static void main(String[] args) {
 		
-		OffPMCC env = new OffPMCC(new Predator(0, 0),
+		MonteCarloOffPolicy env = new MonteCarloOffPolicy(new Predator(0, 0),
 				new Prey(5, 5));
 		double[][] parameterSettings = {{0.5,0.9,1}};
 		env.run(parameterSettings);

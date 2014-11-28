@@ -9,7 +9,7 @@ import agents.Predator;
 import agents.Prey;
 import static agents.Agent.DIR_NUM;
 
-public class OffPMCC extends BasicEnvironment {
+public class MonteCarloOffPolicy extends BasicEnvironment {
 	private static final int N_EPISODES = 10000;
 
 	int runs;
@@ -19,7 +19,7 @@ public class OffPMCC extends BasicEnvironment {
 	 * @param predator_
 	 * @param prey_
 	 */
-	public OffPMCC(Predator predator_, Prey prey_) {
+	public MonteCarloOffPolicy(Predator predator_, Prey prey_) {
 		super(predator_, prey_);
 	}
 
@@ -27,7 +27,7 @@ public class OffPMCC extends BasicEnvironment {
 	 * @param predators_
 	 * @param preys_
 	 */
-	public OffPMCC(ArrayList<Predator> predators_, Prey preys_) {
+	public MonteCarloOffPolicy(ArrayList<Predator> predators_, Prey preys_) {
 		super(predators_, preys_);
 	}
 
