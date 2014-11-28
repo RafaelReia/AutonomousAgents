@@ -35,7 +35,7 @@ public class SoftmaxQLearning extends QLearning {
 		super(predators_, preys_);
 	}
 
-	private int chooseAction(double[] qvalues, double temp) {
+	protected int chooseAction(double[] qvalues, double temp) {
 		int action = 0;
 		double prob[] = new double[DIR_NUM];
 		double sumProb = 0;
@@ -92,7 +92,7 @@ public class SoftmaxQLearning extends QLearning {
 		return steps;
 	}
 
-	private double calcNextValue(double[][][][][] Qvalues, Predator nowPredator, Prey nowPrey, Predator nextPredator, Prey nextPrey, int aPredator, double reward, double alpha, double gamma) {
+	protected double calcNextValue(double[][][][][] Qvalues, Predator nowPredator, Prey nowPrey, Predator nextPredator, Prey nextPrey, int aPredator, double reward, double alpha, double gamma) {
 		return Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]
 				+ alpha
 				* (reward
