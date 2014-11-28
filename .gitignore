@@ -14,3 +14,7 @@
 hs_err_pid*
 /bin/
 *.txt
+*.aux
+*.log
+*.pdf
+*.gz
