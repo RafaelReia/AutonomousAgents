@@ -47,20 +47,20 @@ graphs.
 \subsection{Different learning rates ($\alpha$)}
 In order to test the influence of $\alpha$ we ran our implementation with
 different values. The values used are:
-$0.1 , 0.2, 0.3, 0.4 and 0.5$. 
+$0.1 , 0.2, 0.3, 0.4$ and $0.5$. 
 
-We have noticed that, as expected, when we increse the value of $\alpha$, the 
-algorithm converges faster to an optimal value. This happens because this makes the agent
+We have noticed that, as expected, when we increase the value of $\alpha$, the 
+algorithm converges faster to an optimal value. A higher $\alpha$  makes the agent
 consider the known information. If we choose $0$ for $\alpha$ the agent
 would not learn anything, as it would just use the old (inital) values.
 
 In theory we could increase $\alpha$ to $1$ to maximize the learning rate. However, we cannot trust on only learning, because transitions are non-deterministic, since the agent does not control the prey.
 
-Thus, we should set the values as high as possible while considering this tradeof.
-So, as said we used the values from $0.1, \ldots , 0.5$ test and the results are
-better with $0.5$ as the chart shows. They all converge but with higher values
+Thus, we should set the values as high as possible while considering this tradeoff.
+We experimented with values from $0.1, \ldots , 0.5$. The results are
+better with $0.5$ as the chart shows. They all converge, but with higher values
 they converge faster. The average value shows how fast they converge, because if
-a line converge faster, the number of low values will be high and this have a
+a line converges faster, the number of low values will be high and this has a
 direct impact on the average.
 
 \begin{figure}[h]
@@ -70,46 +70,44 @@ direct impact on the average.
 
 \subsection{Different discount factors ($\gamma$)}
 We started to experiment with different values of $\gamma$. The values used are:
-$0.2, 0.5, 0.7 and 0.9$. 
+$0.2, 0.5, 0.7$ and $0.9$. 
 
 The discount factor influences the importance that is given to future rewards.
 This means that the lower the value, the less the agent cares about future
-rewards and considers more the imediate reward. In the limit, if it's set to
-$0$ (zero), the agent only considers the imediate reward.
+rewards and considers the immediate reward more. In the limit, if it is set to $0$ (zero), the agent only considers the immediate reward.
 
-In this problem instance the imediate reward is almost allways zero, so if we
-have low $\gamma$ the learned values will be close to zero, i. e., it will not
+In this problem instance the immediate reward is almost always zero, so if we
+have low $\gamma$ the learned values will be close to zero, i.e. it will not
 learn anything. 
 
-Thus, we noticed that by incresing $\gamma$ the number of steps converge to
-lower values but don't have a big impact on the convegence rate.
+Thus, we noticed that by increasing $\gamma$ the number of steps converge to
+lower values but do not have a big impact on the convegence rate.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{res/alpha_04_gama_02_to_09_epsilon_01_IV_15.png}
 \end{figure}
 
-The chart shows what we just mentioned, that with higher values for $\gamma$,
-the line converges to a lower point.
+The chart shows what we just mentioned, that with higher values for $\gamma$, the line converges to a lower point.
 
 \subsection{Different Initial Values}
 We started to experiment with different values of IV. The values used are:
-$0, 1, 15 and 50$. 
+$0, 1, 15$ and $50$. 
 
-As Q-learning is an iterative process, and we assign initial values for the
+As Q-learning is an iterative process, and we assign initial values to the
 states, we have to consider what values we use and the impact it may have on the
 performance/evolution of the process.
 
-It have been shown that high values for the initialization, aka \"optimistic
-initial conditions\", can encourage exploration. This is positive because after
-the agent explores all the states and assign the values for that states, in can
+It has been shown that high values for the initialization, known as \emph{optimistic
+initial conditions}, can encourage exploration. This is positive because after
+the agent explores all the states and assigns the values for those states, it can
 start optimizing paths.
 With low initial values, consequently low exploration, the number of states that
-still have the initial values are higher through the process and when the agent
-is surrounded by states with the same value, it chooses randomly. This causes a
-behaviour closer to a random policy at the begining cousing the first group of
-iterations to have much higher number of steps than with \"optimistic
-initial conditions\".
+still have the initial values are higher throughout the process. When the agent
+is surrounded by states with the same value, it will choose randomly. This causes a
+behaviour closer to a random policy at the begining. Therefore, the first group of
+iterations for low initial values has a much higher number of steps than when using \emph{optimistic
+initial conditions}.
 
 \begin{figure}[h]
 \centering
@@ -117,31 +115,27 @@ initial conditions\".
 \end{figure}
 
 \section{Policy}
-The main policy used was the $\epsilon-greedy$ policy. And with that we had to
-tune the value of $\epsilon$ and the results of that tuning are in the following
-subsection.
+The main policy used was the $\epsilon-greedy$ policy. We will discuss the effect of using different values for $\epsilon$ in section \ref{ep}.
 
-After that we implemented a different policy, softmax policy that is also
-described in the subsection \ref{softmax}.
+The results using a different policy, the \emph{softmax} policy, are described in section \ref{softmax}.
 
 \subsection{Different $\epsilon$'s}
+\label{ep}
 In order to understand the impact of $\epsilon$ to our implementation we run
 in with the following values:
-$0.1, 0.3, 0.5 and 0.7$.
+$0.1, 0.3, 0.5$ and $0.7$.
 
-The $\epsilon$ is a parameter of the $\epsilon-greedy$ policy and not directly
-from the Q-Learning algorithm. So this testing shows more how the choosen policy can
+$\epsilon$ is a parameter of the $\epsilon-greedy$ policy and not directly of the Q-Learning algorithm. The tests in this section show mostly how the chosen policy can
 influence the learning process and its outcomes. 
 
 As this parameter is related to the probability of choosing a random action over
-the higher value action it is another factor of exploration/exploitation
-(??????????????????????).
+the maximum valued action, it determines whether more exploration or exploitation is pursued.
 
-So if the $\epsilon$ is increasd, the the behaviour is again closer to a random
-policy, but contrary to what happens with the initial values, this policy have
+If $\epsilon$ is increased, the behaviour is closer to a random
+policy, but contrary to what happens with the initial values, this policy has
 impact throughout the process and not just at the beginning.
 
-This causes a worst final value after convergence as show in the following
+Higher $\epsilon$ values give worse convergence, as can be seen in the following
 chart.
 
 \begin{figure}[h]
@@ -152,21 +146,20 @@ chart.
 \subsection{Softmax}
 \label{softmax}
 
-This policy calculates the probablities for each action to be choosed at each
-timestamp. This algorithm can be tuned through the parameter $\tau$ that is
-caled \emph{temperature}.
-The temperature it's a positive value that have impact in the result of the
+This policy calculates the probablities for each action to be chosen at each
+timestep. This algorithm can be tuned through the parameter $\tau$, which is
+called \emph{temperature}.
+The temperature is a positive value that has impact on the result of the
 formula.
 
-With high $\tau$ the probability of all actions are (nearly) the same, causing
+With high $\tau$ the probability of all actions is (nearly) equal, causing
 this to have a nearly random behaviour.
 
 As $\tau \rightarrow 0$ the behaviour is the same as the $\epsilon-greedy$
 policy.
-So this policy works with this tradeof, trying to balance totaly random choices
-with pure greedy approach.
+So this policy works with a tradeoff, trying to balance totally random choices with a purely greedy approach.
 
-The results presented in the graph shows that with higher $\tau$ the number of
+The results presented in the graph show that with higher $\tau$ the number of
 steps is very high, as expected, caused by the nearly random behaviour. With low
 values, $1 or 0.1$ the final number of steps is close to the best that we got
 with the $\epsilon-greedy$ policy. This is expected as explained before.
