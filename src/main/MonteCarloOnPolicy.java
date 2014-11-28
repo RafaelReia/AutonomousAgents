@@ -1,32 +1,19 @@
-/**
- * 
- */
 package main;
 
-import static main.BasicEnvironment.WORLDSIZE;
-import static agents.Agent.*;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Random;
 
+import agents.Episode;
 import agents.Predator;
-import agents.PredatorPE;
-import agents.PredatorQL;
-import agents.PredatorVI;
 import agents.Prey;
+import static agents.Agent.DIR_NUM;
 
-/**
- *
- */
-public class MonteCarloOnPolicy extends BasicEnvironment {
+public class MonteCarloOnPolicy extends SoftmaxQLearning {
 
 	private static final int N_EPISODES = 10000;
+
+	int runs;
+	int [] steps = new int[N_EPISODES];
+	
 	/**
 	 * @param predator_
 	 * @param prey_
@@ -39,54 +26,170 @@ public class MonteCarloOnPolicy extends BasicEnvironment {
 	 * @param predators_
 	 * @param preys_
 	 */
-	public MonteCarloOnPolicy	(ArrayList<Predator> predators_, Prey preys_) {
+	public MonteCarloOnPolicy(ArrayList<Predator> predators_, Prey preys_) {
 		super(predators_, preys_);
 	}
 
-	private int chooseAction(double[] qvalues, double epsilon) {
-		double max = -Double.MAX_VALUE;
-		Random rdm = new Random();
-		ArrayList<Integer> cand = new ArrayList<Integer>();
-		if (rdm.nextDouble() > epsilon)
-			for (int i = 0; i < DIR_NUM; i++) {
-				if (qvalues[i] > max) {
-					cand.clear();
-					max = qvalues[i];
-				}
-				if (qvalues[i] == max) {
-					cand.add(i);
+	private void initValues(double[][][][][] values, double initValue) {
+		for (int px = 0; px < WORLDSIZE; px++)
+			for (int py = 0; py < WORLDSIZE; py++)
+				for (int x = 0; x < WORLDSIZE; x++)
+					for (int y = 0; y < WORLDSIZE; y++)
+						for (int m = 0; m < DIR_NUM; m++) {
+							values[px][py][x][y][m] = initValue;
+						}
+
+	}
+	
+	
+	
+	public int run(double[][] parameterSettings) {
+		// For every parameter setting
+		double[] ii = new double[parameterSettings.length];
+		for (int ps = 0; ps < parameterSettings.length;ps++)
+		{
+			ii[ps] = 0;
+			for(int i = 0;i<10;i++)
+			{
+				ii[ps] += test(parameterSettings[ps][0],parameterSettings[ps][1],parameterSettings[ps][2]);
+			}
+			ii[ps] /= 10;
+		}
+		for (int i = 0; i < parameterSettings.length; i++) {
+			System.out.println(ii[i]);
+		}
+		return 0;
+	}
+	
+	public int test(double alpha, double gamma, double temp) {
+		double[][][][][] Q = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][DIR_NUM];
+		double[][][][][][] Returns = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][DIR_NUM][N_EPISODES];
+		double[][][][][] pi_b = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][DIR_NUM];
+		double[][][][][] pi = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][DIR_NUM];
+		
+		Episode episode;
+		
+		initValues(pi_b, 0.2);
+		
+		boolean converged = false;
+		int i;
+		for (i = 0; !converged; i++) {
+			converged = true;
+			// generate an episode based on policy pi_b
+			episode = generateEpisode(pi_b, alpha, gamma, temp);
+			int T = episode.length() + 1;
+			
+			/*// tao <- latest time at which a_tao != pi(s_tao)
+			int tao;
+			for (tao = 0; tao < T - 1; tao++) {
+				Predator predator = episode.getPredator(tao);
+				Prey prey = episode.getPrey(tao);
+				int a = episode.getPredatorAction(tao);
+				if (a != pi[predator.getX()][predator.getY()][prey.getX()][prey.getY()]) {
+					break;
 				}
 			}
-		else {
-			// choose any random action for the epsilon part
-			return rdm.nextInt(DIR_NUM);
+			
+			// Pre-process the production part
+			double[] w = new double[T];
+			w[T - 1] = 1;
+			for (int t = T - 2; t >= 0; t--) {
+				Predator predator = episode.getPredator(t);
+				Prey prey = episode.getPrey(t);
+				int a = episode.getPredatorAction(t);
+				w[t] = w[t + 1] / pi_b[predator.getX()][predator.getY()][prey.getX()][prey.getY()][a];
+			}*/
+			
+			// For each pair s,a appearing in the episode
+			for (int t = 0; t < T - 1; t++) {
+				Predator predator = episode.getPredator(t);
+				Prey prey = episode.getPrey(t);
+				int aPredator = episode.getPredatorAction(t);
+				int aPrey = episode.getPreyAction(t);
+				
+				// Calculate reward of this state
+				double G = getReward(predator,prey);
+				
+				
+				// Append reward G to Returns(s,a)
+				Returns[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator][i] = G;
+				
+				// Q(s,a) = average(Returns(s,a))
+				Q[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] = calcAverage( Returns[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] );
+				
+			}
+			
+			// For each s appearing in the episode
+			for (int t = 0; t < T - 1; t++) {
+				Predator predator = episode.getPredator(t);
+				Prey prey = episode.getPrey(t);
+				int aPredator = episode.getPredatorAction(t);
+				int aPrey = episode.getPreyAction(t);
+				
+				int newA = getArgMax(Q[predator.getX()][predator.getY()][prey.getX()][prey.getY()]);
+				// Loop over all possible actions to update policy
+				for (int j = 0; j < DIR_NUM; j++) {
+					if (aPredator == newA)
+					{
+						pi[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] = (1-temp+(temp/DIR_NUM));
+					}
+					else // aPredator != newA
+					{
+						pi[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] = temp/DIR_NUM;
+					}
+				}
+			}
+			//printPolicy(pi, this.prey.getX(), this.prey.getY());
 		}
-		return cand.get(rdm.nextInt(cand.size()));
+		return i;
 	}
 
+	private Episode generateEpisode(double[][][][][] pi_b, double alpha, double gamma, double temp) {
+		Episode episode = new Episode(); 
+		
+		Predator nowPredator = new Predator(predators.get(0));
+		Prey nowPrey = new Prey(prey);
+		
+		while (!nowPrey.isCaught()) {
+			Predator nextPredator = new Predator(nowPredator);
+			Prey nextPrey = new Prey(nowPrey);
+			
+			int aPredator = chooseAction(pi_b[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()], temp);
+			int aPrey = nowPrey.planMoveRandom(nowPredator); //check this if not working XXX
 
-	public int episodeQL(double[][][][][] Qvalues, double alpha, double gamma, double epsilon) {
-		/* Initializing the array values */
+			episode.append(nowPredator, nowPrey, aPredator, aPrey);
+			
+			nextPrey.move(aPrey);
+			nextPredator.move(aPredator, nextPrey);
+			
+			double reward = getReward(nextPredator, nextPrey);
+			pi_b[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]
+					= calcNextValue(pi_b, nowPredator, nowPrey, nextPredator, nextPrey, aPredator, reward, alpha, gamma);
+			
+			nowPredator = nextPredator;
+			nowPrey = nextPrey;
+		}
+		
+		return episode;
+	}
+	
+	private int countSteps(int[][][][] pi) {
 		int steps = 0;
 		
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 		
 		while (!nowPrey.isCaught()) {
-			steps++;
-			
 			Predator nextPredator = new Predator(nowPredator);
 			Prey nextPrey = new Prey(nowPrey);
 			
-			int aPredator = chooseAction(Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()], epsilon);
+			int aPredator = pi[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()];
 			int aPrey = nowPrey.planMoveRandom(nowPredator); //check this if not working XXX
 
 			nextPrey.move(aPrey);
 			nextPredator.move(aPredator, nextPrey);
 			
-			double reward = getReward(nextPredator, nextPrey);
-			Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]
-					= calcNextValue(Qvalues, nowPredator, nowPrey, nextPredator, nextPrey, aPredator, reward, alpha, gamma);
+			steps++;
 			
 			nowPredator = nextPredator;
 			nowPrey = nextPrey;
@@ -94,87 +197,28 @@ public class MonteCarloOnPolicy extends BasicEnvironment {
 		
 		return steps;
 	}
-
-	private double calcNextValue(double[][][][][] Qvalues, Predator nowPredator, Prey nowPrey, Predator nextPredator, Prey nextPrey, int aPredator, double reward, double alpha, double gamma) {
-		return Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]
-				+ alpha
-				* (reward
-						+ gamma
-						* getMax(Qvalues[nextPredator.getX()][nextPredator.getY()][nextPrey.getX()][nextPrey.getY()])
-						- Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]);
+	
+	public static double calcAverage (double[] array)
+	{
+		double sum = 0;
+		// Sum
+		for (int i = 0; i < array.length; i++)
+		{
+			sum += array[i];
+		}
+		// Divide by number of items
+		return sum / array.length;
 	}
-
-	private double getMax(double[] qvalues) {
+	
+	private int getArgMax(double[] qvalues) {
 		double max = -Double.MAX_VALUE;
+		int maxDir = 0;
 		for (int i = 0; i < DIR_NUM; i++) {
 			if (qvalues[i] >= max) {
 				max = qvalues[i];
+				maxDir = i;
 			}
 		}
-		return max;
-	}
-	
-	private void initValues(double[][][][][] values, double initValue) {
-		for (int px = 0; px < WORLDSIZE; px++)
-			for (int py = 0; py < WORLDSIZE; py++)
-				for (int x = 0; x < WORLDSIZE; x++)
-					for (int y = 0; y < WORLDSIZE; y++)
-						for (int m = 0; m < 5; m++) {
-							values[px][py][x][y][m] = initValue;
-						}
-
-	}
-	int runs;
-	int [] steps = new int[N_EPISODES];
-	public int test(double alpha, double gamma, double epsilon, double initValue) {
-		int time = 0;
-		double[][][][][] Qvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
-		initValues(Qvalues, initValue);
-		int aux;
-		runs++;
-		for (int i = 0; i < N_EPISODES; i++) {
-			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
-			System.out.println("episode: " + i + ", steps: " + aux);
-			steps[i] += aux;
-		}
-		
-		return time;
-	}
-	
-	public int run(double[][] parameterSettings) {
-		// For every parameter setting
-		for (int ps = 0; ps < parameterSettings.length;ps++)
-		{
-			for(int i = 0;i<100;i++)
-			{
-				test(parameterSettings[ps][0],parameterSettings[ps][1],parameterSettings[ps][2],parameterSettings[ps][3]);
-			}
-			// Open file to write results
-			PrintWriter f = null;
-			try {
-				f = new PrintWriter("output" + ps + ".txt");
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			double sum = 0;
-			for (int i = 0; i < N_EPISODES; i++) {
-				sum += steps[i]/runs;
-				f.println(steps[i]/runs);
-			}
-			double average = sum / N_EPISODES;
-			System.out.println("Average: " +  average);
-			
-			f.close();
-		}
-		return 0;
-		
-	}
-
-	public int movePrey() {
-		int a = prey.planMoveRandom(predators);
-		prey.move(a);
-		return a;
+		return maxDir;
 	}
 }
