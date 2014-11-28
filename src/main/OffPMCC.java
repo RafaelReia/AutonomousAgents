@@ -4,12 +4,15 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
+
+import sun.util.locale.provider.AuxLocaleProviderAdapter;
 import agents.Episode;
 import agents.Predator;
 import agents.Prey;
 import static agents.Agent.DIR_NUM;
 
-public class OffPMCC extends BasicEnvironment {
+public class OffPMCC extends SoftmaxQLearning {
 	private static final int N_EPISODES = 10000;
 
 	int runs;
@@ -42,36 +45,27 @@ public class OffPMCC extends BasicEnvironment {
 
 	}
 	
-	public void run(double[][] parameterSettings) {
+	
+	
+	public int run(double[][] parameterSettings) {
 		// For every parameter setting
+		double[] ii = new double[parameterSettings.length];
 		for (int ps = 0; ps < parameterSettings.length;ps++)
 		{
-			for(int i = 0;i<100;i++)
+			ii[ps] = 0;
+			for(int i = 0;i<10;i++)
 			{
-				test(parameterSettings[ps][0],parameterSettings[ps][1],parameterSettings[ps][2]);
+				ii[ps] += test(parameterSettings[ps][0],parameterSettings[ps][1],parameterSettings[ps][2]);
 			}
-			// Open file to write results
-			PrintWriter f = null;
-			try {
-				f = new PrintWriter("output" + ps + ".txt");
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			double sum = 0;
-			for (int i = 0; i < N_EPISODES; i++) {
-				sum += steps[i]/runs;
-				f.println(steps[i]/runs);
-			}
-			double average = sum / N_EPISODES;
-			System.out.println("Average: " +  average);
-			
-			f.close();
+			ii[ps] /= 10;
 		}
+		for (int i = 0; i < parameterSettings.length; i++) {
+			System.out.println(ii[i]);
+		}
+		return 0;
 	}
 	
-	public void test(double alpha, double gamma, double temp) {
+	public int test(double alpha, double gamma, double temp) {
 		double[][][][][] Q = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][DIR_NUM];
 		double[][][][][] N = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][DIR_NUM];
 		double[][][][][] D = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][DIR_NUM];
@@ -83,9 +77,12 @@ public class OffPMCC extends BasicEnvironment {
 		
 		initValues(pi_b, 0.2);
 		
-		for (int i = 0; i < N_EPISODES; i++) {
+		boolean converged = false;
+		int i;
+		for (i = 0; i < N_EPISODES; i++) {
+			converged = true;
 			// generate an episode based on policy pi_b
-			episode = generateEpisode(pi_b);
+			episode = generateEpisode(pi_b, alpha, gamma, temp);
 			int T = episode.length() + 1;
 			
 			// tao <- latest time at which a_tao != pi(s_tao)
@@ -124,16 +121,72 @@ public class OffPMCC extends BasicEnvironment {
 				
 				// t <- the time of first occurrence of s,a such that t >= tao
 				vst[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] = true;
-				N[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] += w[t] * getReward(predator, prey, aPredator, aPrey);
+				N[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] += w[t] * 10;
 				D[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] += w[t];
 				Q[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] = N[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] / D[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator];
 				
 				// Update policy
 				if (Q[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] > Q[predator.getX()][predator.getY()][prey.getX()][prey.getY()][pi[predator.getX()][predator.getY()][prey.getX()][prey.getY()]]) {
 					pi[predator.getX()][predator.getY()][prey.getX()][prey.getY()] = aPredator;
+					converged = false;
 				}
 			}
+			printPolicy(pi, this.prey.getX(), this.prey.getY());
 		}
-	}	
+		return i;
+	}
+
+	private Episode generateEpisode(double[][][][][] pi_b, double alpha, double gamma, double temp) {
+		Episode episode = new Episode(); 
+		
+		Predator nowPredator = new Predator(predators.get(0));
+		Prey nowPrey = new Prey(prey);
+		
+		while (!nowPrey.isCaught()) {
+			Predator nextPredator = new Predator(nowPredator);
+			Prey nextPrey = new Prey(nowPrey);
+			
+			int aPredator = chooseAction(pi_b[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()], temp);
+			int aPrey = nowPrey.planMoveRandom(nowPredator); //check this if not working XXX
+
+			episode.append(nowPredator, nowPrey, aPredator, aPrey);
+			
+			nextPrey.move(aPrey);
+			nextPredator.move(aPredator, nextPrey);
+			
+			double reward = getReward(nextPredator, nextPrey);
+			pi_b[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]
+					= calcNextValue(pi_b, nowPredator, nowPrey, nextPredator, nextPrey, aPredator, reward, alpha, gamma);
+			
+			nowPredator = nextPredator;
+			nowPrey = nextPrey;
+		}
+		
+		return episode;
+	}
 	
+	private int countSteps(int[][][][] pi) {
+		int steps = 0;
+		
+		Predator nowPredator = new Predator(predators.get(0));
+		Prey nowPrey = new Prey(prey);
+		
+		while (!nowPrey.isCaught()) {
+			Predator nextPredator = new Predator(nowPredator);
+			Prey nextPrey = new Prey(nowPrey);
+			
+			int aPredator = pi[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()];
+			int aPrey = nowPrey.planMoveRandom(nowPredator); //check this if not working XXX
+
+			nextPrey.move(aPrey);
+			nextPredator.move(aPredator, nextPrey);
+			
+			steps++;
+			
+			nowPredator = nextPredator;
+			nowPrey = nextPrey;
+		}
+		
+		return steps;
+	}
 }

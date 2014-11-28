@@ -6,6 +6,8 @@ import agents.Predator;
 import agents.PredatorRandom;
 import agents.Prey;
 
+import static agents.Agent.*;
+
 public class BasicEnvironment {
 	
 	public static final int WORLDSIZE 	= 11;
@@ -99,6 +101,34 @@ public class BasicEnvironment {
 		for (int x = 0; x < WORLDSIZE; x++) {
 			for (int y = 0; y < WORLDSIZE; y++) {
 				System.out.printf("%.02f\t", values[x][y][px][py]);
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+	
+	protected void printPolicy(int[][][][] p, int px, int py) {
+		for (int x = 0; x < WORLDSIZE; x++) {
+			for (int y = 0; y < WORLDSIZE; y++) {
+				switch (p[x][y][px][py]) {
+				case DIR_WAIT:
+					System.out.print('-');
+					break;
+				case DIR_SOUTH:
+					System.out.print('v');
+					break;
+				case DIR_NORTH:
+					System.out.print('^');
+					break;
+				case DIR_EAST:
+					System.out.print('>');
+					break;
+				case DIR_WEST:
+					System.out.print('<');
+					break;
+				default:
+					break;
+				}
 			}
 			System.out.println();
 		}
