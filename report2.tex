@@ -22,23 +22,15 @@ Yikang Wang -- 10540288\\
 }
 \maketitle
 \section{Introduction}
-In this assignment, we study the application of \emph{reinforced learning
-algorithms}. The main focus of this study is on the Q-Learning algorithm where
-we used a \epsilon-policy at the begining and changed other policies to experiment
-the efects of that.
+In this assignment, we study the application of \emph{reinforcement learning
+algorithms}. The main focus of this study is on the Q-Learning algorithm. We discuss the use of an $\epsilon$-policy and other policies.
 
-Our goal is to tune the algorithms with the different parameters and understand
-how this parameters affect the performance that in this specific instance is
-determined by the number of steps the predator needs to catch the prey and how
-we can improve that with learning. 
+Our goal is to tune the algorithms with the different parameters and understand how these parameters affect the performance that in this specific instance is determined by the number of steps the predator needs to catch the prey and how we can improve that by learning. 
 
 \section{Program design}
-In this assignment the overall progam design stays the same, as we just added
-the equivalent classes for the new algorithms. So we have a new main class,
-\emph{MainQl} that, like the others, create a specific environment for the
-predator and prey to live. Then it runs the simulation for that setup.
+In this assignment the overall progam design stays the same as in assignment 1, as we just added the equivalent classes for the new algorithms. So we have a new main class, \emph{MainQl} that, like the others, creates a specific environment for the predator and prey to live. Then it runs the simulation for that setup.
 
-We also added some utility classes to produce the graphs for this report.
+We also added a utility class to create graphs to measure the performance of different parameter settings. The library used is \emph{JFreeChart}. The code of the graph generation class is an adaptation of an online example, suited to the needs of our project.
 
 \section{Evaluation}
 
@@ -49,24 +41,22 @@ We also added some utility classes to produce the graphs for this report.
 
 In order to test how the Q-learning algorithm works with different parameters we
 have run our implemetation and computed the average of $100$ runs, each of them
-with $10000$ episodes. With the averaging we have been able to get less sharper
+with $10000$ episodes. With the averaging we have been able to get smoother
 graphs.
 
 \subsection{Different learning rates ($\alpha$)}
-In order to test the influence of $\alpha$ we run our implementation with
+In order to test the influence of $\alpha$ we ran our implementation with
 different values. The values used are:
 $0.1 , 0.2, 0.3, 0.4 and 0.5$. 
 
-We have noticed that, as expected, when we increse the value of $\alpha$
+We have noticed that, as expected, when we increse the value of $\alpha$, the 
 algorithm converges faster to an optimal value. This happens because this makes the agent
-consider the the known information. If we choose $0$ for $\alpha$ the agent
-would not learn anything as he would just use the old(inital) values.
+consider the known information. If we choose $0$ for $\alpha$ the agent
+would not learn anything, as it would just use the old (inital) values.
 
-In theory we could put it to $1$ to maximise de learning rate, but as our
-transitions are not deterministic, because the agent doesn't control the
-movement of the prey we can't trust only on learning.
+In theory we could increase $\alpha$ to $1$ to maximize the learning rate. However, we cannot trust on only learning, because transitions are non-deterministic, since the agent does not control the prey.
 
-Thus, we should set the values as high as possible but considering this tradeof.
+Thus, we should set the values as high as possible while considering this tradeof.
 So, as said we used the values from $0.1, \ldots , 0.5$ test and the results are
 better with $0.5$ as the chart shows. They all converge but with higher values
 they converge faster. The average value shows how fast they converge, because if
@@ -125,7 +115,7 @@ subsection.
 After that we implemented a different policy, softmax policy that is also
 described in the subsection \ref{softmax}.
 
-\subsection{Different \epsilon's}
+\subsection{Different $\epsilon$'s}
 In order to understand the impact of $\epsilon$ to our implementation we run
 in with the following values:
 $0.1, 0.3, 0.5 and 0.7$.
