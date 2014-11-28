@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{float}
 
 \graphicspath{ {ReportImages/OneClassSVM/} }
 
@@ -63,7 +64,7 @@ they converge faster. The average value shows how fast they converge, because if
 a line converges faster, the number of low values will be high and this has a
 direct impact on the average.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{res/alpha_01_to_05_gama_09_epsilon_01_IV_15.png}
 \end{figure}
@@ -83,7 +84,7 @@ learn anything.
 Thus, we noticed that by increasing $\gamma$ the number of steps converge to
 lower values but do not have a big impact on the convegence rate.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{res/alpha_04_gama_02_to_09_epsilon_01_IV_15.png}
 \end{figure}
@@ -109,7 +110,7 @@ behaviour closer to a random policy at the begining. Therefore, the first group 
 iterations for low initial values has a much higher number of steps than when using \emph{optimistic
 initial conditions}.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{res/alpha_03_gama_05_epsilon_01IV_00_to_50.png}
 \end{figure}
@@ -138,7 +139,7 @@ impact throughout the process and not just at the beginning.
 Higher $\epsilon$ values give worse convergence, as can be seen in the following
 chart.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{res/alpha_03_gama_05_epsilon_01_to_07_IV_15.png}
 \end{figure}
@@ -164,7 +165,7 @@ steps is very high, as expected, caused by the nearly random behaviour. With low
 values, $1 or 0.1$ the final number of steps is close to the best that we got
 with the $\epsilon-greedy$ policy. This is expected as explained before.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{res/alpha_03_gamma_05_temp_01_to_1000_IV_1.png}
 \end{figure}
