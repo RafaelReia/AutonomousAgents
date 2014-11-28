@@ -140,14 +140,18 @@ public class Chart extends ApplicationFrame {
 			}
 	        String line = null;
 	        
-	        int i = 1;
-
+	        int ln = 1;
 	        try {
 				while( ( line = reader.readLine() ) != null ) {
 					int num = Integer.parseInt(line);
 					sum[j] += num;
-			        series[j].add(i,num);
-					i++;
+					
+					// Sumsampling, only 1 in 10 points is plotted
+					if (ln % 10 == 0)
+					{
+						series[j].add(ln,num);
+					}
+					ln++;
 				}
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
@@ -156,7 +160,7 @@ public class Chart extends ApplicationFrame {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			};
-	    	average[j] = sum[j]/(i-1);
+	    	average[j] = sum[j]/(ln-1);
 			
 			try {
 				reader.close();
@@ -177,7 +181,7 @@ public class Chart extends ApplicationFrame {
      * 
      * @return a chart.
      */
-    private JFreeChart createChart(final XYDataset dataset, final String title,double[][] parameterSettings) {
+    private JFreeChart createChart(final XYDataset dataset, final String title, double[][] parameterSettings) {
         
         // create the chart...
         final JFreeChart chart = ChartFactory.createXYLineChart(
