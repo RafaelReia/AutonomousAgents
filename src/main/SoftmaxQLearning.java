@@ -5,7 +5,10 @@ package main;
 
 import static agents.Agent.*;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+
 import agents.Predator;
 import agents.Prey;
 
@@ -13,6 +16,8 @@ import agents.Prey;
  *
  */
 public class SoftmaxQLearning extends QLearning {
+
+	private static final int N_EPISODES = 100;
 
 	/**
 	 * @param predator_
@@ -93,7 +98,7 @@ public class SoftmaxQLearning extends QLearning {
 				* (reward
 						+ gamma
 						* getMax(Qvalues[nextPredator.getX()][nextPredator.getY()][nextPrey.getX()][nextPrey.getY()])
-						- Qvalues[nowPredator.getX()][nowPredator.getY()][nextPrey.getX()][nextPrey.getY()][aPredator]);
+						- Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]);
 	}
 
 	private double getMax(double[] qvalues) {
@@ -116,20 +121,51 @@ public class SoftmaxQLearning extends QLearning {
 						}
 
 	}
-
+	int runs;
+	int [] steps = new int[N_EPISODES];
 	public int test(double alpha, double gamma, double temp, double initValue) {
 		double[][][][][] Qvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
-
+		int aux;
+		runs++;
 		initValues(Qvalues, initValue);
-		for (int i = 0; i < 100000; i++) {
-			System.out.println(episodeQL(Qvalues, alpha, gamma, temp));
+		for (int i = 0; i < N_EPISODES; i++) {
+			//System.out.println(episodeQL(Qvalues, alpha, gamma, temp));
+			aux = episodeQL(Qvalues, alpha, gamma, temp);
+			//System.out.println("episode: " + i + ", steps: " + aux);
+			steps[i] += aux;
 		}
 
 		return 0;
 	}
 	
-	public int run() {
-		test(0.1, 0.9, 1, 15);
+	public int run(double[][] parameterSettings) {
+		// For every parameter setting
+		for (int ps = 0; ps < parameterSettings.length;ps++)
+		{
+			for(int i = 0;i<100;i++)
+			{
+				test(parameterSettings[ps][0],parameterSettings[ps][1],parameterSettings[ps][2],parameterSettings[ps][3]);
+			}
+			// Open file to write results
+			PrintWriter f = null;
+			try {
+				f = new PrintWriter("output" + ps + ".txt");
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			double sum = 0;
+			for (int i = 0; i < N_EPISODES; i++) {
+				sum += steps[i]/runs;
+				f.println(steps[i]/runs);
+			}
+			double average = sum / N_EPISODES;
+			System.out.println("Average: " +  average);
+			
+			f.close();
+		}
 		return 0;
+		
 	}
 }

@@ -3,22 +3,14 @@
  */
 package main;
 
-import static main.BasicEnvironment.WORLDSIZE;
 import static agents.Agent.*;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
 import agents.Predator;
-import agents.PredatorPE;
-import agents.PredatorQL;
-import agents.PredatorVI;
 import agents.Prey;
 
 /**
@@ -134,7 +126,7 @@ public class QLearning extends BasicEnvironment {
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {
 			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
-			System.out.println("episode: " + i + ", steps: " + aux);
+			//System.out.println("episode: " + i + ", steps: " + aux);
 			steps[i] += aux;
 		}
 		
@@ -172,9 +164,4 @@ public class QLearning extends BasicEnvironment {
 		
 	}
 
-	public int movePrey() {
-		int a = prey.planMoveRandom(predators);
-		prey.move(a);
-		return a;
-	}
 }
