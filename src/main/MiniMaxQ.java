@@ -65,38 +65,71 @@ public class MiniMaxQ extends BasicEnvironment {
 		return cand.get(rdm.nextInt(cand.size()));
 	}
 
-	public int episodeQL(double[][][][][] Qvalues, double alpha, double gamma,
-			double epsilon) {
+	public int episodeQL(double[][][][][][] Qvalues, double alpha, double gamma,
+			double epsilon, double[][][][] vvalues, double[][][][][] pivalues) {
 		/* Initializing the array values */
 		int steps = 0;
 
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 
-		while (!nowPrey.isCaught()) {
+		while (!nowPrey.isCaught()) { //FIXME when it's not over
 			steps++;
 
 			Predator nextPredator = new Predator(nowPredator);
 			Prey nextPrey = new Prey(nowPrey);
 
+			//FIXME I set the action to 0 because we don't use/know the opponents chosen action. 
 			int aPredator = chooseAction(
 					Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
-							.getY()], epsilon);
+							.getY()][0], epsilon);
 			
+			//FIXME I set the action to 0 because we don't use/know the opponents chosen action.
 			// Prey chooses actions or trips
 			int aPrey = chooseOrTrip(
 					Qvalues[nowPrey.getX()][nowPrey.getY()][nowPredator.getX()][nowPredator
-					                                    							.getY()], epsilon);
+					                                    							.getY()][0], epsilon);
 
+			//move the next prey state.
 			nextPrey.move(aPrey);
 			nextPredator.move(aPredator, nextPrey);
 
-			double reward = getReward(nextPredator, nextPrey);
+			//!!!!!!!!!!!Learn!!!!!!!!!!
+			/*Reward is the reward getted by moving for the state*/
+			//FIXME in our case is always 0 right? because when there is a reward the game ends.
+			double reward =0;
+			
+			//TODO finish this;
+			/* After receiving reward rew for moving from state s to s’
+			 * via action a and opponent’s action o
+			 * */
+			//Q[s,a,o] := (1-alpha) * Q[s,a,o] + alpha * (rew + gamma * V[s’])
+			// compute for the predator
+			Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
+					[nowPrey.getY()][aPredator][aPrey] = (1-alpha)* Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
+							[nowPrey.getY()][aPredator][aPrey] 
+									+ alpha*(reward + gamma
+											//computes using the "now values of the prey" because
+											//we don't know for where it moved. //FIXME
+											* vvalues[nextPredator.getX()][nextPredator.getY()][nowPrey.getX()]
+											[nowPrey.getY()]);
+			
+			//computePi(); use linear programming!
+//TODO
+			//computeV();
+//TODO	
+			//computeAlpha();
+			alpha = alpha*gamma;
+			
+			
+			//Computes with the next prey
+			/*double reward = getReward(nextPredator, nextPrey);
 			Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
 					.getY()][aPredator] = calcNextValue(Qvalues, nowPredator,
 					nowPrey, nextPredator, nextPrey, aPredator, reward, alpha,
-					gamma);
+					gamma);*/
 
+			//It's only move here.
 			nowPredator = nextPredator;
 			nowPrey = nextPrey;
 		}
@@ -114,6 +147,11 @@ public class MiniMaxQ extends BasicEnvironment {
 		{
 			return 0;
 		}
+	}
+	
+	private void learnMiniMax(){
+		
+		
 	}
 
 	private double calcNextValue(double[][][][][] Qvalues,
@@ -174,7 +212,7 @@ public class MiniMaxQ extends BasicEnvironment {
 		int aux;
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {
-			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
+			aux = episodeQL(Qvalues, alpha, gamma, epsilon, Vvalues, Pivalues);
 			// System.out.println("episode: " + i + ", steps: " + aux);
 			steps[i] += aux;
 		}
@@ -186,8 +224,8 @@ public class MiniMaxQ extends BasicEnvironment {
 		// For every parameter setting
 		for (int ps = 0; ps < parameterSettings.length; ps++) {
 			for (int i = 0; i < 100; i++) {
-				test(parameterSettings[ps][0], parameterSettings[ps][1],
-						parameterSettings[ps][2], parameterSettings[ps][3]);
+			/*	test(parameterSettings[ps][0], parameterSettings[ps][1],
+						parameterSettings[ps][2], parameterSettings[ps][3]);*/
 			}
 			// Open file to write results
 			PrintWriter f = null;
