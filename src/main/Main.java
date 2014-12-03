@@ -1,4 +1,7 @@
 package main;
+import java.util.ArrayList;
+
+import agents.Predator;
 import agents.PredatorRandom;
 import agents.Prey;
 
@@ -37,6 +40,7 @@ public class Main {
 		int nRuns = 100;
 		for (int i = 0; i < nRuns; i++)
 		{
+			//PredatorRandom[] predators = {new PredatorRandom(0, 0);new PredatorRandom(0, 0);new PredatorRandom(0, 0) };
 			BasicEnvironment env = new BasicEnvironment(new PredatorRandom(0, 0), new Prey(5, 5));
 			execTime[i] = env.run();
 			
