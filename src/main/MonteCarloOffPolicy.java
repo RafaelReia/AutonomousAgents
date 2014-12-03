@@ -76,20 +76,25 @@ public class MonteCarloOffPolicy extends SoftmaxQLearning {
 		boolean converged = false;
 		int i;
 		for (i = 0; !converged; i++) {
-			converged = true;
+			converged = false;
 			// generate an episode based on policy pi_b
 			episode = generateEpisode(pi_b, alpha, gamma, temp);
 			int T = episode.length() + 1;
 			
 			// tao <- latest time at which a_tao != pi(s_tao)
 			int tao;
-			for (tao = 0; tao < T - 1; tao++) {
+			for (tao = T - 2; tao >= 0; tao--) {
 				Predator predator = episode.getPredator(tao);
 				Prey prey = episode.getPrey(tao);
 				int a = episode.getPredatorAction(tao);
 				if (a != pi[predator.getX()][predator.getY()][prey.getX()][prey.getY()]) {
 					break;
 				}
+			}
+			
+			if (tao < 0) {
+				converged = true;
+				break;
 			}
 			
 			// Pre-process the production part
@@ -117,14 +122,14 @@ public class MonteCarloOffPolicy extends SoftmaxQLearning {
 				
 				// t <- the time of first occurrence of s,a such that t >= tao
 				vst[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] = true;
-				N[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] += w[t] * 10;
+				N[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] += w[t] * getReward(predator, prey, aPredator, aPrey);
 				D[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] += w[t];
 				Q[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] = N[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] / D[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator];
 				
 				// Update policy
 				if (Q[predator.getX()][predator.getY()][prey.getX()][prey.getY()][aPredator] > Q[predator.getX()][predator.getY()][prey.getX()][prey.getY()][pi[predator.getX()][predator.getY()][prey.getX()][prey.getY()]]) {
 					pi[predator.getX()][predator.getY()][prey.getX()][prey.getY()] = aPredator;
-					converged = false;
+					//converged = false;
 				}
 			}
 			printPolicy(pi, this.prey.getX(), this.prey.getY());
@@ -151,8 +156,8 @@ public class MonteCarloOffPolicy extends SoftmaxQLearning {
 			nextPredator.move(aPredator, nextPrey);
 			
 			double reward = getReward(nextPredator, nextPrey);
-			pi_b[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]
-					= calcNextValue(pi_b, nowPredator, nowPrey, nextPredator, nextPrey, aPredator, reward, alpha, gamma);
+			//pi_b[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][aPredator]
+			//		= calcNextValue(pi_b, nowPredator, nowPrey, nextPredator, nextPrey, aPredator, reward, alpha, gamma);
 			
 			nowPredator = nextPredator;
 			nowPrey = nextPrey;
