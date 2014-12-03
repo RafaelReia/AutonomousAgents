@@ -7,8 +7,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.TreeSet;
 
+import agents.Agent;
 import agents.Predator;
 import agents.Prey;
 
@@ -48,16 +48,14 @@ public class MultiQlearningEnvironment extends BasicEnvironment {
 
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
-		
 
-		while (!nowPrey.isCaught()) {
+		while (!Agent.isEnd()) {
 			steps++;
 
 			Predator nextPredator = new Predator(nowPredator);
 			Prey nextPrey = new Prey(nowPrey);
 
-			int aPredator = chooseAction(
-					qvalues.get(predators,prey), epsilon);
+			int aPredator = chooseAction(qvalues.get(predators, prey), epsilon);
 			int aPrey = nowPrey.planMoveRandom(nowPredator); // check this if
 																// not working
 																// XXX
@@ -66,10 +64,12 @@ public class MultiQlearningEnvironment extends BasicEnvironment {
 			nextPredator.move(aPredator, nextPrey);
 
 			double reward = getReward(nextPredator, nextPrey);
-			qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
-					.getY()][aPredator] = calcNextValue(qvalues, nowPredator,
-					nowPrey, nextPredator, nextPrey, aPredator, reward, alpha,
-					gamma);
+			qvalues.set(
+					predators,
+					prey,
+					aPredator,
+					calcNextValue(qvalues, nowPredator, nowPrey, nextPredator,
+							nextPrey, aPredator, reward, alpha, gamma));
 
 			nowPredator = nextPredator;
 			nowPrey = nextPrey;
@@ -78,40 +78,23 @@ public class MultiQlearningEnvironment extends BasicEnvironment {
 		return steps;
 	}
 
-	private double calcNextValue(double[][][][][] Qvalues,
-			Predator nowPredator, Prey nowPrey, Predator nextPredator,
-			Prey nextPrey, int aPredator, double reward, double alpha,
-			double gamma) {
-		return Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
-				.getY()][aPredator]
+	private double calcNextValue(QValuesSet qvalues, Predator nowPredator,
+			Prey nowPrey, Predator nextPredator, Prey nextPrey, int aPredator,
+			double reward, double alpha, double gamma) {
+		return qvalues.get(predators, prey, aPredator)
 				+ alpha
-				* (reward
-						+ gamma
-						* getMax(Qvalues[nextPredator.getX()][nextPredator
-								.getY()][nextPrey.getX()][nextPrey.getY()]) - Qvalues[nowPredator
-							.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
-						.getY()][aPredator]);
+				* (reward + gamma * getMax(qvalues.get(predators, prey)) - qvalues
+						.get(predators, prey, aPredator));
 	}
 
-	private double getMax(double[] qvalues) {
+	private double getMax(LinkedList<Double> linkedList) {
 		double max = -Double.MAX_VALUE;
 		for (int i = 0; i < DIR_NUM; i++) {
-			if (qvalues[i] >= max) {
-				max = qvalues[i];
+			if (linkedList.get(i) >= max) {
+				max = linkedList.get(i);
 			}
 		}
 		return max;
-	}
-
-	private void initValues(double[][][][][] values, double initValue) {
-		for (int px = 0; px < WORLDSIZE; px++)
-			for (int py = 0; py < WORLDSIZE; py++)
-				for (int x = 0; x < WORLDSIZE; x++)
-					for (int y = 0; y < WORLDSIZE; y++)
-						for (int m = 0; m < 5; m++) {
-							values[px][py][x][y][m] = initValue;
-						}
-
 	}
 
 	int runs;
@@ -119,7 +102,7 @@ public class MultiQlearningEnvironment extends BasicEnvironment {
 
 	public int test(double alpha, double gamma, double epsilon, double initValue) {
 		int time = 0;
-		QValuesSet Qvalues = new QValuesSet(initValue, valuesSizePerState);
+		QValuesSet Qvalues = new QValuesSet(initValue, 5);
 		int aux;
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {

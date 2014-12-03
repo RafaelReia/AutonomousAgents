@@ -64,4 +64,13 @@ public class QValuesSet extends TreeMap<State, LinkedList<Double>> {
 		}
 	}
 
+	public void set(ArrayList<Predator> predators, Prey prey, int action,
+			double value) {
+		set(new State(predators, prey),action, value);
+	}
+
+	public Double get(ArrayList<Predator> predators, Prey prey, int action) {
+		return get(predators,prey).get(action);
+	}
+
 }
