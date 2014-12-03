@@ -11,23 +11,23 @@ public class NewEnvironment extends BasicEnvironment {
 		super(predators_, prey_);
 	}
 
-	public int getReward(ArrayList<Predator> predators, Prey prey) {
+	public Pair<Integer, Integer> getReward(ArrayList<Predator> predators, Prey prey) {
 		for (int i = 0; i < predators.size() - 1; i++)
 			for (int j = i + 1; j < predators.size(); j++)
 				if (predators.get(i).equals(predators.get(j))) {
-					return -10;
+					return new Pair<Integer,Integer>(10,-10);
 				}
 		
 		for (int i = 0; i < predators.size(); i++) {
 			if (predators.get(i).equals(prey)) {
-				return 10;
+				return  new Pair<Integer,Integer>(-10,10);
 			}
 		}
 		
-		return 0;
+		return  new Pair<Integer,Integer>(0,0);
 	}
 	
-	public int getReward(ArrayList<Predator> predators, Prey prey, ArrayList<Integer> aPredators, int aPrey) {
+	public Pair<Integer, Integer> getReward(ArrayList<Predator> predators, Prey prey, ArrayList<Integer> aPredators, int aPrey) {
 		ArrayList<Predator> dummyPredators = new ArrayList<Predator>();
 		Prey dummyPrey;
 		
