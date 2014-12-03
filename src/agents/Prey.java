@@ -4,24 +4,12 @@ import java.util.Arrays;
 
 public class Prey extends Agent {
 	
-	boolean caught;
-
 	public Prey(int locX_, int locY_) {
 		super(locX_, locY_);
-		caught = false;
 	}
 	
 	public Prey(Agent prey) {
 		super(prey);
-		caught = false;
-	}
-	
-	public void setCaught(boolean caught_) {
-		caught = caught_;
-	}
-	
-	public boolean isCaught() {
-		return caught;
 	}
 	
 	public ArrayList<Integer> tryMove(ArrayList<Predator> agents) {
@@ -83,5 +71,14 @@ public class Prey extends Agent {
 
 	public double prob(Predator predator, int aPrey) {
 		return prob(new ArrayList<Predator>(Arrays.asList(predator)), aPrey);
+	}
+	
+	public int actionAfterTrip(int aPrey) {
+		double prob = Math.random();
+		if (prob < 0.2) {
+			return DIR_WAIT;
+		} else {
+			return aPrey;
+		}
 	}
 }

@@ -27,7 +27,7 @@ public class Predator extends Agent {
 			reward += 10;
 
 
-			prey.setCaught(true);
+			prey.setEnd(true);
 		}
 
 		return reward;

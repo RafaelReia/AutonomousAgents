@@ -16,14 +16,26 @@ public abstract class Agent{
 	public final static int dirX[] = {0,-1,+1, 0, 0};
 	public final static int dirY[] = {0, 0, 0,+1,-1};
 
+	static boolean episodeEnd;
+
+	static public void setEnd(boolean episodeEnd_) {
+		episodeEnd = episodeEnd_;
+	}
+	
+	static public boolean isEnd() {
+		return episodeEnd;
+	}
+	
 	public Agent(int locX_, int locY_) {
 		locX = locX_;
 		locY = locY_;
+		episodeEnd = false;
 	}
 	
 	public Agent(Agent agent) {
 		this.locX = agent.locX;
 		this.locY = agent.locY;
+		episodeEnd = false;
 	}
 	
 	public int getX() {
