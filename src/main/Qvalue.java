@@ -39,7 +39,7 @@ public class Qvalue {
 		initValue = initValue_;
 		NUM = NUM_;
 
-		s = (int) Math.pow(DIR_NUM, NUM + 1);
+		s = (int) Math.pow(DIR_NUM, NUM);
 		predatorQvalue = new double[s];
 		preyQvalue = new double[DIR_NUM];
 		Arrays.fill(predatorQvalue, initValue);

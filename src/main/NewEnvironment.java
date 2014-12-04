@@ -18,14 +18,14 @@ public class NewEnvironment extends BasicEnvironment {
 		for (int i = 0; i < predators.size() - 1; i++)
 			for (int j = i + 1; j < predators.size(); j++)
 				if (predators.get(i).equals(predators.get(j))) {
-					Agent.setEnd(true);
-					return new Pair<Integer,Integer>(10,-10);
+					Agent.setCaught();
+					return new Pair<Integer,Integer>(-10,10);
 				}
 		
 		for (int i = 0; i < predators.size(); i++) {
 			if (predators.get(i).equals(prey)) {
-				Agent.setEnd(true);
-				return new Pair<Integer,Integer>(-10,10);
+				Agent.setCaught();
+				return new Pair<Integer,Integer>(10,-10);
 			}
 		}
 		
@@ -53,13 +53,13 @@ public class NewEnvironment extends BasicEnvironment {
 		for (int i = 0; i < predators.size() - 1; i++)
 			for (int j = i + 1; j < predators.size(); j++)
 				if (predators.get(i).equals(predators.get(j))) {
-					Agent.setEnd(true);
+					Agent.setClash();
 					return;
 				}
 		
 		for (int i = 0; i < predators.size(); i++) {
 			if (predators.get(i).equals(prey)) {
-				Agent.setEnd(true);
+				Agent.setCaught();
 				return;
 			}
 		}
@@ -86,7 +86,7 @@ public class NewEnvironment extends BasicEnvironment {
 	
 	public int run() {
 		int times = 0;
-		while (!Agent.isEnd()) {
+		while (!Agent.isCaught()) {
 			times++;
 			ArrayList<Integer> aPredators = new ArrayList<Integer>();
 			int aPrey;

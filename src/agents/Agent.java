@@ -16,26 +16,38 @@ public abstract class Agent{
 	public final static int dirX[] = {0,-1,+1, 0, 0};
 	public final static int dirY[] = {0, 0, 0,+1,-1};
 
-	static boolean episodeEnd;
+	static int caught;
 
-	static public void setEnd(boolean episodeEnd_) {
-		episodeEnd = episodeEnd_;
+	static public void reset() {
+		caught = 0;
 	}
 	
-	static public boolean isEnd() {
-		return episodeEnd;
+	static public void setCaught() {
+		caught = 1;
+	}
+	
+	static public void setClash() {
+		caught = -1;
+	}
+	
+	static public boolean isCaught() {
+		return caught == 1;
+	}
+	
+	static public boolean isClash() {
+		return caught == -1;
 	}
 	
 	public Agent(int locX_, int locY_) {
 		locX = locX_;
 		locY = locY_;
-		episodeEnd = false;
+		caught = 0;
 	}
 	
 	public Agent(Agent agent) {
 		this.locX = agent.locX;
 		this.locY = agent.locY;
-		episodeEnd = false;
+		caught = 0;
 	}
 	
 	public int getX() {

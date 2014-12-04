@@ -2,6 +2,7 @@ package main;
 
 import java.util.ArrayList;
 
+import agents.Agent;
 import agents.Episode;
 import agents.Predator;
 import agents.Prey;
@@ -143,7 +144,7 @@ public class MonteCarloOffPolicy extends SoftmaxQLearning {
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 		
-		while (!nowPrey.isEnd()) {
+		while (!Agent.isCaught()) {
 			Predator nextPredator = new Predator(nowPredator);
 			Prey nextPrey = new Prey(nowPrey);
 			
@@ -172,7 +173,7 @@ public class MonteCarloOffPolicy extends SoftmaxQLearning {
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 		
-		while (!nowPrey.isEnd()) {
+		while (!Agent.isCaught()) {
 			Predator nextPredator = new Predator(nowPredator);
 			Prey nextPrey = new Prey(nowPrey);
 			

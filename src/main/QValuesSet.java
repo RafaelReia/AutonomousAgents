@@ -1,9 +1,6 @@
 package main;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.TreeMap;
 
 import agents.Predator;
@@ -25,11 +22,11 @@ public class QValuesSet extends TreeMap<State, Qvalue> {
 	 */
 	public Qvalue get(State t) {
 		if (containsKey(t))
-			return get(t);
+			return super.get(t);
 		else {
 			this.put(t, defaultValues.copy());
 		}
-		return get(t);
+		return super.get(t);
 	}
 
 	/**

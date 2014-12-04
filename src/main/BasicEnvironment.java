@@ -56,7 +56,7 @@ public class BasicEnvironment {
 	
 	public int run() {
 		int time = 0;
-		while (!Agent.isEnd()) {
+		while (!Agent.isCaught()) {
 			time ++;
 			System.out.print(time);
 			

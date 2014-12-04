@@ -38,7 +38,7 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 		State nowState = new State(nowPredators, nowPrey);
 		Qvalue nowValue = qvalues.get(nowState);
 
-		while (!Agent.isEnd()) {
+		while (!Agent.isCaught() && !Agent.isClash()) {
 			steps++;
 
 			ArrayList<Predator> nextPredators = copyPredators(nowPredators);
@@ -80,7 +80,7 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 			nowValue = nextValue;
 		}
 
-		return steps;
+		return Agent.isCaught() ? steps : -steps;
 	}
 
 	int runs;
@@ -88,12 +88,12 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 
 	public int test(double alpha, double gamma, double epsilon, double initValue) {
 		int time = 0;
-		QValuesSet Qvalues = new QValuesSet(initValue, predators.size() + 1);
+		QValuesSet Qvalues = new QValuesSet(initValue, predators.size());
 		int aux;
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {
 			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
-			// System.out.println("episode: " + i + ", steps: " + aux);
+			System.out.println("episode: " + i + ", steps: " + aux);
 			steps[i] += aux;
 		}
 
@@ -103,7 +103,7 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 	public int run(double[][] parameterSettings) {
 		// For every parameter setting
 		for (int ps = 0; ps < parameterSettings.length; ps++) {
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < 1; i++) {
 				test(parameterSettings[ps][0], parameterSettings[ps][1],
 						parameterSettings[ps][2], parameterSettings[ps][3]);
 			}

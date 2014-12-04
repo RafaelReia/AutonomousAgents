@@ -69,7 +69,7 @@ public class SoftmaxQLearning extends QLearning {
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 		
-		while (!nowPrey.isEnd()) {
+		while (!nowPrey.isCaught()) {
 			steps++;
 			
 			Predator nextPredator = new Predator(nowPredator);

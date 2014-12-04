@@ -9,13 +9,13 @@ import agents.Prey;
 public class MainMultiQlearning extends Main{
 	public static void main(String[] args) {
 		int[] execTime = new int[100];
-		int nRuns = 100;
+		int nRuns = 1;
 		for (int i = 0; i < nRuns; i++) {
 			ArrayList<Predator> predators = new ArrayList<Predator>();
 			predators.add(new Predator(0, 10));
 			predators.add(new Predator(10, 10));
-			predators.add(new Predator(0, 0));
-			predators.add(new Predator(10, 0));
+//			predators.add(new Predator(0, 0));
+//			predators.add(new Predator(10, 0));
 			MultiQlearningEnvironment env = new MultiQlearningEnvironment(predators, new Prey(5,
 					5));
 			double[][] parameterSettings = {{0.5,0.9,0.1,15}};

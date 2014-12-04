@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
+import agents.Agent;
 import agents.Predator;
 import agents.Prey;
 
@@ -80,7 +81,7 @@ public class MiniMaxQ extends BasicEnvironment {
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 
-		while (!nowPrey.isCaught()) { //FIXME when it's not over
+		while (!Agent.isCaught()) { //FIXME when it's not over
 			steps++;
 
 			Predator nextPredator = new Predator(nowPredator);
@@ -107,11 +108,11 @@ public class MiniMaxQ extends BasicEnvironment {
 			double reward =0;
 			
 			//TODO finish this;
-			/* After receiving reward rew for moving from state s to s’
-			 * via action a and opponent’s action o
+			/* After receiving reward rew for moving from state s to s鈥�
+			 * via action a and opponent鈥檚 action o
 			 * */
 			
-			//Q[s,a,o] := (1-alpha) * Q[s,a,o] + alpha * (rew + gamma * V[s’])
+			//Q[s,a,o] := (1-alpha) * Q[s,a,o] + alpha * (rew + gamma * V[s鈥橾)
 			// compute for the predator
 			Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
 					[nowPrey.getY()][aPredator][aPrey] = (1-alpha)* Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
@@ -123,7 +124,7 @@ public class MiniMaxQ extends BasicEnvironment {
 											[nowPrey.getY()]);
 			
 			// Compute the new policy using linear programming
-			// First compute min(o', sum(a’, pi[s,a’] * Q[s,a’,o’])
+			// First compute min(o', sum(a鈥�, pi[s,a鈥橾 * Q[s,a鈥�,o鈥橾)
 			LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] { -2, 1 }, -5);
 			
 			Collection constraints = new ArrayList();
