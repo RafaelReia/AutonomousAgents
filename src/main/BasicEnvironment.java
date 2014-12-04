@@ -2,10 +2,10 @@ package main;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import agents.Agent;
 import agents.Predator;
 import agents.PredatorRandom;
 import agents.Prey;
-
 import static agents.Agent.*;
 
 public class BasicEnvironment {
@@ -56,7 +56,7 @@ public class BasicEnvironment {
 	
 	public int run() {
 		int time = 0;
-		while (!prey.isEnd()) {
+		while (!Agent.isEnd()) {
 			time ++;
 			System.out.print(time);
 			
