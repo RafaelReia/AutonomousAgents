@@ -143,7 +143,7 @@ public class MonteCarloOffPolicy extends SoftmaxQLearning {
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 		
-		while (!nowPrey.isCaught()) {
+		while (!nowPrey.isEnd()) {
 			Predator nextPredator = new Predator(nowPredator);
 			Prey nextPrey = new Prey(nowPrey);
 			
@@ -172,7 +172,7 @@ public class MonteCarloOffPolicy extends SoftmaxQLearning {
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 		
-		while (!nowPrey.isCaught()) {
+		while (!nowPrey.isEnd()) {
 			Predator nextPredator = new Predator(nowPredator);
 			Prey nextPrey = new Prey(nowPrey);
 			

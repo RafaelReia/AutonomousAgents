@@ -72,7 +72,7 @@ public class MonteCarloOnPolicy extends BasicEnvironment {
 		Predator nowPredator = new Predator(predators.get(0));
 		Prey nowPrey = new Prey(prey);
 		
-		while (!nowPrey.isCaught()) {
+		while (!nowPrey.isEnd()) {
 			steps++;
 			
 			Predator nextPredator = new Predator(nowPredator);
