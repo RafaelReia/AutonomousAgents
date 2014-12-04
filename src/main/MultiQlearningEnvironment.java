@@ -14,7 +14,7 @@ import agents.Prey;
 
 public class MultiQlearningEnvironment extends BasicEnvironment {
 
-	private static final int N_EPISODES = 1000;
+	private static final int N_EPISODES = 10000;
 
 	public MultiQlearningEnvironment(ArrayList<Predator> predators_, Prey prey_) {
 		super(predators_, prey_);
