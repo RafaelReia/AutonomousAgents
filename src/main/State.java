@@ -9,8 +9,6 @@ public class State implements Comparable<State>{
 	public int dim;
 	public ArrayList<Pair<Integer, Integer>> positions;
 	
-	
-	
 	public State(ArrayList<Predator> predators, Prey prey) {
 		this.dim = predators.size() + 1;
 		positions = new ArrayList<Pair<Integer, Integer>>(dim);
@@ -22,20 +20,14 @@ public class State implements Comparable<State>{
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof ArrayList<?>) {
-			ArrayList<Pair<Integer, Integer>> aux = (ArrayList<Pair<Integer, Integer>>) obj;
-			for (int i=0;i<dim;i++) {
-				aux.get(i).equals(positions.get(i));
-			}
-		}
-		return false;
-
-	}
-
-	@Override
 	public int compareTo(State o) {
-		return this.equals(o)?0:-1;
+		int cmp = 0;
+		for (int i = 0; i < dim; i++) {
+			cmp = this.positions.get(i).compareTo(o.positions.get(i));
+			if (cmp != 0)
+				break;
+		}
+		return cmp;
 	}
 
 }

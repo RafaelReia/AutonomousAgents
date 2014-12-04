@@ -12,7 +12,7 @@ import agents.Agent;
 import agents.Predator;
 import agents.Prey;
 
-public class MultiQlearningEnvironment extends BasicEnvironment {
+public class MultiQlearningEnvironment extends NewEnvironment {
 
 	private static final int N_EPISODES = 10000;
 
@@ -20,81 +20,67 @@ public class MultiQlearningEnvironment extends BasicEnvironment {
 		super(predators_, prey_);
 	}
 
-	private int chooseAction(LinkedList<Double> linkedList, double epsilon) {
-		double max = -Double.MAX_VALUE;
-		Random rdm = new Random();
-		ArrayList<Integer> cand = new ArrayList<Integer>();
-		if (rdm.nextDouble() > epsilon)
-			for (int i = 0; i < DIR_NUM; i++) {
-				if (linkedList.get(i) > max) {
-					cand.clear();
-					max = linkedList.get(i);
-				}
-				if (linkedList.get(i) == max) {
-					cand.add(i);
-				}
-			}
-		else {
-			// choose any random action for the epsilon part
-			return rdm.nextInt(DIR_NUM);
+	private ArrayList<Predator> copyPredators(ArrayList<Predator> o) {
+		ArrayList<Predator> t = new ArrayList<Predator>();
+		for (Predator p : o) {
+			t.add(new Predator(p));
 		}
-		return cand.get(rdm.nextInt(cand.size()));
+		return t;
 	}
-
+	
 	public int episodeQL(QValuesSet qvalues, double alpha, double gamma,
 			double epsilon) {
 		/* Initializing the array values */
 		int steps = 0;
 
-		Predator nowPredator = new Predator(predators.get(0));
+		ArrayList<Predator> nowPredators = copyPredators(predators);
 		Prey nowPrey = new Prey(prey);
+		State nowState = new State(nowPredators, nowPrey);
+		Qvalue nowValue = qvalues.get(nowState);
 
 		while (!Agent.isEnd()) {
 			steps++;
 
-			Predator nextPredator = new Predator(nowPredator);
+			ArrayList<Predator> nextPredators = copyPredators(nowPredators);
 			Prey nextPrey = new Prey(nowPrey);
+			
+			ArrayList<Integer> aPredators = nowValue.choosePredatorActions(epsilon);
+			int aPrey = nowValue.choosePreyActions(epsilon);
+			aPrey = nextPrey.actionAfterTrip(aPrey);
 
-			int aPredator = chooseAction(qvalues.get(predators, prey), epsilon);
-			int aPrey = nowPrey.planMoveRandom(nowPredator); // check this if
-																// not working
-																// XXX
-
+			for (int i = 0; i < nextPredators.size(); i++) {
+				nextPredators.get(i).move(aPredators.get(i));
+			}
 			nextPrey.move(aPrey);
-			nextPredator.move(aPredator, nextPrey);
+			State nextState = new State(nextPredators, nextPrey);
+			Qvalue nextValue = qvalues.get(nextState);
+			
+			Pair<Integer, Integer> reward = getReward(nextPredators, nextPrey);
+			testEnd(nextPredators, nextPrey);
+			int rewardPredator = reward.a;
+			int rewardPrey = reward.b;
+			
+			double predatorQSA = nowValue.getPredatorValue(aPredators);
+			double preyQSA = nowValue.getPreyValue(aPrey);
+			
+			double predatorMaxQS_b = nextValue.getMaxPredatorValue();
+			double preyMaxQS_b = nextValue.getMaxPreyValue();
+			
+			predatorQSA += alpha * (rewardPredator + gamma * predatorMaxQS_b - predatorQSA);
+			preyQSA += alpha * (rewardPrey + gamma * preyMaxQS_b - preyQSA);
+			
+			nowValue.setPredatorValue(aPredators, predatorQSA);
+			nowValue.setPreyValue(aPrey, preyQSA);
+			
+			qvalues.put(nowState, nowValue);
 
-			double reward = getReward(nextPredator, nextPrey);
-			qvalues.set(
-					predators,
-					prey,
-					aPredator,
-					calcNextValue(qvalues, nowPredator, nowPrey, nextPredator,
-							nextPrey, aPredator, reward, alpha, gamma));
-
-			nowPredator = nextPredator;
+			nowPredators = nextPredators;
 			nowPrey = nextPrey;
+			nowState = nextState;
+			nowValue = nextValue;
 		}
 
 		return steps;
-	}
-
-	private double calcNextValue(QValuesSet qvalues, Predator nowPredator,
-			Prey nowPrey, Predator nextPredator, Prey nextPrey, int aPredator,
-			double reward, double alpha, double gamma) {
-		return qvalues.get(predators, prey, aPredator)
-				+ alpha
-				* (reward + gamma * getMax(qvalues.get(predators, prey)) - qvalues
-						.get(predators, prey, aPredator));
-	}
-
-	private double getMax(LinkedList<Double> linkedList) {
-		double max = -Double.MAX_VALUE;
-		for (int i = 0; i < DIR_NUM; i++) {
-			if (linkedList.get(i) >= max) {
-				max = linkedList.get(i);
-			}
-		}
-		return max;
 	}
 
 	int runs;
@@ -102,7 +88,7 @@ public class MultiQlearningEnvironment extends BasicEnvironment {
 
 	public int test(double alpha, double gamma, double epsilon, double initValue) {
 		int time = 0;
-		QValuesSet Qvalues = new QValuesSet(initValue, 5);
+		QValuesSet Qvalues = new QValuesSet(initValue, predators.size() + 1);
 		int aux;
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {

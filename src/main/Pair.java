@@ -1,8 +1,6 @@
 package main;
 
-import java.util.ArrayList;
-
-public class Pair<A,B> {
+public class Pair<A extends Comparable <A>,B extends Comparable<B>> implements Comparable<Pair<A, B>> {
     public final A a;
     public final B b;
 
@@ -12,13 +10,11 @@ public class Pair<A,B> {
     }
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Pair<?,?>) {
-			Pair<Integer, Integer> aux = (Pair<Integer, Integer>) obj;
-			return (aux.a.equals(this.a) && aux.b.equals(this.b));
-		}
-		return false;
+	public int compareTo(Pair<A, B> o) {
+		int cmp = this.a.compareTo(o.a);
+		if (cmp == 0)
+			cmp = this.b.compareTo(o.b);
+		return cmp;
 	}
-    
     
 };
