@@ -4,11 +4,18 @@
 package main;
 
 import static agents.Agent.*;
+
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.RealPointValuePair;
+import org.apache.commons.math.optimization.linear.LinearConstraint;
+import org.apache.commons.math.optimization.linear.LinearObjectiveFunction;
+import org.apache.commons.math.optimization.linear.Relationship;
 import org.apache.commons.math.optimization.linear.SimplexSolver;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 
 import agents.Predator;
@@ -103,6 +110,7 @@ public class MiniMaxQ extends BasicEnvironment {
 			/* After receiving reward rew for moving from state s to s’
 			 * via action a and opponent’s action o
 			 * */
+			
 			//Q[s,a,o] := (1-alpha) * Q[s,a,o] + alpha * (rew + gamma * V[s’])
 			// compute for the predator
 			Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
@@ -114,8 +122,22 @@ public class MiniMaxQ extends BasicEnvironment {
 											* vvalues[nextPredator.getX()][nextPredator.getY()][nowPrey.getX()]
 											[nowPrey.getY()]);
 			
-			//computePi(); use linear programming!
-//TODO
+			// Compute the new policy using linear programming
+			// First compute min(o', sum(a’, pi[s,a’] * Q[s,a’,o’])
+			LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] { -2, 1 }, -5);
+			
+			Collection constraints = new ArrayList();
+			//constraints.add(new LinearConstraint(new double[] { 1, 2 }, Relationship.LEQ, 6));
+			//constraints.add(new LinearConstraint(new double[] { 3, 2 }, Relationship.LEQ, 12));
+			//constraints.add(new LinearConstraint(new double[] { 0, 1 }, Relationship.GEQ, 0));
+
+			// create and run the solver
+			RealPointValuePair solution = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, false);
+
+			double x = solution.getPoint()[0];
+			double y = solution.getPoint()[1];
+			double min = solution.getValue();
+			
 			//computeV();
 //TODO	
 			//computeAlpha();
