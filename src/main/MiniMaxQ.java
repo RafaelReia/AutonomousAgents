@@ -151,8 +151,8 @@ public class MiniMaxQ extends BasicEnvironment {
 			}
 			
 			// Equality constraint SUM_a(pi[s,a]) = 1
-			constraints.add(new LinearConstraint(new double[] {},
-					PivaluesCurrent),
+			constraints.add(new LinearConstraint(
+					PivaluesCurrent, 0.0,
 					Relationship.EQ, 
 					new double[] {}, 1.0));
 
