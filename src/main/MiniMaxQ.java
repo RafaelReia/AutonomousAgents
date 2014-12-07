@@ -6,6 +6,8 @@ package main;
 
 import static agents.Agent.*;
 
+import java.util.Arrays;
+
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealPointValuePair;
@@ -76,7 +78,7 @@ public class MiniMaxQ extends BasicEnvironment {
 	}
 
 	public int episodeQL(double[][][][][][] Qvalues, double alpha, double gamma,
-			double epsilon, double[][][][] Vvalues, double[][][][][] Pivalues) throws OptimizationException {
+			double epsilon, double[][][][] Vvalues, double[][][][][] Pivalues)  {
 		/* Initializing the array values */
 		int steps = 0;
 
@@ -122,24 +124,32 @@ public class MiniMaxQ extends BasicEnvironment {
 									+ alpha*(reward + gamma
 											//computes using the "now values of the prey" because
 											//we don't know for where it moved. //FIXME
-											* vvalues[nextPredator.getX()][nextPredator.getY()][nowPrey.getX()]
+											* Vvalues[nextPredator.getX()][nextPredator.getY()][nowPrey.getX()]
 											[nowPrey.getY()]); 
 			
 			// Compute the new policy using linear programming
+			
+			// The variable array for the linear solver has length 2 * DIR_NUM + 1. The first
+			// DIR_NUM entries contain the pi[s,a] variables, the second DIR_NUM entries
+			// contain the Q[s,a,o]*pi[s,a] variables, the last entry contains V.
+			
 			// First compute min(o', sum(a', pi[s,a' * Q[s,a',o')
 			
-			double[] V;
+			double[] V = new double[2 * DIR_NUM + 1];
+			Arrays.fill(V,0.0); // all other positions are other variables, which have coefficient 0
+			V[2 * DIR_NUM] = 1.0; // the last position is the V variable, which has coefficient 1
 			LinearObjectiveFunction f = new LinearObjectiveFunction(V, 0); // max V
 			Collection constraints = new ArrayList();
 			
+			// Put current Pivalues in variable array, rest of variables are 0
 			double[] PivaluesCurrent = Pivalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()];
 
 			// Inequality constraint for all o':
 			//SUM_a(pi[s][a] * Q[s][a][o']) >= V
-			for (int oPrime = 0; oPrime <= DIR_NUM; oPrime++)
+			for (int oPrime = 0; oPrime < DIR_NUM; oPrime++)
 			{
 				double[] QvaluesCurrent = new double[DIR_NUM];
-				for (int i = 0; i <= DIR_NUM; i++)
+				for (int i = 0; i < DIR_NUM; i++)
 				{
 					QvaluesCurrent[i] = Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][i][oPrime];
 				}
@@ -152,21 +162,23 @@ public class MiniMaxQ extends BasicEnvironment {
 			
 			// Equality constraint SUM_a(pi[s,a]) = 1
 			constraints.add(new LinearConstraint(
-					PivaluesCurrent, 0.0,
+					createVariableArray(PivaluesCurrent), 
 					Relationship.EQ, 
-					new double[] {}, 1.0));
+					1.0));
 
 			// create and run the solver
-			RealPointValuePair solution;
-			solution = new SimplexSolver().optimize(f, constraints, GoalType.MAXIMIZE, true);
+			RealPointValuePair solution = null;
+			try {
+				solution = new SimplexSolver().optimize(f, constraints, GoalType.MAXIMIZE, true);
+			} catch (OptimizationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			double x = solution.getPoint()[0];
 			double y = solution.getPoint()[1];
 			double min = solution.getValue();
 			
-			//computeV();
-//TODO	
-			//computeAlpha();
 			alpha = alpha*gamma;
 			
 			
@@ -186,7 +198,7 @@ public class MiniMaxQ extends BasicEnvironment {
 	}
 
 	private int chooseOrTrip(double[] ds, double epsilon) {
-		Random rdm = null;
+		Random rdm = new Random();
 		if (rdm.nextDouble() > 0.2)
 		{
 			return chooseAction(ds, epsilon);
@@ -272,8 +284,8 @@ public class MiniMaxQ extends BasicEnvironment {
 		// For every parameter setting
 		for (int ps = 0; ps < parameterSettings.length; ps++) {
 			for (int i = 0; i < 100; i++) {
-			/*	test(parameterSettings[ps][0], parameterSettings[ps][1],
-						parameterSettings[ps][2], parameterSettings[ps][3]);*/
+				test(parameterSettings[ps][0], parameterSettings[ps][1],
+						parameterSettings[ps][2], parameterSettings[ps][3], parameterSettings[ps][4]);
 			}
 			// Open file to write results
 			PrintWriter f = null;
@@ -298,25 +310,30 @@ public class MiniMaxQ extends BasicEnvironment {
 
 	}
 	
-	/* Sum the elements of an array*/
-	double sum(double[] array)
-	{
-		double sum = 0;
-		for (int a = 0; a <= array.length; a++)
-		{
-			sum += array[a];
-		}
-		return sum;
-	}
 	
 	/* For each element in the array, multiply it with the corresponding element
-	 * in the other array and sum the resulting products */
+	 * in the other array and sum the resulting products
+	 * THese sums are placed in the DIR_NUM till 2*DIR_NUM entries of the variable array */
 	double[] multiplyArrays(double[] array1, double[] array2)
 	{
-		double[] newArray = new double[DIR_NUM];
-		for (int a = 0; a <= DIR_NUM; a++)
+		double[] newArray = new double[2 * DIR_NUM + 1];
+		Arrays.fill(newArray,0.0);
+		for (int a = 0; a < DIR_NUM; a++)
 		{
-			newArray[a] = array1[a] * array2[a];
+			newArray[a+DIR_NUM] = array1[a] * array2[a];
+		}
+		return newArray;
+	}
+	
+	// Puts array in the first DIR_NUM elements of new_array
+	double[] createVariableArray(double[] array)
+	{
+		// Put current Pivalues in variable array, rest of variables are 0
+		double[] newArray = new double[2*DIR_NUM + 1];
+		Arrays.fill(newArray, 0.0);
+		for (int i = 0; i < DIR_NUM; i++)
+		{
+			newArray[i] = array[i];
 		}
 		return newArray;
 	}
