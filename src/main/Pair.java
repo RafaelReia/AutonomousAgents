@@ -1,8 +1,8 @@
 package main;
 
 public class Pair<A extends Comparable <A>,B extends Comparable<B>> implements Comparable<Pair<A, B>> {
-    public final A a;
-    public final B b;
+    public A a;
+    public B b;
 
     public Pair(A a, B b) {
         this.a = a;

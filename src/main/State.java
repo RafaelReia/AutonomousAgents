@@ -18,6 +18,11 @@ public class State implements Comparable<State>{
 		}
 		positions.add(new Pair<Integer, Integer>(prey.getX(), prey.getY()));
 	}
+	
+	public State(ArrayList<Pair<Integer, Integer>> positions_) {
+		this.dim = positions_.size();
+		positions = positions_;
+	}
 
 	@Override
 	public int compareTo(State o) {

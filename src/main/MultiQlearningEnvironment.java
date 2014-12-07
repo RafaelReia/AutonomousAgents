@@ -1,20 +1,15 @@
 package main;
 
-import static agents.Agent.DIR_NUM;
-
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Random;
-
 import agents.Agent;
 import agents.Predator;
 import agents.Prey;
 
 public class MultiQlearningEnvironment extends NewEnvironment {
 
-	private static final int N_EPISODES = 10000;
+	private static final int N_EPISODES = 100000;
 
 	public MultiQlearningEnvironment(ArrayList<Predator> predators_, Prey prey_) {
 		super(predators_, prey_);
@@ -35,7 +30,7 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 
 		ArrayList<Predator> nowPredators = copyPredators(predators);
 		Prey nowPrey = new Prey(prey);
-		State nowState = new State(nowPredators, nowPrey);
+		StateRelative nowState = new StateRelative(nowPredators, nowPrey);
 		Qvalue nowValue = qvalues.get(nowState);
 
 		while (!Agent.isCaught() && !Agent.isClash()) {
@@ -52,21 +47,25 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 				nextPredators.get(i).move(aPredators.get(i));
 			}
 			nextPrey.move(aPrey);
-			State nextState = new State(nextPredators, nextPrey);
+			StateRelative nextState = new StateRelative(nextPredators, nextPrey);
 			Qvalue nextValue = qvalues.get(nextState);
 			
-			System.out.print(steps + " ");
-			nextPrey.print();
-			for (int i = 0; i < nextPredators.size(); i++) {
-				System.out.print(" ");
-				nextPredators.get(i).print();
-			}
-			System.out.println();
+//			System.out.print(steps + " ");
+//			nextPrey.print();
+//			for (int i = 0; i < nextPredators.size(); i++) {
+//				System.out.print(" ");
+//				nextPredators.get(i).print();
+//			}
+//			System.out.println();
 			
 			Pair<Integer, Integer> reward = getReward(nextPredators, nextPrey);
-			testEnd(nextPredators, nextPrey);
 			int rewardPredator = reward.a;
 			int rewardPrey = reward.b;
+			
+			testEnd(nextPredators, nextPrey);
+			if (Agent.isCaught() || Agent.isClash()) {
+				nextValue = new Qvalue(0, nextPredators.size());
+			}
 			
 			double predatorQSA = nowValue.getPredatorValue(aPredators);
 			double preyQSA = nowValue.getPreyValue(aPrey);

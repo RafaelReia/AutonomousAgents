@@ -6,7 +6,7 @@ import java.util.TreeMap;
 import agents.Predator;
 import agents.Prey;
 
-public class QValuesSet extends TreeMap<State, Qvalue> {
+public class QValuesSet extends TreeMap<StateRelative, Qvalue> {
 	private static final long serialVersionUID = -8594401860750971868L;
 	private final Qvalue defaultValues;
 
@@ -20,7 +20,7 @@ public class QValuesSet extends TreeMap<State, Qvalue> {
 	 * @param t
 	 * @return
 	 */
-	public Qvalue get(State t) {
+	public Qvalue get(StateRelative t) {
 		if (containsKey(t))
 			return super.get(t);
 		else {
@@ -37,16 +37,16 @@ public class QValuesSet extends TreeMap<State, Qvalue> {
 	 * @return
 	 */
 	public Qvalue get(ArrayList<Predator> predators, Prey prey) {
-		return get(new State(predators, prey));
+		return get(new StateRelative(predators, prey));
 	}
 
 	public void put(ArrayList<Predator> predators, Prey prey, Qvalue value) {
-		put(new State(predators, prey), value);
+		put(new StateRelative(predators, prey), value);
 	}
 
 	public void set(ArrayList<Predator> predators, Prey prey,
 			ArrayList<Integer> aPredators, double value) {
-		State s = new State(predators, prey);
+		StateRelative s = new StateRelative(predators, prey);
 		Qvalue v = this.get(s);
 		v.setPredatorValue(aPredators, value);
 		this.put(s, v);
@@ -54,7 +54,7 @@ public class QValuesSet extends TreeMap<State, Qvalue> {
 	
 	public void set(ArrayList<Predator> predators, Prey prey,
 			int aPrey, double value) {
-		State s = new State(predators, prey);
+		StateRelative s = new StateRelative(predators, prey);
 		Qvalue v = this.get(s);
 		v.setPreyValue(aPrey, value);
 		this.put(s, v);
@@ -62,7 +62,7 @@ public class QValuesSet extends TreeMap<State, Qvalue> {
 	
 	public void set(ArrayList<Predator> predators, Prey prey,
 			ArrayList<Integer> aPredators, int aPrey, double predatorValue, double preyValue) {
-		State s = new State(predators, prey);
+		StateRelative s = new StateRelative(predators, prey);
 		Qvalue v = this.get(s);
 		v.setPredatorValue(aPredators, predatorValue);
 		v.setPreyValue(aPrey, preyValue);
