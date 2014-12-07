@@ -55,6 +55,14 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 			State nextState = new State(nextPredators, nextPrey);
 			Qvalue nextValue = qvalues.get(nextState);
 			
+			System.out.print(steps + " ");
+			nextPrey.print();
+			for (int i = 0; i < nextPredators.size(); i++) {
+				System.out.print(" ");
+				nextPredators.get(i).print();
+			}
+			System.out.println();
+			
 			Pair<Integer, Integer> reward = getReward(nextPredators, nextPrey);
 			testEnd(nextPredators, nextPrey);
 			int rewardPredator = reward.a;

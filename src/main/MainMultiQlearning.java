@@ -13,7 +13,7 @@ public class MainMultiQlearning extends Main{
 		for (int i = 0; i < nRuns; i++) {
 			ArrayList<Predator> predators = new ArrayList<Predator>();
 			predators.add(new Predator(0, 10));
-			predators.add(new Predator(10, 10));
+//			predators.add(new Predator(10, 10));
 //			predators.add(new Predator(0, 0));
 //			predators.add(new Predator(10, 0));
 			MultiQlearningEnvironment env = new MultiQlearningEnvironment(predators, new Prey(5,

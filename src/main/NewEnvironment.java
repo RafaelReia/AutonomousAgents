@@ -18,7 +18,7 @@ public class NewEnvironment extends BasicEnvironment {
 		for (int i = 0; i < predators.size() - 1; i++)
 			for (int j = i + 1; j < predators.size(); j++)
 				if (predators.get(i).equals(predators.get(j))) {
-					Agent.setCaught();
+					Agent.setClash();
 					return new Pair<Integer,Integer>(-10,10);
 				}
 		
