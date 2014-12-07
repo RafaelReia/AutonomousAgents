@@ -3,9 +3,11 @@
  */
 package main;
 
+
 import static agents.Agent.*;
 
 import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.linear.LinearConstraint;
 import org.apache.commons.math.optimization.linear.LinearObjectiveFunction;
@@ -74,7 +76,7 @@ public class MiniMaxQ extends BasicEnvironment {
 	}
 
 	public int episodeQL(double[][][][][][] Qvalues, double alpha, double gamma,
-			double epsilon, double[][][][] vvalues, double[][][][][] pivalues) {
+			double epsilon, double[][][][] Vvalues, double[][][][][] Pivalues) throws OptimizationException {
 		/* Initializing the array values */
 		int steps = 0;
 
@@ -121,19 +123,42 @@ public class MiniMaxQ extends BasicEnvironment {
 											//computes using the "now values of the prey" because
 											//we don't know for where it moved. //FIXME
 											* vvalues[nextPredator.getX()][nextPredator.getY()][nowPrey.getX()]
-											[nowPrey.getY()]);
+											[nowPrey.getY()]); 
 			
 			// Compute the new policy using linear programming
-			// First compute min(o', sum(a鈥�, pi[s,a鈥橾 * Q[s,a鈥�,o鈥橾)
-			LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] { -2, 1 }, -5);
+			// First compute min(o', sum(a', pi[s,a' * Q[s,a',o')
 			
+			double[] V;
+			LinearObjectiveFunction f = new LinearObjectiveFunction(V, 0); // max V
 			Collection constraints = new ArrayList();
-			//constraints.add(new LinearConstraint(new double[] { 1, 2 }, Relationship.LEQ, 6));
-			//constraints.add(new LinearConstraint(new double[] { 3, 2 }, Relationship.LEQ, 12));
-			//constraints.add(new LinearConstraint(new double[] { 0, 1 }, Relationship.GEQ, 0));
+			
+			double[] PivaluesCurrent = Pivalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()];
+
+			// Inequality constraint for all o':
+			//SUM_a(pi[s][a] * Q[s][a][o']) >= V
+			for (int oPrime = 0; oPrime <= DIR_NUM; oPrime++)
+			{
+				double[] QvaluesCurrent = new double[DIR_NUM];
+				for (int i = 0; i <= DIR_NUM; i++)
+				{
+					QvaluesCurrent[i] = Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][i][oPrime];
+				}
+				constraints.add(new LinearConstraint(
+						multiplyArrays(PivaluesCurrent,
+									QvaluesCurrent), 0.0,
+						Relationship.GEQ, V, 0.0));
+
+			}
+			
+			// Equality constraint SUM_a(pi[s,a]) = 1
+			constraints.add(new LinearConstraint(
+					PivaluesCurrent, 0.0,
+					Relationship.EQ, 
+					new double[] {}, 1.0));
 
 			// create and run the solver
-			RealPointValuePair solution = new SimplexSolver().optimize(f, constraints, GoalType.MINIMIZE, false);
+			RealPointValuePair solution;
+			solution = new SimplexSolver().optimize(f, constraints, GoalType.MAXIMIZE, true);
 
 			double x = solution.getPoint()[0];
 			double y = solution.getPoint()[1];
@@ -271,6 +296,29 @@ public class MiniMaxQ extends BasicEnvironment {
 		}
 		return 0;
 
+	}
+	
+	/* Sum the elements of an array*/
+	double sum(double[] array)
+	{
+		double sum = 0;
+		for (int a = 0; a <= array.length; a++)
+		{
+			sum += array[a];
+		}
+		return sum;
+	}
+	
+	/* For each element in the array, multiply it with the corresponding element
+	 * in the other array and sum the resulting products */
+	double[] multiplyArrays(double[] array1, double[] array2)
+	{
+		double[] newArray = new double[DIR_NUM];
+		for (int a = 0; a <= DIR_NUM; a++)
+		{
+			newArray[a] = array1[a] * array2[a];
+		}
+		return newArray;
 	}
 
 }
