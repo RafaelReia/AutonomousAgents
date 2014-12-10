@@ -284,7 +284,8 @@ public class MiniMaxQ extends BasicEnvironment {
 				
 				nowPredator = nextPredator;
 				nowPrey = nextPrey;
-				
+				System.out.println("Prey position " + nowPrey.getX() + " " + nowPrey.getY()  + " move Prey " + nextPredator.whereMove(aPrey));
+				System.out.println("Predator position " + nowPredator.getX() + " " + nowPredator.getY() + " move Predator "+ nextPredator.whereMove(aPredator));
 				steps++;
 				// System.out.println("episode: " + i + ", steps: " + aux);
 				
