@@ -10,8 +10,8 @@ public class QValuesSet extends TreeMap<StateRelative, Qvalue> {
 	private static final long serialVersionUID = -8594401860750971868L;
 	private final Qvalue defaultValues;
 
-	public QValuesSet(double initValue, int NUM) {
-		defaultValues = new Qvalue(initValue, NUM);
+	public QValuesSet(double initValuePredator,double initValuePrey, int NUM) {
+		defaultValues = new Qvalue(initValuePredator,initValuePrey, NUM);
 	}
 
 	/**

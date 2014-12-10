@@ -13,7 +13,8 @@ public class Qvalue {
 	double[] predatorQvalue;
 	double[] preyQvalue;
 	int s;
-	double initValue;
+	double initValuePredator;
+	double initValuePrey;
 	static int NUM;
 
 	public static int actionEncoder(ArrayList<Integer> aPredators) {
@@ -35,19 +36,19 @@ public class Qvalue {
 		return aPredators;
 	}
 
-	public Qvalue(double initValue_, int NUM_) {
-		initValue = initValue_;
+	public Qvalue(double initValue_, double initValuePrey, int NUM_) {
+		initValuePredator = initValue_;
 		NUM = NUM_;
 
 		s = (int) Math.pow(DIR_NUM, NUM);
 		predatorQvalue = new double[s];
 		preyQvalue = new double[DIR_NUM];
-		Arrays.fill(predatorQvalue, initValue);
-		Arrays.fill(preyQvalue, initValue);
+		Arrays.fill(predatorQvalue, initValuePredator);
+		Arrays.fill(preyQvalue, initValuePrey);
 	}
 
 	public Qvalue copy() {
-		Qvalue nv = new Qvalue(initValue, NUM);
+		Qvalue nv = new Qvalue(initValuePredator, initValuePrey,NUM);
 		return nv;
 	}
 

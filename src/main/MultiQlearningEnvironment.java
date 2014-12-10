@@ -22,9 +22,9 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 		}
 		return t;
 	}
-	
-	public int episodeQL(QValuesSet qvalues, double alpha, double gamma,
-			double epsilon) {
+
+	public int episodeQL(QValuesSet qvalues, double alphaPredator,
+			double gammaPredator, double epsilonPredator, double alphaPrey, double gammaPrey, double epsilonPrey) {
 		/* Initializing the array values */
 		int steps = 0;
 
@@ -38,9 +38,10 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 
 			ArrayList<Predator> nextPredators = copyPredators(nowPredators);
 			Prey nextPrey = new Prey(nowPrey);
-			
-			ArrayList<Integer> aPredators = nowValue.choosePredatorActions(epsilon);
-			int aPrey = nowValue.choosePreyActions(epsilon);
+
+			ArrayList<Integer> aPredators = nowValue
+					.choosePredatorActions(epsilonPredator);
+			int aPrey = nowValue.choosePreyActions(epsilonPrey);
 			aPrey = nextPrey.actionAfterTrip(aPrey);
 
 			for (int i = 0; i < nextPredators.size(); i++) {
@@ -49,36 +50,38 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 			nextPrey.move(aPrey);
 			StateRelative nextState = new StateRelative(nextPredators, nextPrey);
 			Qvalue nextValue = qvalues.get(nextState);
-			
-//			System.out.print(steps + " ");
-//			nextPrey.print();
-//			for (int i = 0; i < nextPredators.size(); i++) {
-//				System.out.print(" ");
-//				nextPredators.get(i).print();
-//			}
-//			System.out.println();
-			
+
+			// System.out.print(steps + " ");
+			// nextPrey.print();
+			// for (int i = 0; i < nextPredators.size(); i++) {
+			// System.out.print(" ");
+			// nextPredators.get(i).print();
+			// }
+			// System.out.println();
+
 			Pair<Integer, Integer> reward = getReward(nextPredators, nextPrey);
 			int rewardPredator = reward.a;
 			int rewardPrey = reward.b;
-			
+
 			testEnd(nextPredators, nextPrey);
 			if (Agent.isCaught() || Agent.isClash()) {
-				nextValue = new Qvalue(0, nextPredators.size());
+				nextValue = new Qvalue(0,0,nextPredators.size());
 			}
-			
+
 			double predatorQSA = nowValue.getPredatorValue(aPredators);
 			double preyQSA = nowValue.getPreyValue(aPrey);
-			
+
 			double predatorMaxQS_b = nextValue.getMaxPredatorValue();
 			double preyMaxQS_b = nextValue.getMaxPreyValue();
-			
-			predatorQSA += alpha * (rewardPredator + gamma * predatorMaxQS_b - predatorQSA);
-			preyQSA += alpha * (rewardPrey + gamma * preyMaxQS_b - preyQSA);
-			
+
+			predatorQSA += alphaPredator
+					* (rewardPredator + gammaPredator * predatorMaxQS_b - predatorQSA);
+			preyQSA += alphaPrey
+					* (rewardPrey + gammaPrey * preyMaxQS_b - preyQSA);
+
 			nowValue.setPredatorValue(aPredators, predatorQSA);
 			nowValue.setPreyValue(aPrey, preyQSA);
-			
+
 			qvalues.put(nowState, nowValue);
 
 			nowPredators = nextPredators;
@@ -93,13 +96,18 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 	int runs;
 	int[] steps = new int[N_EPISODES];
 
-	public int test(double alpha, double gamma, double epsilon, double initValue) {
+	public int test(double alphaPredator, double gammaPredator,
+			double epsilonPredator, double initValuePredator, double alphaPrey,
+			double gammaPrey, double epsilonPrey, double initValuePrey) {
 		int time = 0;
-		QValuesSet Qvalues = new QValuesSet(initValue, predators.size());
+		QValuesSet Qvalues = new QValuesSet(initValuePredator, initValuePrey,
+				predators.size());
 		int aux;
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {
-			aux = episodeQL(Qvalues, alpha, gamma, epsilon);
+			aux = episodeQL(Qvalues, alphaPredator, gammaPredator,
+					epsilonPredator,alphaPrey, gammaPrey,
+					epsilonPrey);
 			System.out.println("episode: " + i + ", steps: " + aux);
 			steps[i] += aux;
 		}
@@ -112,7 +120,9 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 		for (int ps = 0; ps < parameterSettings.length; ps++) {
 			for (int i = 0; i < 1; i++) {
 				test(parameterSettings[ps][0], parameterSettings[ps][1],
-						parameterSettings[ps][2], parameterSettings[ps][3]);
+						parameterSettings[ps][2], parameterSettings[ps][3],
+						parameterSettings[ps][4], parameterSettings[ps][5],
+						parameterSettings[ps][6], parameterSettings[ps][7]);
 			}
 			// Open file to write results
 			PrintWriter f = null;
