@@ -104,7 +104,7 @@ public class MiniMaxQ extends BasicEnvironment {
 			double[] V = new double[DIR_NUM + 1];
 			V[DIR_NUM] = 1.0; // the last position is the V variable, which has coefficient 1
 			// all other positions are other variables, which have coefficient 0
-			LinearObjectiveFunction f = new LinearObjectiveFunction(V, 0); // max V
+			LinearObjectiveFunction f = new LinearObjectiveFunction(V, 0.0); // max V
 			Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
 			
 			// Put current Pivalues in variable array, rest of variables are 0
@@ -118,12 +118,13 @@ public class MiniMaxQ extends BasicEnvironment {
 				for (int a = 0; a < DIR_NUM; a++)
 				{
 					coefficientsPiQ[a] = Qvalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()]
-						[nowOpponent.getY()][aPlayer][oPrime];
+						[nowOpponent.getY()][a][oPrime];
 				}
+				
 				constraints.add(new LinearConstraint(
 						coefficientsPiQ, 0.0,
 						Relationship.GEQ, V, 0.0));
-
+				//System.out.println("Q*Pi"+oPrime+":" + Arrays.toString(coefficientsPiQ));
 			}
 			
 			// Equality constraint SUM_a(pi[s,a]) = 1
@@ -135,7 +136,11 @@ public class MiniMaxQ extends BasicEnvironment {
 					coefficientsPi1, 
 					Relationship.EQ, 
 					1.0));
-
+			
+			//System.out.println("V " + Arrays.toString(V));
+			
+			//System.out.println("1: " + Arrays.toString(coefficientsPi1));
+			
 			// create and run the solver
 			RealPointValuePair solution = null;
 			try {
@@ -275,7 +280,7 @@ public class MiniMaxQ extends BasicEnvironment {
 				
 				//move the next prey state.
 				nextPrey.move(aPrey);
-				nextPredator.move(aPredator, nextPrey);
+				lastReward = nextPredator.move(aPredator, nextPrey);
 				steps++;
 				// System.out.println("episode: " + i + ", steps: " + aux);
 				
