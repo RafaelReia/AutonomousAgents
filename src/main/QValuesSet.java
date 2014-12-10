@@ -1,12 +1,13 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 import agents.Predator;
 import agents.Prey;
 
-public class QValuesSet extends TreeMap<StateRelative, Qvalue> {
+public class QValuesSet extends HashMap<StateRelative, Qvalue> {
 	private static final long serialVersionUID = -8594401860750971868L;
 	private final Qvalue defaultValues;
 
