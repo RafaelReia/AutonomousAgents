@@ -1,0 +1,35 @@
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+\graphicspath{ {ReportImages/OneClassSVM/} }
+
+
+\begin{document}
+
+\title{Autonomous Agents\\
+Assignment 3: \emph{Multi-agent planning and learning}}
+\author{
+Artur Alkaim -- 10859368\\
+Peter Dekker -- 10820973\\
+Rafael Reia -- 10859454\\
+Yikang Wang -- 10540288\\
+}
+\maketitle
+\section{Introduction}
+
+\section{Multi-predator independent Q-learning}
+In the article \emph{Markov games as a framework for multi-agent reinforcement learning} (Littman 1994)\footnote{Littman, M. L. (1994, July). Markov games as a framework for multi-agent reinforcement learning. In ICML (Vol. 94, pp. 157-163).}, Markov games are introduced as a way to model the interaction between agents in an MDP. The optimal policy is found by following the \emph{minimax} algorithm. The action chosen is the one which maximizes the reward, given the fact that the opponent picks an action which is worst for you.
+\section{MiniMaxQ}
+
+\section{Conclusion}
+
+In this assignment, the full pipline of Q-learning as well as Softmax version Q-learning is implemented. Based on these two algorithms, a series of experiment with different parameter settings were done. According to the results of the experiments, we found that finding the right combination of parameters is useful, because it can greatly speed up converge and also improve the performance.
+
+\end{document}
