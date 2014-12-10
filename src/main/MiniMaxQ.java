@@ -3,6 +3,7 @@
  */
 package main;
 
+import main.Triple;
 
 import static agents.Agent.*;
 
@@ -49,7 +50,7 @@ public class MiniMaxQ extends BasicEnvironment {
 		super(predators_, preys_);
 	}
 
-	private int chooseAction(double[] pivalues, double epsilon) {
+	private int chooseActionPredator(double epsilon, Predator nowPredator, Prey nowPrey) {
 		double max = -Double.MAX_VALUE;
 		Random rdm = new Random();
 		ArrayList<Integer> cand = new ArrayList<Integer>();
@@ -63,7 +64,7 @@ public class MiniMaxQ extends BasicEnvironment {
 			{
 				// If random value less than complementary probability of i
 				// Assign to i
-				aux += pivalues[i];
+				aux += PivaluesPredator[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][i];
 				if (randomValue <= aux)
 				{
 					return i;
@@ -74,66 +75,31 @@ public class MiniMaxQ extends BasicEnvironment {
 			// choose any random action for the epsilon part
 			return rdm.nextInt(DIR_NUM);
 		}
+		System.out.println("ERROR");
 		return cand.get(rdm.nextInt(cand.size()));
 	}
 
-	public int episodeQL(double[][][][][][] Qvalues, double alpha, double gamma,
-			double epsilon, double[][][][] Vvalues, double[][][][][] Pivalues)  {
-		/* Initializing the array values */
-		int steps = 0;
-
-		Predator nowPredator = new Predator(predators.get(0));
-		Prey nowPrey = new Prey(prey);
-
-		while (!Agent.isCaught()) { //FIXME when it's not over
-			steps++;
-
-			Predator nextPredator = new Predator(nowPredator);
-			Prey nextPrey = new Prey(nowPrey);
-
-			//FIXME I set the action to 0 because we don't use/know the opponents chosen action. 
-			int aPredator = chooseAction(
-					Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
-							.getY()][0], epsilon);
-			
-			//FIXME I set the action to 0 because we don't use/know the opponents chosen action.
-			// Prey chooses actions or trips
-			int aPrey = chooseOrTrip(
-					Qvalues[nowPrey.getX()][nowPrey.getY()][nowPredator.getX()][nowPredator
-					                                    							.getY()][0], epsilon);
-
-			//move the next prey state.
-			nextPrey.move(aPrey);
-			nextPredator.move(aPredator, nextPrey);
-
-			//!!!!!!!!!!!Learn!!!!!!!!!!
-			/*Reward is the reward getted by moving for the state*/
-			//FIXME in our case is always 0 right? because when there is a reward the game ends.
+	public Triple
+	learnQL(double [][][][][][] Qvalues, double alpha, double gamma,
+			double epsilon, double[][][][] Vvalues, double[][][][][] Pivalues, Agent nowPlayer, Agent nowOpponent,  int aPlayer, int aOpponent, Agent nextPlayer, Agent nextOpponent)  {
 			double reward =0;
-			
-			//TODO finish this;
-			/* After receiving reward rew for moving from state s to s鈥�
-			 * via action a and opponent鈥檚 action o
-			 * */
 			
 			//Q[s,a,o] := (1-alpha) * Q[s,a,o] + alpha * (rew + gamma * V[s鈥橾)
 			// compute for the predator
-			Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
-					[nowPrey.getY()][aPredator][aPrey] = (1-alpha)* Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
-							[nowPrey.getY()][aPredator][aPrey] 
+			Qvalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()]
+					[nowOpponent.getY()][aPlayer][aOpponent] = (1-alpha)* Qvalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()]
+							[nowOpponent.getY()][aPlayer][aOpponent] 
 									+ alpha*(reward + gamma
 											//computes using the "now values of the prey" because
 											//we don't know for where it moved. //FIXME
-											* Vvalues[nextPredator.getX()][nextPredator.getY()][nowPrey.getX()]
-											[nowPrey.getY()]); 
+											* Vvalues[nextPlayer.getX()][nextPlayer.getY()][nowOpponent.getX()]
+											[nowOpponent.getY()]); 
 			
 			// Compute the new policy using linear programming
 			
-			// The variable array for the linear solver has length 2 * DIR_NUM + 1. The first
-			// DIR_NUM entries contain the pi[s,a] variables, the second DIR_NUM entries
-			// contain the Q[s,a,o]*pi[s,a] variables, the last entry contains V.
+			// The variable array for the linear solver has length DIR_NUM + 1. The first
+			// DIR_NUM entries contain the pi[s,a] variables, the last entry contains V.
 			
-			// First compute min(o', sum(a', pi[s,a' * Q[s,a',o')
 			
 			double[] V = new double[DIR_NUM + 1];
 			V[DIR_NUM] = 1.0; // the last position is the V variable, which has coefficient 1
@@ -151,8 +117,8 @@ public class MiniMaxQ extends BasicEnvironment {
 				double[] coefficientsPiQ = new double[DIR_NUM + 1];
 				for (int a = 0; a < DIR_NUM; a++)
 				{
-					coefficientsPiQ[a] = Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
-						[nowPrey.getY()][aPredator][oPrime];
+					coefficientsPiQ[a] = Qvalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()]
+						[nowOpponent.getY()][aPlayer][oPrime];
 				}
 				constraints.add(new LinearConstraint(
 						coefficientsPiQ, 0.0,
@@ -182,29 +148,49 @@ public class MiniMaxQ extends BasicEnvironment {
 			// Extract solutions
 			for(int a = 0; a < DIR_NUM;a++)
 			{
-				Pivalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][a] = solution.getPoint()[a];
-				System.out.println("Pi[s,"+a+"]: "+Pivalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][a]);
+				Pivalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()][nowOpponent.getY()][a] = solution.getPoint()[a];
+				System.out.println("Pi[s,"+a+"]: "+Pivalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()][nowOpponent.getY()][a]);
 			}
 			double min = solution.getValue();
-			Vvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()] = min;
+			Vvalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()][nowOpponent.getY()] = min;
 			System.out.println("V[s]: " + min);
 			
 			
-			alpha = alpha*gamma;
-			
-			//It's only move here.
-			nowPredator = nextPredator;
-			nowPrey = nextPrey;
-		}
-
-		return steps;
+		return new Triple(Qvalues,Vvalues,Pivalues);
 	}
 
-	private int chooseOrTrip(double[] ds, double epsilon) {
+	private int chooseActionPrey(double epsilon, Predator nowPredator, Prey nowPrey) {
 		Random rdm = new Random();
 		if (rdm.nextDouble() > 0.2)
 		{
-			return chooseAction(ds, epsilon);
+			double max = -Double.MAX_VALUE;
+			ArrayList<Integer> cand = new ArrayList<Integer>();
+			if (rdm.nextDouble() > epsilon)
+			{
+				// Draw new number to determine which policy action to take
+				double randomValue = rdm.nextDouble();
+				double aux = 0.0;
+				
+				for (int i=0; i < DIR_NUM; i++)
+				{
+					// If random value less than complementary probability of i
+					// Assign to i
+					System.out.println("aux: "+ aux);
+					aux += PivaluesPredator[nowPrey.getX()][nowPrey.getY()][nowPredator.getX()][nowPredator.getY()][i];
+					System.out.println("aux: "+ aux);
+					if (randomValue <= aux)
+					{
+						System.out.println("i");
+						return i;
+					}
+				}
+			}
+			else {
+				// choose any random action for the epsilon part
+				System.out.println("random");
+				return rdm.nextInt(DIR_NUM);
+			}
+			return cand.get(rdm.nextInt(cand.size()));
 		}
 		else
 		{
@@ -217,21 +203,7 @@ public class MiniMaxQ extends BasicEnvironment {
 		
 	}
 
-	private double calcNextValue(double[][][][][] Qvalues,
-			Predator nowPredator, Prey nowPrey, Predator nextPredator,
-			Prey nextPrey, int aPredator, double reward, double alpha,
-			double gamma) {
-		return Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
-				.getY()][aPredator]
-				+ alpha
-				* (reward
-						+ gamma
-						* getMax(Qvalues[nextPredator.getX()][nextPredator
-								.getY()][nextPrey.getX()][nextPrey.getY()]) - Qvalues[nowPredator
-							.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
-						.getY()][aPredator]);
-	}
-
+	
 	private double getMax(double[] qvalues) {
 		double max = -Double.MAX_VALUE;
 		for (int i = 0; i < DIR_NUM; i++) {
@@ -242,42 +214,73 @@ public class MiniMaxQ extends BasicEnvironment {
 		return max;
 	}
 
-	private void initValues(double[][][][][][] qvalues, double[][][][] vvalues, double[][][][][] pivalues,
-			double initValueQ, double initValueV) {
+	private void initValues(double initValueQ, double initValueV) {
 		for (int predX = 0; predX < WORLDSIZE; predX++)
 			for (int predY = 0; predY < WORLDSIZE; predY++)
 				for (int preyX = 0; preyX < WORLDSIZE; preyX++)
 					for (int preyY = 0; preyY < WORLDSIZE; preyY++) {
 						// Initialize V-values
-						vvalues[predX][predY][preyX][preyY] = initValueV;
+						VvaluesPredator[predX][predY][preyX][preyY] = initValueV;
+						VvaluesPrey[predX][predY][preyX][preyY] = initValueV;
 						for (int predA = 0; predA < 5; predA++) {
 							// Initialize pivalues
-							pivalues[predX][predY][preyX][preyY][predA] = 1/5;
+							PivaluesPredator[predX][predY][preyX][preyY][predA] = 1.0/5;
+							PivaluesPrey[predX][predY][preyX][preyY][predA] = 1.0/5;
 							for (int preyA = 0; preyA < 5; preyA++) {
 								// Initialize Q-values
-								qvalues[predX][predY][preyX][preyY][predA][preyA] = initValueQ;
+								QvaluesPredator[predX][predY][preyX][preyY][predA][preyA] = initValueQ;
+								QvaluesPrey[predX][predY][preyX][preyY][predA][preyA] = initValueQ;
 							}
 						}
 					}
 	}
 
 	int runs;
-	int[] steps = new int[N_EPISODES];
-
+	int[] totalSteps = new int[N_EPISODES];
+	
+	double[][][][][][] QvaluesPredator = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5][5];
+	double[][][][] VvaluesPredator = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
+	double[][][][][] PivaluesPredator = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
+	double[][][][][][] QvaluesPrey = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5][5];
+	double[][][][] VvaluesPrey = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
+	double[][][][][] PivaluesPrey = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
+	
 	public int test(double alpha, double gamma, double epsilon, double initValueQ, double initValueV) {
 		int time = 0;
-		double initValue = 1.0;
-		double[][][][][][] Qvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5][5];
-		double[][][][] Vvalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE];
-		double[][][][][] Pivalues = new double[WORLDSIZE][WORLDSIZE][WORLDSIZE][WORLDSIZE][5];
-		initValues(Qvalues, Vvalues, Pivalues, initValueQ, initValueV);
-
-		int aux;
+		initValues(initValueQ, initValueV);
+		
+		Triple auxPredator;
+		Triple auxPrey;
 		runs++;
 		for (int i = 0; i < N_EPISODES; i++) {
-			aux = episodeQL(Qvalues, alpha, gamma, epsilon, Vvalues, Pivalues);
-			// System.out.println("episode: " + i + ", steps: " + aux);
-			steps[i] += aux;
+			// New predator and prey every episode
+			Predator nowPredator = new Predator(predators.get(0));
+			Prey nowPrey = new Prey(prey);
+			int steps = 0;
+			double lastReward = 0;
+			while(lastReward != 10)
+			{
+				Predator nextPredator = new Predator(nowPredator);
+				Prey nextPrey = new Prey(nowPrey);
+				
+				//FIXME I set the action to 0 because we don't use/know the opponents chosen action. 
+				int aPredator = chooseActionPredator(epsilon, nowPredator, nowPrey);
+				
+				int aPrey = chooseActionPrey(epsilon, nowPredator, nowPrey);
+				
+				auxPredator = learnQL(QvaluesPredator, alpha, gamma, epsilon, VvaluesPredator, PivaluesPredator, nowPredator, nowPrey, aPredator, aPrey, nextPredator, nextPrey);
+				auxPrey = learnQL(QvaluesPredator, alpha, gamma, epsilon, VvaluesPredator, PivaluesPredator, nowPrey, nowPredator, aPrey, aPredator, nextPrey, nextPredator);
+				
+				alpha = alpha*gamma;
+				
+				//move the next prey state.
+				nextPrey.move(aPrey);
+				nextPredator.move(aPredator, nextPrey);
+				steps++;
+				// System.out.println("episode: " + i + ", steps: " + aux);
+				
+			}
+			totalSteps[i] += steps;
 		}
 
 		return time;
@@ -301,8 +304,8 @@ public class MiniMaxQ extends BasicEnvironment {
 
 			double sum = 0;
 			for (int i = 0; i < N_EPISODES; i++) {
-				sum += steps[i] / runs;
-				f.println(steps[i] / runs);
+				sum += totalSteps[i] / runs;
+				f.println(totalSteps[i] / runs);
 			}
 			double average = sum / N_EPISODES;
 			System.out.println("Average: " + average);
@@ -313,32 +316,5 @@ public class MiniMaxQ extends BasicEnvironment {
 
 	}
 	
-	
-	/* For each element in the array, multiply it with the corresponding element
-	 * in the other array and sum the resulting products
-	 * THese sums are placed in the DIR_NUM till 2*DIR_NUM entries of the variable array */
-	double[] multiplyArrays(double[] array1, double[] array2)
-	{
-		double[] newArray = new double[2 * DIR_NUM + 1];
-		Arrays.fill(newArray,0.0);
-		for (int a = 0; a < DIR_NUM; a++)
-		{
-			newArray[a+DIR_NUM] = array1[a] * array2[a];
-		}
-		return newArray;
-	}
-	
-	// Puts array in the first DIR_NUM elements of new_array
-	double[] createVariableArray(double[] array)
-	{
-		// Put current Pivalues in variable array, rest of variables are 0
-		double[] newArray = new double[2*DIR_NUM + 1];
-		Arrays.fill(newArray, 0.0);
-		for (int i = 0; i < DIR_NUM; i++)
-		{
-			newArray[i] = array[i];
-		}
-		return newArray;
-	}
 
 }
