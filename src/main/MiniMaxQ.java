@@ -30,7 +30,7 @@ import agents.Prey;
 /**
  *
  */
-public class MiniMaxQ extends BasicEnvironment {
+public class MiniMaxQ extends NewEnvironment {
 
 	private static final int N_EPISODES = 10000;
 
@@ -39,7 +39,7 @@ public class MiniMaxQ extends BasicEnvironment {
 	 * @param prey_
 	 */
 	public MiniMaxQ(Predator predator_, Prey prey_) {
-		super(predator_, prey_);
+		super(new ArrayList<Predator>(Arrays.asList(predator_)), prey_);
 	}
 
 	/**
@@ -203,10 +203,6 @@ public class MiniMaxQ extends BasicEnvironment {
 		}
 	}
 	
-	private void learnMiniMax(){
-		
-		
-	}
 
 	
 	private double getMax(double[] qvalues) {
@@ -268,7 +264,6 @@ public class MiniMaxQ extends BasicEnvironment {
 				Predator nextPredator = new Predator(nowPredator);
 				Prey nextPrey = new Prey(nowPrey);
 				
-				//FIXME I set the action to 0 because we don't use/know the opponents chosen action. 
 				int aPredator = chooseActionPredator(epsilon, nowPredator, nowPrey);
 				
 				int aPrey = chooseActionPrey(epsilon, nowPredator, nowPrey);
@@ -279,6 +274,12 @@ public class MiniMaxQ extends BasicEnvironment {
 				
 				auxPredator = learnQL(QvaluesPredator, alpha, gamma, epsilon, VvaluesPredator, PivaluesPredator, nowPredator, nowPrey, aPredator, aPrey, nextPredator, nextPrey);
 				auxPrey = learnQL(QvaluesPredator, alpha, gamma, epsilon, VvaluesPredator, PivaluesPredator, nowPrey, nowPredator, aPrey, aPredator, nextPrey, nextPredator);
+				QvaluesPredator = (double[][][][][][]) auxPredator.x;
+				VvaluesPredator = (double[][][][]) auxPredator.y;
+				PivaluesPredator = (double[][][][][]) auxPredator.z;
+				QvaluesPrey = (double[][][][][][]) auxPrey.x;
+				VvaluesPrey = (double[][][][]) auxPrey.y;
+				PivaluesPrey = (double[][][][][]) auxPrey.z;
 				
 				alpha = alpha*gamma;
 				
