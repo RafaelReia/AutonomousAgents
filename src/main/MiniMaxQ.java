@@ -135,34 +135,38 @@ public class MiniMaxQ extends BasicEnvironment {
 			
 			// First compute min(o', sum(a', pi[s,a' * Q[s,a',o')
 			
-			double[] V = new double[2 * DIR_NUM + 1];
-			Arrays.fill(V,0.0); // all other positions are other variables, which have coefficient 0
-			V[2 * DIR_NUM] = 1.0; // the last position is the V variable, which has coefficient 1
+			double[] V = new double[DIR_NUM + 1];
+			V[DIR_NUM] = 1.0; // the last position is the V variable, which has coefficient 1
+			// all other positions are other variables, which have coefficient 0
 			LinearObjectiveFunction f = new LinearObjectiveFunction(V, 0); // max V
-			Collection constraints = new ArrayList();
+			Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
 			
 			// Put current Pivalues in variable array, rest of variables are 0
-			double[] PivaluesCurrent = Pivalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()];
-
+			
 			// Inequality constraint for all o':
-			//SUM_a(pi[s][a] * Q[s][a][o']) >= V
+			//SUM_a(Q[s][a][o']*pi[s][a] * ) >= V
 			for (int oPrime = 0; oPrime < DIR_NUM; oPrime++)
 			{
-				double[] QvaluesCurrent = new double[DIR_NUM];
-				for (int i = 0; i < DIR_NUM; i++)
+				// The q's are the coefficients of the pi's
+				double[] coefficientsPiQ = new double[DIR_NUM + 1];
+				for (int a = 0; a < DIR_NUM; a++)
 				{
-					QvaluesCurrent[i] = Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][i][oPrime];
+					coefficientsPiQ[a] = Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()]
+						[nowPrey.getY()][aPredator][oPrime];
 				}
 				constraints.add(new LinearConstraint(
-						multiplyArrays(PivaluesCurrent,
-									QvaluesCurrent), 0.0,
+						coefficientsPiQ, 0.0,
 						Relationship.GEQ, V, 0.0));
 
 			}
 			
 			// Equality constraint SUM_a(pi[s,a]) = 1
+			// The coefficients of all pi[s,a] should be 1, so the pi values are summed
+			double[] coefficientsPi1 = new double[DIR_NUM+1];
+			Arrays.fill(coefficientsPi1, 1);
+			coefficientsPi1[DIR_NUM] = 0; // coefficient of V is 0
 			constraints.add(new LinearConstraint(
-					createVariableArray(PivaluesCurrent), 
+					coefficientsPi1, 
 					Relationship.EQ, 
 					1.0));
 
@@ -174,21 +178,20 @@ public class MiniMaxQ extends BasicEnvironment {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			double x = solution.getPoint()[0];
-			double y = solution.getPoint()[1];
+			
+			// Extract solutions
+			for(int a = 0; a < DIR_NUM;a++)
+			{
+				Pivalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][a] = solution.getPoint()[a];
+				System.out.println("Pi[s,"+a+"]: "+Pivalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()][a]);
+			}
 			double min = solution.getValue();
+			Vvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey.getY()] = min;
+			System.out.println("V[s]: " + min);
+			
 			
 			alpha = alpha*gamma;
 			
-			
-			//Computes with the next prey
-			/*double reward = getReward(nextPredator, nextPrey);
-			Qvalues[nowPredator.getX()][nowPredator.getY()][nowPrey.getX()][nowPrey
-					.getY()][aPredator] = calcNextValue(Qvalues, nowPredator,
-					nowPrey, nextPredator, nextPrey, aPredator, reward, alpha,
-					gamma);*/
-
 			//It's only move here.
 			nowPredator = nextPredator;
 			nowPrey = nextPrey;
