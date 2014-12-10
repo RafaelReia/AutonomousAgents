@@ -273,14 +273,18 @@ public class MiniMaxQ extends BasicEnvironment {
 				
 				int aPrey = chooseActionPrey(epsilon, nowPredator, nowPrey);
 				
+				//move the next prey state.
+				nextPrey.move(aPrey);
+				lastReward = nextPredator.move(aPredator, nextPrey);
+				
 				auxPredator = learnQL(QvaluesPredator, alpha, gamma, epsilon, VvaluesPredator, PivaluesPredator, nowPredator, nowPrey, aPredator, aPrey, nextPredator, nextPrey);
 				auxPrey = learnQL(QvaluesPredator, alpha, gamma, epsilon, VvaluesPredator, PivaluesPredator, nowPrey, nowPredator, aPrey, aPredator, nextPrey, nextPredator);
 				
 				alpha = alpha*gamma;
 				
-				//move the next prey state.
-				nextPrey.move(aPrey);
-				lastReward = nextPredator.move(aPredator, nextPrey);
+				nowPredator = nextPredator;
+				nowPrey = nextPrey;
+				
 				steps++;
 				// System.out.println("episode: " + i + ", steps: " + aux);
 				
