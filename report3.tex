@@ -56,8 +56,38 @@ would reduce the dimensions to just one for each predator. With this we would
 loose important information for the agents. Direction is importante to run away
 when close.
 
-\section{Multi-predator independent Q-learning}
+\section{Multi-Agent independent Q-learning}
 In the article \emph{Markov games as a framework for multi-agent reinforcement learning} (Littman 1994)\footnote{Littman, M. L. (1994, July). Markov games as a framework for multi-agent reinforcement learning. In ICML (Vol. 94, pp. 157-163).}, Markov games are introduced as a way to model the interaction between agents in an MDP. The optimal policy is found by following the \emph{minimax} algorithm. The action chosen is the one which maximizes the reward, given the fact that the opponent picks an action which is worst for you.
+
+We implemented multi-agent independent Q-learning, and aplied to predators and
+preys. With this, the prey does not have a random policy. They learn
+independently of each other, this means that each agent is trying to optimize
+their own rewards. So we have different Q-values sets and they get different
+rewards.
+
+\section{Multi-Agent independent Q-learning - Evaluation}
+To evaluate our implementation of Multi-Agent independent Q-learning we tested
+with one, two and three predators. We didn't tested with more becasue the state
+space would be intractable with the available computing resources. In the
+following subsections we will explain this three cases separately.
+
+One big difference is between the case with only one predator and the cases with
+more than one. First with only one predator, if the prey is smart enough it can
+run away forever. To prevent that, the prey have a trip factor that causes the
+prey to not be able to move a $\eta\%$ of times.
+
+\subsection{One Predator}
+
+
+
+\subsection{Two Predators}
+
+
+
+\subsection{Three Predators}
+
+
+
 \section{MiniMaxQ}
 
 \section{Conclusion}
