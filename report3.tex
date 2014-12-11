@@ -24,6 +24,38 @@ Yikang Wang -- 10540288\\
 \maketitle
 \section{Introduction}
 
+\section{Multi-predator random policy}
+The first step for this assignment wast to extend our environments to be able to
+handle multiple agents. With more than one Predator and one Prey that can also
+act as a learning agent.
+
+We didn't change much of our implementation because most of our code was
+already prepared to this changes.
+
+Altough, in this process we noticed that our state representation would grow
+(exponentialy) too much with the addition of more predators. Represented the
+state space as the \emph{coordenates} of all indiviuals, which is implemented as
+an array with $2 \times (n+1)$ dimensions, with the $n$ as the number of predators. So with four predators we had a $10-D$ array with each
+dimension with the value $11$. 
+
+To reduce the number of dimensions we implemented \emph{relative positions},
+that represent the distance of each predator to the prey. With this we reduced the
+state space in two dimensions and reduced the size of each dimension in one.
+This doesn't look a lot at first sight but, for instance with $4$ predators and
+the prior representation we had $6.115909045E19$ states. With this
+representation we have $1E8$ that is a huge reduction.
+
+To reduce even more the state space we want to represent the states as
+\emph{(direction, square distance)} for each predator. With this we have the
+same number of dimensions but the size of the direction dimension is reduced to $4$.
+This would have a lighter impact on the size of the state space but stil
+significant.
+
+We can not implement the state as the \emph{square distance} to the prey that
+would reduce the dimensions to just one for each predator. With this we would
+loose important information for the agents. Direction is importante to run away
+when close.
+
 \section{Multi-predator independent Q-learning}
 In the article \emph{Markov games as a framework for multi-agent reinforcement learning} (Littman 1994)\footnote{Littman, M. L. (1994, July). Markov games as a framework for multi-agent reinforcement learning. In ICML (Vol. 94, pp. 157-163).}, Markov games are introduced as a way to model the interaction between agents in an MDP. The optimal policy is found by following the \emph{minimax} algorithm. The action chosen is the one which maximizes the reward, given the fact that the opponent picks an action which is worst for you.
 \section{MiniMaxQ}
