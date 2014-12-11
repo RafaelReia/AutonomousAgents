@@ -43,13 +43,13 @@ that represent the distance of each predator to the prey. With this we reduced t
 state space in two dimensions and reduced the size of each dimension in one.
 This doesn't look a lot at first sight but, for instance with $4$ predators and
 the prior representation we had $6.115909045E19$ states. With this
-representation we have $1E8$ that is a huge reduction.
+representation we have $1E7$ that is a huge reduction.
 
 To reduce even more the state space we want to represent the states as
 \emph{(direction, square distance)} for each predator. With this we have the
 same number of dimensions but the size of the direction dimension is reduced to $4$.
-This would have a lighter impact on the size of the state space but stil
-significant.
+This would have a significant impact on the size of the state space reducing it
+by a factor of $4E4$.
 
 We can not implement the state as the \emph{square distance} to the prey that
 would reduce the dimensions to just one for each predator. With this we would
