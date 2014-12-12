@@ -23,11 +23,17 @@ Yikang Wang -- 10540288\\
 }
 \maketitle
 \section{Introduction}
+In this assignment, we study the application of \emph{multi-agent learning}. To go from a single-agent situation to a multi-agent situation for our predator-prey scenario, we study two perspectives:
 
+\begin{itemize}
+ \item In \emph{Independent Q-learning}, one or more predators try to catch a prey, which is also a rational agent. The agents apply Q-learning independently of eachother.
+ \item In \emph{Markov games with the minimax-Q algorithm}, one predator and one prey compete with eachother. Both are agents which try to optimize their policies by applying the minimax algorithm, maximizing their own policy for the worst possible policy by the opponent.
+\end{itemize}
 \section{Multi-predator random policy}
-The first step for this assignment was to extend our environments to be able to
-handle multiple agents. With more than one Predator and one Prey that can also
-act as a learning agent.
+The first step for this assignment was to extend our environment to be able to
+handle multiple agents. The environment can now contain more than one predator and a prey that also acts as a learning agent.
+We did not change much of our implementation, because most of our code had
+already been prepared for the changes.
 
 We didn't change much of our implementation because most of our code was
 already prepared to this changes. We runed some tests to use as a baseline for
@@ -46,6 +52,7 @@ Standard Dev of clash  &         & 58.688  & 24.379  & 9.112  \\ \hline
 \end{tabular}
 \end{table}
 
+\section{State-space reduction}
 Although, in this process we noticed that our state representation would grow
 (exponentially) too much with the addition of more predators. Represented the
 state space as the \emph{coordinates} of all individuals, which is implemented as
@@ -55,64 +62,55 @@ with the value $11$.
 
 To reduce the number of dimensions we implemented \emph{relative positions},
 that represent the distance of each predator to the prey. With this we reduced the
-state space by two dimensions. This doesn't look a lot at first sight but, it
-makes the 3-predator situation solvable on our machines. And it also makes the
-algorithm converge much faster on 1 or predator settings. Taking the 1-predator
-as an example, with the original state-space, the algorithm will need to wait
-until the action-value function converge on $121^2$ states; but now it only
-need to converge on $121$ states.
+state space by two dimensions. This does not look a lot at first sight, but it makes the 3-predator situation solvable on our machines. It also makes the algorithm converge much faster on 1 or predator settings. Taking the 1-predator situation as an example, with the original state-space, the algorithm will need to wait until the action-value function converge on $121^2$ states; but now it only need to converge on $121$ states.
 
-To reduce even more the state space we represent the states as
-\emph{(direction, square distance)} for each predator. With this we have the
-same number of dimensions but the size of the direction dimension is reduced to $4$.
-This have a significant impact on the size of the state space reducing it
-by a factor of $4E4$. After that we reduce more the size of the state space with
+To reduce even more of the state space, we wanted to represent the states as
+\emph{(direction, square distance)} for each predator. With this modification, we have the
+same number of dimensions, but the size of the direction dimension is reduced to $4$.
+This would have a significant impact on the size of the state space reducing it
+by a factor of $4\cdot10^4$. After that we reduce more the size of the state space with
 two different options. The first was by setting the distance as $5$ if it was
-higher that that and the second by seting the distance as the minimum of both
-directions insetead of the sum.
-With this we reduce the amount of information that we keep but we turn this into
-a tractrable problem with four predators.
+higher than that and the second by setting the distance as the minimum of both
+directions instead of the sum.
+With this, we reduce the amount of information that we keep but we turn this into
+a tractable problem with four predators.
 
-We can not implement the state as the \emph{square distance} to the prey that
-would reduce the dimensions to just one for each predator. With this we would
-loose important information for the agents. Direction is important to run away
+It turned out we could not further reduce the encoding of the state to just the \emph{square distance} to the prey. That
+would reduce the dimensions to just one for each predator. We would then loose important information for the agents: direction is important to run away
 when close.
 
 \section{Multi-Agent independent Q-learning}
-We implemented multi-agent independent Q-learning, and aplied to predators and
-preys. With this, the prey does not have a random policy. They learn
+We implemented \emph{multi-agent independent Q-learning} and applied it to the predators and preys. The prey does not have a random policy anymore, but acts as an agent. The agents learn
 independently of each other, this means that each agent is trying to optimize
-their own rewards. So we have different Q-values sets and they get different
-rewards.
+its own rewards. The agents have their own Q-value arrays and receive their own rewards.
 
-\section{Multi-Agent independent Q-learning - Evaluation}
-To evaluate our implementation of Multi-Agent independent Q-learning we tested
-with one, two and three predators. We didn't tested with more because the state
-space would be intractable with the available computing resources. In the
-following subsections we will explain this three cases separately.
+\subsection{Evaluation}
+To evaluate our implementation of multi-agent independent Q-learning, we tested
+with one, two and three predators. We did not test with more because the state
+space would be intractably large with the available computing resources. In the
+following subsections we will explain the three cases separately.
 
-One big difference is between the case with only one predator and the cases with
-more than one. First with only one predator, if the prey is smart enough it can
-run away forever. To prevent that, the prey have a trip factor that causes the
-prey to not be able to move a $\eta\%$ of times.
+One big difference exists between the case with only one predator and the cases with
+more than one predator. With only one predator, the prey can run away forever, because it pursuits the same smart policy (with opposite rewards) as the predator. To prevent this, the prey has a trip factor that causes the
+prey to wait $\eta\%$ of the times.
 
-\subsection{One Predator}
-As briefly explained, the behaviour for this settings is different from the
-following ones. The predator always catch the prey, similar to the previous
-assignments. So to evaluate this behaviour we use the number of steps needed to
-catch the prey. With this we want to evaluate how the prey learns comparing to
-the predator. Although it have a trip probability, the prey still would manage to
+\subsection{One predator}
+As briefly explained, the behaviour for this setting is different from the
+following ones. The predator always catches the prey, similar to the previous
+assignments. To evaluate this behaviour, we use the number of steps needed to
+catch the prey. With this metric, we want to evaluate how the prey learns, compared to
+the predator. Although it has a trip probability, the prey would still manage to
 stay alive longer if it learns faster.
 
-We run this environment with $1000$ episodes, we didn't use more because the
-state space is small and is covered very fast and it converges very fast also.
+We run this environment with $1000$ episodes, we did not use more because the
+state space is small and is covered very fast. This number of episodes also converges quickly.
 
-The result the we have is in the following figures.
-
+The result that we have is in the following figures.
 
 We tested a setting with both smart agents. So we used the best
 values for the parameters for both agents. With this we wanted to show the effect
 of the trip, because with the same parameters the agents learn at the same rate.
+
 The only difference between the agents is the trip factor for the prey.
 
 \begin{figure}[htbp]
@@ -123,10 +121,11 @@ The only difference between the agents is the trip factor for the prey.
 \end{figure}
 
 
-The next step was to test the same settings as before but with a pure greedy
+The next step was to test the same settings as before, but with a purely greedy
 policy for both agents, that means, setting the $\epsilon$ to zero. Because we
 have an optimistic initialisation, the agents still go to unexplored places
 without the random move factor.
+\error explain results missing
 
 \begin{figure}[htbp]
     \centering
@@ -145,9 +144,8 @@ very fast the number of steps.
 The spike in the figure \ref{fig2} can be explained by the following, the agent
 found a set of states that wasn't explored yet.
 
-After this we wanted to test if we can have a smart prey that manages to never
-get caught and a dumb predator. Because we still have the trip
-factor, we are just testing how long a prey manages to stay alive, and if this
+After this we wanted to test if we could have a smart prey that manages to never get caught and a dumb predator. Because we still have the trip
+factor, we are just testing how long a prey manages to stay alive, and whether this
 number grows with learning.
 
 \begin{figure}[htbp]
@@ -161,21 +159,19 @@ number grows with learning.
 
 \subsection{Two Predators}
 \label{twoP}
-With more than one predator we add a new possible behaviour to the environment,
-that is about the predators clashing into themselves and the prey runs away. The
-probability of this behaviour to occur is very high at the beginning if the
-predators star the close positions. To evaluate this new environment the number
-of steps isn't enough because it doesn't take into account the occurrence of the
-new behaviour, assuming that the prey is always caught. 
+With more than one predator we add a new possible behaviour to the environment. There is the possiblity that the predators clash into eachother and the prey runs away. The
+probability of this behaviour is very high at the beginning if the
+predators start at close positions. To evaluate this new environment, the number
+of steps is not enough, because they predators can clash into eachother instead of catching the prey.
 
-With this we have to compare the ratio between the number of times that the prey
-is caught versus the number of times that escapes and from that together
-with the number of steps we can have a much better understanding of what is
-happening with our simulation.
+Now, we have to compare the ratio between the number of times that the prey
+is caught versus the number of times that it escapes. Together 
+with the number of steps, we can have a much better understanding of what is
+happening in our simulation.
 
-We run this environment with $100000$ episodes,because the state space is grows
-very fast with the number of individuals, we need to grow the number of episodes
-accordingly to make sure that a higher rate of states are explored.
+We run this environment with $100000$ episodes. Since the state space grows
+very fast with the number of agents, we need to let the number of episodes grow
+accordingly, to make sure that a higher rate of states is explored.
 
 At first we wanted to test how agents with the same parameters, therefore
 the same learning rates would behave in our environment. If we could reduce the
@@ -221,11 +217,10 @@ Again with two agents learning at the same rate, we changed the only the
 $\epsilon$ from the last figure. We can see the same pattern than before with
 just one predator. It first goes very high and then goes down very fast.
 
-After that we tested how long a smart prey would live against less smart
-predators, for that we used the same parameters from the last section but for
-this we used again a pure greedy policy for the prey.
-With this we test also if the clashing is a real problem and if it's being solved
-trough learning. This would cause the predators to clash more with less
+After that, we tested how long a smart prey would live against less smart
+predators. In order to do this, we used the same parameters from the last section, but a purely greedy policy for the prey.
+With this, we also test if the clashing is a real problem and if it is being solved
+through learning. This would cause the predators to clash more with less
 learning. 
 
 \begin{figure}[htbp]
@@ -244,21 +239,20 @@ learning.
 
 
 \subsection{Three Predators}
-We add another predator to the environment explained in the section \ref{twoP}.
-With more predators it should be easier and faster to catch the prey but on the
-other hand the probability of clash increases. Then theoretically predators put
+We added another predator to the environment explained in  section \ref{twoP}.
+With more predators, it should be easier and faster to catch the prey. On the
+other hand, the probability of clashing increases. Theoretically, predators put
 less effort to catch the prey and more to avoid clashes.
 
-We also used the same evaluation model as the last section.
+We also used the same evaluation model as in the last section.
 
-We run this environment with $500000$ episodes because as the size of the state
+We ran this environment with $500000$ episodes, because, as the size of the state
 space grows very fast, the time that is needed to test this environments grows.
-So we could not test with a bigger number of episodes because it would turn to
-be impractical. However we still tested with higher number of episodes but not
+We could not test with a bigger number of episodes, because it would turn out to
+be impractical. However, we still tested with a higher number of episodes, but not
 in a systematic way.
 
-Again we have the same testing goals as the last section, with both smart agents
-we wanted to test how the prey would react with more predators and if they would
+Again, we have the same testing goals as in the last section.  With both agents being smart, we wanted to test how the prey would react with more predators and if they would
 clash more or catch the prey faster.
 \begin{figure}[htbp]
 	\centering
@@ -333,9 +327,17 @@ In the article \emph{Markov games as a framework for multi-agent reinforcement l
 
 We implemented the linear program in the MiniMax-Q algorithm using a linear solver, the Apache Commons Math \emph{SimplexSolver}\footnote{Documentation of Apache Commons Math \emph{SimplexSolver}: http://commons.apache.org/proper/commons-math//apidocs/org/apache/commons/math3/optim/linear/SimplexSolver.html}.
 
-The policy generated by the MiniMaxQ algorithm did not really fit our expectations. The recurring pattern is that $\pi(a_i) = 1.0$ for one of the actions $a_i$, and for all the other values $\forall a_j (a_j \neq a_i) \pi(a_j) = 0.0$. We have not been able to explain this strange behaviour after extensive testing. The policy does not converge to a best strategy given the worst case action of the opponent.
+The policy generated by the MiniMaxQ algorithm did not really fit our expectations. The recurring pattern is that $\pi(a_i) = 1.0$ for one of the actions $a_i$, and for all the other values $\forall a_j (a_j \neq a_i) \pi(a_j) = 0.0$. The policy does not converge to a best strategy given the worst case action of the opponent. We have not been able to explain this strange behaviour after extensive testing. 
 
-We expected a policy that decreases its number of steps drastically at the beginning, when $\alpha$ is high. Then, the policy converges slower, because $\alpha$ decays. %When both the predator and the prey play an optimal action according to minimax, an episode will never converge. For this reason
+\begin{figure}[!h]
+\includegraphics[scale=0.5]{res/minimaxq-trip040.jpg}
+\caption{Minimax-Q: $\gamma=0.5, \alpha = 0.5, \epsilon = 0.1$}
+\label{fig:minimaxq}
+\end{figure}
+
+We expected a policy that decreases its number of steps drastically at the beginning, when $\alpha$ is high. Then, the policy converges slower, because $\alpha$ decays. Figure~\ref{fig:minimaxq} shows the results of minimax-Q for 10,000 episodes. It can be seen that the policy is not converging, but is almost a random process. Possible causes for this behaviour could be a wrong set-up of the linear solver or, less probable, a wrong update of the Q-values. We have however not been able to find the real cause for the problem. %When both the predator and the prey play an optimal action according to minimax, an episode will never converge. For this reason
+
+The difference between indendent Q-learning and minimax-Q is that minimax-Q uses Markov games as its basis, while independent Q-learning does not. Because Markov games involve two players, only one predator can hunt one prey, while independent Q-learning can handle multiple predators. Minimax-Q could handle multiple predators, if a team of cooperating predators would be seen as one player in the Markov game.
 \section{Conclusion}
-
+The results of independent Q-learning look promising. The game-theoretic perspective of applying the minimax-algorithm is interesting, but did not turn out useful in our assignment, because we could not solve the error in our implementation.
 \end{document}
