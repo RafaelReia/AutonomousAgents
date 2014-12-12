@@ -14,11 +14,11 @@ public class MainMultiQlearning extends Main{
 			ArrayList<Predator> predators = new ArrayList<Predator>();
 			predators.add(new Predator(0, 10));
 			predators.add(new Predator(10, 10));
-//			predators.add(new Predator(0, 0));
+			predators.add(new Predator(0, 0));
 //			predators.add(new Predator(10, 0));
 			MultiQlearningEnvironment env = new MultiQlearningEnvironment(predators, new Prey(5,
 					5));
-			double[][] parameterSettings = {{0.1,0.1,0.1,15,0.5,0.9,0.0,15}};
+			double[][] parameterSettings = {{0.5,0.9,0.1,15,0.5,0.9,0.1,15}};
 			execTime[i] = env.run(parameterSettings);
 
 			// For garbage cleaning the object

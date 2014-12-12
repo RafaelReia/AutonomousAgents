@@ -17,7 +17,7 @@ import agents.Prey;
  */
 public class SoftmaxQLearning extends QLearning {
 
-	private static final int N_EPISODES = 100;
+	private static final int N_EPISODES = 10000;
 
 	/**
 	 * @param predator_
@@ -142,7 +142,7 @@ public class SoftmaxQLearning extends QLearning {
 		// For every parameter setting
 		for (int ps = 0; ps < parameterSettings.length;ps++)
 		{
-			for(int i = 0;i<100;i++)
+			for(int i = 0;i<500;i++)
 			{
 				test(parameterSettings[ps][0],parameterSettings[ps][1],parameterSettings[ps][2],parameterSettings[ps][3]);
 			}

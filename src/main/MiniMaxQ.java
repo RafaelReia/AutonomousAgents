@@ -82,7 +82,7 @@ public class MiniMaxQ extends NewEnvironment {
 	public Triple
 	learnQL(double [][][][][][] Qvalues, double alpha, double gamma,
 			double epsilon, double[][][][] Vvalues, double[][][][][] Pivalues, Agent nowPlayer, Agent nowOpponent,  int aPlayer, int aOpponent, Agent nextPlayer, Agent nextOpponent)  {
-			double reward =0;
+			double reward = getRewardMiniMax(nowPlayer, nowOpponent, aPlayer, aOpponent);
 			
 			//Q[s,a,o] := (1-alpha) * Q[s,a,o] + alpha * (rew + gamma * V[s鈥橾)
 			// compute for the predator
@@ -151,7 +151,7 @@ public class MiniMaxQ extends NewEnvironment {
 			}
 			
 			// Extract solutions
-			for(int a = 0; a < DIR_NUM;a++)
+			for(int a = DIR_NUM-1; a >= 0;a--)
 			{
 				Pivalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()][nowOpponent.getY()][a] = solution.getPoint()[a];
 				System.out.println("Pi[s,"+a+"]: "+Pivalues[nowPlayer.getX()][nowPlayer.getY()][nowOpponent.getX()][nowOpponent.getY()][a]);
@@ -300,7 +300,7 @@ public class MiniMaxQ extends NewEnvironment {
 	public int run(double[][] parameterSettings) {
 		// For every parameter setting
 		for (int ps = 0; ps < parameterSettings.length; ps++) {
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < 1; i++) {
 				test(parameterSettings[ps][0], parameterSettings[ps][1],
 						parameterSettings[ps][2], parameterSettings[ps][3], parameterSettings[ps][4]);
 			}
