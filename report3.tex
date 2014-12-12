@@ -34,6 +34,7 @@ already prepared to this changes. We runed some tests to use as a baseline for
 the evaluation of the following evironments.
 
 \begin{table}[h]
+\centering
 \begin{tabular}{|l|l|l|l|l|}
 \hline
 Number of predators    & 1       & 2       & 3       & 4      \\ \hline
@@ -108,31 +109,30 @@ state space is small and is covered very fast and it converges very fast also.
 
 The result the we have is in the following figures.
 
-To test how our implementation evolves with a smart predator and a dumb prey we
-used the set of parameters that resulted in the best values in the last
-assignment for the predator, and really bad ones for the pray. We still want the
-prey to learn so we didn't set any values to zero.
 
-\error add picture, 1 predator, dumb prey
-
-Here we don't see a big difference from the Q-Learning from the last assignment.
-We have a smart predator and a dumb prey, so we expected this results.
-
-
-After that, we tested a setting with both smart agents. So we used the best
+We tested a setting with both smart agents. So we used the best
 values for the parameters for both agents. With this we wanted to show the effect
 of the trip, because with the same parameters the agents learn at the same rate.
 The only difference between the agents is the trip factor for the prey.
 
-\error add picture, 1 predator, both smart, epsilon 0.1
-\label{fig2}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{res/1_both_smart.png}
+    \caption{One smart predator(0.5, 0.9, 0, 15), one smart prey(0.5, 0.9, 0, 15)}
+    \label{fig:fig2}
+\end{figure}
+
 
 The next step was to test the same settings as before but with a pure greedy
 policy for both agents, that means, setting the $\epsilon$ to zero. Because we
 have an optimistic initialisation, the agents still go to unexplored places
 without the random move factor.
 
-\error add picture, 1 predator, both smart, epsilon 0.0
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{res/1_both_smart_e01.png}
+    \caption{One smart predator(0.5, 0.9, 0.1, 15), one smart prey(0.5, 0.9, 0.1, 15)}
+\end{figure}
 
 With both agents learning fast, i.e. two smart agents, we can see on the last to
 figures that it converges really fast but to a value sligtly higher than the
@@ -150,9 +150,13 @@ get caught and a dumb predator. Because we still have the trip
 factor, we are just testing how long a prey manages to stay alive, and if this
 number grows with learning.
 
-\error add picture, 1 predator, dumb predator, smart prey
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{res/1_dumb_predator.png}
+    \caption{One dumb predator(0.01, 0.1, 0.1, 0), one smart prey(0.5, 0.9, 0, 15)}
+\end{figure}
 
-\error explain results missing
+%\error explain results missing
 
 
 \subsection{Two Predators}
@@ -178,10 +182,21 @@ the same learning rates would behave in our environment. If we could reduce the
 number of clashes, i.e. the predators learn to not kill each other and catch the
 prey and how the prey would run away from a smart group of predators.
 
-\error add picture, 2 predators, both smart, epsilon 0.1
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/2_both_smart_greedy.png}
+	\end{minipage}
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/2_both_smart_greedy_100.png}
+	\end{minipage}
+\end{figure}
+
 
 As we can see, at the begining the predators clash a lot, so the ratio of
-catch/clash is very low. But it looks like they ar learning to not kill each
+catch/clash is very low. But it looks like they are learning to not kill each
 other. After some time, the clashes almost goes to zero and then they start
 optimizing the catches. We can clearly see that after this phase the number of
 steps converges fast.
@@ -190,7 +205,17 @@ steps converges fast.
 At second we tested two agents with the same parametes like before but the value
 for $\epsilon$ is zero, so we are using a pure greedy policy.
 
-\error add picture, 2 predators, both smart, epsilon 0.0
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/2_both_smart_e01.png}
+	\end{minipage}
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/2_both_smart_e01_100.png}
+	\end{minipage}
+\end{figure}
 
 Again with two agents learning at the same rate, we changed the only the
 $\epsilon$ from the last figure. We can see the same pattern than before with
@@ -203,9 +228,19 @@ With this we test also if the clashing is a real problem and if it's being solve
 trough learning. This would cause the predators to clash more with less
 learning. 
 
-\error add picture, 2 predators, dumb predator, smart prey
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/2_dumb_predator_e01_greedy.png}
+	\end{minipage}
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/2_dumb_predator_e01_greedy_100.png}
+	\end{minipage}
+\end{figure}
 
-\error explain results missing
+%\error explain results missing
 
 
 \subsection{Three Predators}
@@ -225,13 +260,33 @@ in a systematic way.
 Again we have the same testing goals as the last section, with both smart agents
 we wanted to test how the prey would react with more predators and if they would
 clash more or catch the prey faster.
-\error add picture, 3 predators, both smart
-\error explain results missing
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/3_both_smart_e01_greedy.png}
+	\end{minipage}
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/3_both_smart_e01_greedy_100.png}
+	\end{minipage}
+\end{figure}
+%\error explain results missing
 
 After that we again tested with dumb predators and a smart pure greedy prey to
 know how it would survive with one more predator.
-\error add picture, 3 predators, both smart, epsilon 0.0
-\error explain results missing
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/3_dumb_predator_e01_greedy.png}
+	\end{minipage}
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/3_dumb_predator_e01_greedy_100.png}
+	\end{minipage}
+\end{figure}
+%\error explain results missing
 
 \subsection{Four Predators}
 We tried to the fouth predator without changing the state representation and
@@ -245,9 +300,29 @@ the state space grows very fast we used a different representation for the
 state that reduces is a lot. So turning it to be close to the size of the space
 with three predators and the other state representation.
 
-\error add picture, 4 predators, set to 5
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/4_max5.png}
+	\end{minipage}
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/4_max5_100.png}
+	\end{minipage}
+\end{figure}
 
-\error add picture, 4 predators, set to min
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/4_minxy.png}
+	\end{minipage}
+	\begin{minipage}[t]{.45\linewidth}
+		\centering
+		\includegraphics[width=1\textwidth]{res/4_minxy_100.png}
+	\end{minipage}
+\end{figure}
 
 As we can see, the figure shows that the values should converge and some
 learning is happening. For the first one, we can see that the percentage of
