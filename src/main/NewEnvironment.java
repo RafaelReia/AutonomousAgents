@@ -1,5 +1,6 @@
 package main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.jfree.data.time.TimeSeries;
@@ -31,6 +32,51 @@ public class NewEnvironment extends BasicEnvironment {
 		
 		return new Pair<Integer,Integer>(0,0);
 	}
+	public double getRewardMiniMax(Agent nowPlayer, Agent nowOpponent,
+			int aPlayer, int aOpponent) {
+		if(nowPlayer instanceof Predator)
+			return getRewardMiniMax((Predator)nowPlayer, (Prey)nowOpponent, aPlayer, aOpponent);
+		return getRewardMiniMax((Prey)nowPlayer, (Predator)nowOpponent, aPlayer, aOpponent);
+
+	}
+	public double getRewardMiniMax(Predator predator, Prey prey, int aPredator, int aPrey){
+		Prey dummyPrey = new Prey(prey);
+		Predator dummyPredator = new Predator(predator);
+		dummyPredator.move(aPredator);
+		dummyPrey.move(aPrey);
+
+		if (dummyPredator.equals(dummyPrey)) {
+			/*System.err.println("Reward!! ");
+			try {
+				System.in.read();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Agent.setCaught(); //XXX */
+			return 10;
+		}
+		return 0;
+	}
+	public double getRewardMiniMax(Prey prey, Predator predator, int aPrey, int aPredator){
+		Prey dummyPrey = new Prey(prey);
+		Predator dummyPredator = new Predator(predator);
+		dummyPredator.move(aPredator);
+		dummyPrey.move(aPrey);
+		if (dummyPredator.equals(dummyPrey)) {
+			/*System.err.println("Reward!! PREY");
+			try {
+				System.in.read();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Agent.setCaught(); //XXX */
+			return -10;
+		}
+		return 0;
+	}
+	
 	
 	public Pair<Integer, Integer> getReward(ArrayList<Predator> predators, Prey prey, ArrayList<Integer> aPredators, int aPrey) {
 		ArrayList<Predator> dummyPredators = new ArrayList<Predator>();
