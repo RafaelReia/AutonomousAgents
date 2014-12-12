@@ -77,16 +77,100 @@ run away forever. To prevent that, the prey have a trip factor that causes the
 prey to not be able to move a $\eta\%$ of times.
 
 \subsection{One Predator}
+As briefly explained, the behaviour for this settings is different from the
+following ones. The predator allways catch the prey, simmilar to the previous
+assignments. So to evaluate this behaviour we use the number of steps needed to
+chatch the prey. With this we want to evaluate how the prey learns comparing to
+the predator. Altough it have a trip probability, the prey still would manage to
+stay alive longer if it learns faster.
 
+We run this evironment with $1000$ episodes, we didn't use more because the
+state space is small and is covered very fast and it converges very fast also.
+
+The result the we have is in the following figures.
+
+To test how our implementation evolves with a smart predator and a dumb prey we
+used the set of parameters that resulted in the best values in the last
+assignment for the predator, and really bad ones for the pray. We stil want the
+prey to learn so we didn't set any values to zero.
+\error explain results missing
+
+
+
+After that, we tested a setting with both smart agents. So we used the best
+values for the parameters for both agents. With this we wanted to show the efect
+of the trip, because with the same parameters the agents learn at the same rate.
+The only difference between the agents is the trip factor for the prey.
+\error explain results missing
+
+The next step was to test the same settings as before but with a pure greedy
+policy for both agents, that means, setting the $\epsilon$ to zero. Because we
+have an optimistic initialization, the agents still go to unexplored places
+without the random move factor.
+\error explain results missing
+
+After this we wanted to test if we can have a smart prey that manages to never
+get caught and a dumb predator. Because we stil have the trip
+factor, we are just testing how long a prey manages to stay alive, and if this
+number grows with learning.
+\error explain results missing
 
 
 \subsection{Two Predators}
+\label{twoP}
+With more than one predator we add a new possible behaviour to the evironment,
+that is about the predators clashing into themselves and the prey runs away. The
+probability of this behaviour to occur is very high at the begining if the
+predators star the close positions. To evaluate this new evironment the number
+of steps isn't enough because it doesn't take into account the occourence of the
+new behaviour, assuming that the prey is allways caught. 
 
+With this we have to compare the ratio between the number of times that the prey
+is caught versus the number of times that escapes and from that together
+with the number of steps we can have a much better understanding of what is
+happening with our simulation.
+
+We run this evironment with $100000$ episodes,because the state space is grows
+very fast with the number of individuals, we need to grow the number of episodes
+accordingly to make sure that a higer rate of states are explored.
+
+At first we wanted to test how agents with the same parameters, therefore
+the same learning rates would behave in our environment. If we could reduce the
+number of clashes, ie the predators learn to not kill eachother and catch the
+prey and how the prey would run away from a smart group of predators.
+\error explain results missing
+
+After that we tested how long a smart prey would live against less smart
+predators, for that we used the same parameters from the last setction but for
+this we used again a pure greedy policy for the prey.
+With this we test also if the clashing is a real problem and if it's being solved
+trough learning. This would cause the predators to clash more with less
+learning. 
+\error explain results missing
 
 
 \subsection{Three Predators}
+We add another predator to the environment explained in the section \ref{twoP}.
+With more prdators it should be easier and faster to catch the prey but on the
+other hand the probability of clash increases. Then theoretically predators put
+less effort to catch the prey and more to avoid clashes.
 
+We also used the same evaluation model as the last section.
 
+We run this environment with $500000$ episodes because as the size of the state
+space grows very fast, the time that is needed to test this environments grows.
+So we could not test with a bigger number of episodes because it would turn to
+be impractical. However we still tested with higher number of episodes but not
+in a systematic way.
+
+Again we have the same testing goals as the last section, with both smart agents
+we wanted to test how the prey would react with more predators and if they would
+clash more or cacth the prey faster.
+\error explain results missing
+
+After that we again tested with dumb predators and a smart pure greedy prey to
+know how it would survive with one more predator.
+\error explain results missing
 
 \section{MiniMaxQ}
 
