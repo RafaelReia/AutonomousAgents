@@ -25,7 +25,7 @@ Yikang Wang -- 10540288\\
 \section{Introduction}
 
 \section{Multi-predator random policy}
-The first step for this assignment wast to extend our environments to be able to
+The first step for this assignment was to extend our environments to be able to
 handle multiple agents. With more than one Predator and one Prey that can also
 act as a learning agent.
 
@@ -35,15 +35,12 @@ already prepared to this changes.
 Altough, in this process we noticed that our state representation would grow
 (exponentialy) too much with the addition of more predators. Represented the
 state space as the \emph{coordenates} of all indiviuals, which is implemented as
-an array with $2 \times (n+1)$ dimensions, with the $n$ as the number of predators. So with four predators we had a $10-D$ array with each
+an array with $2 \times (n+1)$ dimensions, with the $n$ as the number of predators. So with four predators we had a 10-D array with each
 dimension with the value $11$. 
 
 To reduce the number of dimensions we implemented \emph{relative positions},
 that represent the distance of each predator to the prey. With this we reduced the
-state space in two dimensions and reduced the size of each dimension in one.
-This doesn't look a lot at first sight but, for instance with $4$ predators and
-the prior representation we had $6.115909045E19$ states. With this
-representation we have $1E7$ that is a huge reduction.
+state space by two dimensions. This doesn't look a lot at first sight but, it makes the 3-predator situation solvable on our machines. And it also makes the algorithm converge much faster on 1 or predator settings. Taking the 1-predator as an example, with the original state-space, the algorithm will need to wait until the action-value function converge on $121^2$ states; but now it only need to converge on $121$ states.
 
 To reduce even more the state space we want to represent the states as
 \emph{(direction, square distance)} for each predator. With this we have the
