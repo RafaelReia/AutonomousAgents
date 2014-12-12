@@ -7,21 +7,21 @@ import java.util.TreeMap;
 import agents.Predator;
 import agents.Prey;
 
-public class QValuesSet extends HashMap<StateRelative, Qvalue> {
+public class QValuesSet extends TreeMap<DirectionalState, Qvalue> {
 	private static final long serialVersionUID = -8594401860750971868L;
 	private final Qvalue defaultValues;
-
+	
 	public QValuesSet(double initValuePredator,double initValuePrey, int NUM) {
 		defaultValues = new Qvalue(initValuePredator,initValuePrey, NUM);
 	}
-
+	
 	/**
 	 * Get the values for a state @state use this if we have the @state object
 	 * 
 	 * @param t
 	 * @return
 	 */
-	public Qvalue get(StateRelative t) {
+	public Qvalue get(DirectionalState t) {
 		if (containsKey(t))
 			return super.get(t);
 		else {
@@ -38,16 +38,16 @@ public class QValuesSet extends HashMap<StateRelative, Qvalue> {
 	 * @return
 	 */
 	public Qvalue get(ArrayList<Predator> predators, Prey prey) {
-		return get(new StateRelative(predators, prey));
+		return get(new DirectionalState(predators, prey));
 	}
 
 	public void put(ArrayList<Predator> predators, Prey prey, Qvalue value) {
-		put(new StateRelative(predators, prey), value);
+		put(new DirectionalState(predators, prey), value);
 	}
 
 	public void set(ArrayList<Predator> predators, Prey prey,
 			ArrayList<Integer> aPredators, double value) {
-		StateRelative s = new StateRelative(predators, prey);
+		DirectionalState s = new DirectionalState(predators, prey);
 		Qvalue v = this.get(s);
 		v.setPredatorValue(aPredators, value);
 		this.put(s, v);
@@ -55,7 +55,7 @@ public class QValuesSet extends HashMap<StateRelative, Qvalue> {
 	
 	public void set(ArrayList<Predator> predators, Prey prey,
 			int aPrey, double value) {
-		StateRelative s = new StateRelative(predators, prey);
+		DirectionalState s = new DirectionalState(predators, prey);
 		Qvalue v = this.get(s);
 		v.setPreyValue(aPrey, value);
 		this.put(s, v);
@@ -63,11 +63,12 @@ public class QValuesSet extends HashMap<StateRelative, Qvalue> {
 	
 	public void set(ArrayList<Predator> predators, Prey prey,
 			ArrayList<Integer> aPredators, int aPrey, double predatorValue, double preyValue) {
-		StateRelative s = new StateRelative(predators, prey);
+		DirectionalState s = new DirectionalState(predators, prey);
 		Qvalue v = this.get(s);
 		v.setPredatorValue(aPredators, predatorValue);
 		v.setPreyValue(aPrey, preyValue);
 		this.put(s, v);
 	}
+
 
 }

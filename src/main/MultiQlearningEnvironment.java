@@ -9,7 +9,7 @@ import agents.Prey;
 
 public class MultiQlearningEnvironment extends NewEnvironment {
 
-	private static final int N_EPISODES = 100000;
+	private static final int N_EPISODES = 5000000;
 
 	public MultiQlearningEnvironment(ArrayList<Predator> predators_, Prey prey_) {
 		super(predators_, prey_);
@@ -30,7 +30,7 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 
 		ArrayList<Predator> nowPredators = copyPredators(predators);
 		Prey nowPrey = new Prey(prey);
-		StateRelative nowState = new StateRelative(nowPredators, nowPrey);
+		DirectionalState nowState = new DirectionalState(nowPredators, nowPrey);
 		Qvalue nowValue = qvalues.get(nowState);
 
 		while (!Agent.isCaught() && !Agent.isClash()) {
@@ -48,7 +48,7 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 				nextPredators.get(i).move(aPredators.get(i));
 			}
 			nextPrey.move(aPrey);
-			StateRelative nextState = new StateRelative(nextPredators, nextPrey);
+			DirectionalState nextState = new DirectionalState(nextPredators, nextPrey);
 			Qvalue nextValue = qvalues.get(nextState);
 
 			// System.out.print(steps + " ");
@@ -108,7 +108,7 @@ public class MultiQlearningEnvironment extends NewEnvironment {
 			aux = episodeQL(Qvalues, alphaPredator, gammaPredator,
 					epsilonPredator,alphaPrey, gammaPrey,
 					epsilonPrey);
-			System.out.println("episode: " + i + ", steps: " + aux);
+			System.out.println("episode: " + i + ", steps: " + aux + ", size: " + Qvalues.size());
 			steps[i] += aux;
 		}
 
